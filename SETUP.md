@@ -70,9 +70,10 @@ Astro 会在 GitHub Actions 中自动判断：
 2. 访问 `/admin/`，使用 `MIL / MIL` 进入编辑入口。
 3. 第一步选择内容类型以及新增、编辑或删除操作。
 4. Publication 或 People 可以在第二步跳转 GitHub 上传、删除图片；提交图片后回到后台刷新图片列表。
-5. 第三步填写字段，点击 `Copy complete file content`，复制成功后再点击 `Open GitHub editor`。
-6. 在 GitHub 的文件编辑区域粘贴完整内容，不要粘贴到 commit message；最后点击 `Commit changes`。
-7. GitHub Actions 自动重新构建并发布。
+5. Publication 在第三步先粘贴 BibTeX，点击 `Read BibTeX & fill fields` 自动填写可识别字段，再人工补充图片和其他链接。
+6. 点击 `Copy complete file content`，复制成功后再点击 `Open GitHub editor`。
+7. 在 GitHub 的文件编辑区域粘贴完整内容，不要粘贴到 commit message；最后点击 `Commit changes`。
+8. GitHub Actions 自动重新构建并发布。
 
 发布不是数据库实时更新，需要等待 GitHub Actions 构建完成。构建失败时，旧网站仍然保留，可在仓库 Actions 页面查看错误并修正对应内容。
 

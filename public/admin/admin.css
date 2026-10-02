@@ -146,6 +146,16 @@ button:disabled, select:disabled { cursor: not-allowed; opacity: .5; }
 .form-field { min-width: 0; }
 .field-wide { grid-column: 1 / -1; }
 .form-field small, .slug-field small { display: block; margin-top: .42rem; color: #758d9b; font-size: .75rem; line-height: 1.45; }
+.bibtex-field { padding: 1.1rem; border: 1px solid rgba(31, 120, 161, .2); border-radius: 13px; background: rgba(226, 244, 250, .52); }
+.bibtex-field > label { display: block; margin-bottom: .45rem; color: #225f7f; font-size: .76rem; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; }
+.bibtex-field textarea { min-height: 14rem; background: rgba(255, 255, 255, .92); font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .82rem; }
+.bibtex-tools { display: flex; align-items: center; flex-wrap: wrap; gap: .8rem 1rem; margin-top: .9rem; }
+.bibtex-overwrite { display: inline-flex; align-items: center; gap: .5rem; cursor: pointer; }
+.bibtex-overwrite input { width: 1rem; min-height: 0; margin: 0; accent-color: var(--blue); }
+.bibtex-overwrite span { margin: 0; color: #526f80; font-size: .75rem; font-weight: 600; letter-spacing: 0; text-transform: none; }
+.bibtex-status { min-height: 1.2rem; margin: .7rem 0 0 !important; color: #526f80 !important; font-size: .78rem; line-height: 1.5 !important; }
+.bibtex-status.is-success { color: #157154 !important; }
+.bibtex-status.is-error { color: #ad3d4b !important; }
 .checkbox-field { display: flex; align-items: center; gap: .65rem; min-height: 3rem; padding: .75rem .9rem; border: 1px solid rgba(43, 116, 154, .18); border-radius: 11px; background: rgba(255, 255, 255, .62); }
 .checkbox-field input { width: 1rem; min-height: 0; margin: 0; accent-color: var(--blue); }
 .checkbox-field span { margin: 0; }
@@ -216,6 +226,8 @@ button:disabled, select:disabled { cursor: not-allowed; opacity: .5; }
   .field-grid { grid-template-columns: 1fr; }
   .field-wide { grid-column: auto; }
   .button-row { flex-direction: column; }
+  .bibtex-tools { align-items: stretch; flex-direction: column; }
+  .bibtex-tools .outline-button { width: 100%; }
   .media-list { height: 24rem; }
   .media-row { grid-template-columns: 82px minmax(0, 1fr); align-items: start; }
   .media-thumbnail { width: 82px; height: 66px; }

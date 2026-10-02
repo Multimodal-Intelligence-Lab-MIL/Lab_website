@@ -145,9 +145,9 @@ GitHub 是唯一内容源。`/admin/` 不拥有独立数据库，而是把管理
 
 ## 7. BibTeX 工作流
 
-后台的 Publication 模板预留完整 `bibtex` 字段，并保留 title、authors、venue、year、DOI、PDF、arXiv、Project 和 Code 等人工可编辑字段。原始 BibTeX 会完整保留，用于前台复制和引用。
+Publication 表单首先接收完整 `bibtex`，在浏览器本地解析 title、authors、journal/booktitle、year、DOI、URL、arXiv、abstract 和 keywords，并推断内容分类。默认只填写空白或新建表单的默认字段；管理员可明确选择覆盖已有值。原始 BibTeX 会完整保留，用于前台复制和引用。
 
-自动解析 BibTeX、批量导入、Crossref 或 arXiv 自动补全可以在后续作为独立模块增加，不改变现有内容模型。
+解析不调用第三方服务，也不需要额外凭据。批量导入、重复检测以及 Crossref 或 arXiv 联网补全仍可在后续作为独立模块增加，不改变现有内容模型。
 
 ## 8. 权限与安全边界
 

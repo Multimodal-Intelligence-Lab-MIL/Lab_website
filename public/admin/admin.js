@@ -38,6 +38,7 @@
       { key: 'body', label: 'Full news text (Markdown)', type: 'textarea', wide: true, rows: 10, body: true }
     ],
     publications: [
+      { key: 'bibtex', label: '1. Paste BibTeX first', type: 'textarea', wide: true, rows: 11, block: true, importer: true, help: 'Paste one complete BibTeX entry, then let the form identify its title, authors, venue, year, DOI, links, abstract and keywords.' },
       { key: 'title', label: 'Paper title', type: 'text', required: true, primary: true, wide: true },
       { key: 'authors', label: 'Authors', type: 'text', required: true, wide: true },
       { key: 'venue', label: 'Journal or conference', type: 'text', wide: true },
@@ -54,7 +55,6 @@
       { key: 'code', label: 'Code URL', type: 'url' },
       { key: 'dataset', label: 'Dataset URL', type: 'url' },
       { key: 'video', label: 'Video URL', type: 'url' },
-      { key: 'bibtex', label: 'BibTeX', type: 'textarea', wide: true, rows: 9, block: true },
       { key: 'keywords', label: 'Keywords', type: 'tags', wide: true, help: 'Separate keywords with commas.' },
       { key: 'featured', label: 'Featured', type: 'checkbox', default: false },
       { key: 'draft', label: 'Draft', type: 'checkbox', default: false }
@@ -233,24 +233,25 @@
   }
 
   function makeField(field, value) {
-    const label = document.createElement('label');
-    label.className = field.wide ? 'form-field field-wide' : 'form-field';
+    const fieldElement = document.createElement(field.importer ? 'div' : 'label');
+    fieldElement.className = field.wide ? 'form-field field-wide' : 'form-field';
+    if (field.importer) fieldElement.classList.add('bibtex-field');
 
     if (field.type === 'checkbox') {
-      label.classList.add('checkbox-field');
+      fieldElement.classList.add('checkbox-field');
       const input = document.createElement('input');
       input.type = 'checkbox';
       input.name = field.key;
       input.checked = Boolean(value);
       const labelText = document.createElement('span');
       labelText.textContent = field.label;
-      label.append(input, labelText);
-      return label;
+      fieldElement.append(input, labelText);
+      return fieldElement;
     }
 
-    const labelText = document.createElement('span');
+    const labelText = document.createElement(field.importer ? 'label' : 'span');
     labelText.textContent = `${field.label}${field.required ? ' *' : ''}`;
-    label.append(labelText);
+    fieldElement.append(labelText);
 
     let input;
     if (field.type === 'textarea') {
@@ -275,14 +276,93 @@
     input.name = field.key;
     input.required = Boolean(field.required);
     input.value = Array.isArray(value) ? value.join(', ') : String(value ?? '');
-    label.append(input);
+    if (field.importer) {
+      input.id = 'publication-bibtex-input';
+      labelText.htmlFor = input.id;
+    }
+    fieldElement.append(input);
 
     if (field.help) {
       const help = document.createElement('small');
       help.textContent = field.help;
-      label.append(help);
+      fieldElement.append(help);
     }
-    return label;
+
+    if (field.importer) {
+      const tools = document.createElement('div');
+      tools.className = 'bibtex-tools';
+      const importButton = document.createElement('button');
+      importButton.className = 'outline-button';
+      importButton.type = 'button';
+      importButton.textContent = 'Read BibTeX & fill fields';
+      importButton.addEventListener('click', applyBibtexToForm);
+
+      const overwriteLabel = document.createElement('label');
+      overwriteLabel.className = 'bibtex-overwrite';
+      const overwrite = document.createElement('input');
+      overwrite.type = 'checkbox';
+      overwrite.setAttribute('data-bibtex-overwrite', '');
+      const overwriteText = document.createElement('span');
+      overwriteText.textContent = 'Overwrite fields that already have values';
+      overwriteLabel.append(overwrite, overwriteText);
+      tools.append(importButton, overwriteLabel);
+
+      const status = document.createElement('p');
+      status.className = 'bibtex-status';
+      status.setAttribute('data-bibtex-status', '');
+      status.setAttribute('aria-live', 'polite');
+      fieldElement.append(tools, status);
+    }
+    return fieldElement;
+  }
+
+  function applyBibtexToForm() {
+    const bibtexInput = contentForm?.querySelector('[name="bibtex"]');
+    const overwriteInput = contentForm?.querySelector('[data-bibtex-overwrite]');
+    const status = contentForm?.querySelector('[data-bibtex-status]');
+    if (!bibtexInput || !status) return;
+
+    status.classList.remove('is-error', 'is-success');
+    try {
+      if (!window.MILBibTeX) throw new Error('The BibTeX reader did not load. Refresh the page and try again.');
+      const parsed = window.MILBibTeX.toPublication(bibtexInput.value);
+      const config = fieldConfig.publications;
+      const overwrite = Boolean(overwriteInput?.checked);
+      const applied = [];
+      const preserved = [];
+
+      Object.entries(parsed.values).forEach(function ([key, value]) {
+        const field = config.find((item) => item.key === key);
+        const control = contentForm.elements[key];
+        if (!field || !control || value === '') return;
+
+        const currentValue = control.type === 'checkbox' ? control.checked : String(control.value || '').trim();
+        const defaultValue = getDefault(field);
+        const hasOnlyCreateDefault = state.operation === 'create' && String(currentValue) === String(defaultValue);
+        if (!overwrite && currentValue !== '' && !hasOnlyCreateDefault) {
+          preserved.push(field.label);
+          return;
+        }
+
+        if (control.type === 'checkbox') control.checked = Boolean(value);
+        else control.value = String(value);
+        control.dispatchEvent(new Event('input', { bubbles: true }));
+        control.dispatchEvent(new Event('change', { bubbles: true }));
+        applied.push(field.label);
+      });
+
+      const entryName = `@${parsed.entry.type}{${parsed.entry.citationKey || 'entry'}}`;
+      if (!applied.length) {
+        status.textContent = `${entryName} was read, but no empty matching fields were available. Select overwrite to replace existing values.`;
+        return;
+      }
+      const preservedText = preserved.length ? ` Preserved ${preserved.length} field${preserved.length === 1 ? '' : 's'} that already had values.` : '';
+      status.textContent = `${entryName} recognised. Filled ${applied.length} field${applied.length === 1 ? '' : 's'}: ${applied.join(', ')}.${preservedText}`;
+      status.classList.add('is-success');
+    } catch (error) {
+      status.textContent = `Could not read BibTeX: ${error.message}`;
+      status.classList.add('is-error');
+    }
   }
 
   function renderContentForm() {
