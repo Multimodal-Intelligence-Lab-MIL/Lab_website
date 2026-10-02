@@ -1299,6 +1299,7 @@ jobs:
           rI12OGr8hTuz4Iyq2aKRc9r1gj3jCjy670/bay5g/ayf9fNv/Px/DuQkQgAwBAA=
           MIL_SITE_ARCHIVE
           tar -xzf /tmp/mil-site.tgz -C .
+          rm -f .github/workflows/deploy.yml
           download() { mkdir -p "$(dirname "$1")"; curl --fail --location --silent --show-error "$2" --output "$1"; }
           download 'public/assets/images/3d-avatar-face.jpg' 'https://mmilabuk.github.io/mmi-lab-website/assets/images/3d-avatar-face.jpg'
           download 'public/assets/images/atefe-hassani.jpeg' 'https://mmilabuk.github.io/mmi-lab-website/assets/images/atefe-hassani.jpeg'
