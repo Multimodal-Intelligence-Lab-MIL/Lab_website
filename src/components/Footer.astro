@@ -1,0 +1,29 @@
+---
+import site from '../data/site.json';
+import { sitePath } from '../lib/paths';
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer" id="contact">
+  <div class="shell footer-grid">
+    <div>
+      <p class="eyebrow">Multimodal Intelligence Lab</p>
+      <h2>Research across signals, disciplines and society.</h2>
+    </div>
+    <div class="footer-contact">
+      <a href={`mailto:${site.email}`}>{site.email}</a>
+      <p>{site.address}</p>
+    </div>
+    <div class="footer-links" aria-label="Social links">
+      <a href={site.github} target="_blank" rel="noreferrer">GitHub</a>
+      <a href={site.linkedin} target="_blank" rel="noreferrer">LinkedIn</a>
+      <a href={site.x} target="_blank" rel="noreferrer">X</a>
+      <a href={site.youtube} target="_blank" rel="noreferrer">YouTube</a>
+      <a href={sitePath('admin/')} rel="nofollow">Admin</a>
+    </div>
+  </div>
+  <div class="shell footer-bottom">
+    <span>© {year} {site.name}</span>
+    <span>Department of Computer Science · University of Exeter</span>
+  </div>
+</footer>

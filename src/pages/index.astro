@@ -1,0 +1,87 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SignalField from '../components/SignalField.astro';
+import site from '../data/site.json';
+import { sitePath } from '../lib/paths';
+import { getCollection } from 'astro:content';
+
+const research = (await getCollection('research'))
+  .filter((item) => !item.data.draft && item.data.featured)
+  .sort((a, b) => a.data.order - b.data.order);
+const news = (await getCollection('news'))
+  .filter((item) => !item.data.draft)
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+  .slice(0, 3);
+---
+
+<BaseLayout title={site.name} description={site.description} currentPath="/">
+  <section class="hero">
+    <SignalField />
+    <div class="shell hero-grid">
+      <div class="hero-copy">
+        <p class="eyebrow"><span></span> University of Exeter · Computer Science</p>
+        <h1>Intelligence,<br /><em>across modalities.</em></h1>
+        <p class="hero-intro">{site.mission}</p>
+        <div class="hero-actions">
+          <a class="button button-primary" href={sitePath('research/')}>Explore our research</a>
+          <a class="text-link" href={sitePath('publications/')}>View publications <span aria-hidden="true">↗</span></a>
+        </div>
+      </div>
+      <div class="hero-model" aria-label="Research modalities">
+        <div class="model-core"><span>M</span><small>multimodal<br />intelligence</small></div>
+        <span class="modality modality-vision">Vision</span>
+        <span class="modality modality-language">Language</span>
+        <span class="modality modality-audio">Audio</span>
+        <span class="modality modality-sensor">Signals</span>
+      </div>
+    </div>
+    <div class="shell hero-foot">
+      <span>Healthcare</span><span>Environment</span><span>Social computing</span><span>Trustworthy AI</span>
+    </div>
+  </section>
+
+  <section class="section research-overview">
+    <div class="shell">
+      <div class="section-heading split-heading">
+        <div><p class="eyebrow dark">Research directions</p><h2>One lab. Multiple signals.<br />Shared intelligence.</h2></div>
+        <p>{site.description}</p>
+      </div>
+      <div class="research-list">
+        {research.map((item, index) => (
+          <article class="research-row">
+            <span>{String(index + 1).padStart(2, '0')}</span><h3>{item.data.shortTitle}</h3><p>{item.data.summary}</p><span class="row-mark" aria-hidden="true">+</span>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section latest-section">
+    <div class="shell">
+      <div class="section-heading inline-heading">
+        <div><p class="eyebrow">Lab updates</p><h2>Latest news</h2></div>
+        <a class="text-link light" href={sitePath('news/')}>All news <span aria-hidden="true">↗</span></a>
+      </div>
+      <div class="news-feature-list">
+        {news.map((item, index) => (
+          <article class="news-feature">
+            <span class="news-index">0{index + 1}</span>
+            <div><p class="news-meta">{item.data.date.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })} · {item.data.category}</p><h3><a href={sitePath(`news/#${item.id}`)}>{item.data.title}</a></h3></div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section partners-section">
+    <div class="shell">
+      <p class="eyebrow dark">Selected funders & collaborators</p>
+      <div class="partner-strip">
+        <img src={sitePath('assets/logos/exeter.png')} alt="University of Exeter" />
+        <img src={sitePath('assets/logos/ukri_logo.png')} alt="UK Research and Innovation" />
+        <img src={sitePath('assets/logos/the_alan_turing_institute_logo.jpeg')} alt="The Alan Turing Institute" />
+        <img src={sitePath('assets/logos/dso_singapore_log.png')} alt="DSO National Laboratories" />
+      </div>
+    </div>
+  </section>
+</BaseLayout>

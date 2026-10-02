@@ -1,0 +1,5 @@
+body { background: #f7fbfd; }
+[class*="AppHeaderContent"] { background: rgba(255,255,255,.92) !important; border-bottom: 1px solid rgba(31,104,150,.16); }
+[class*="AppHeaderContent"] * { text-shadow: none !important; }
+[class*="SidebarContainer"] { background: #edf6fa !important; }
+[class*="CardCard"] { border: 1px solid rgba(31,104,150,.14) !important; box-shadow: 0 10px 35px rgba(26,92,133,.06) !important; }

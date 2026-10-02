@@ -1,0 +1,27 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import PersonCard from '../../components/PersonCard.astro';
+
+const categoryOrder = ['Faculty', 'Postdoctoral Researchers', 'PhD Students', 'Research Assistants', 'Visiting Scholars', 'MSc Students', 'Undergraduate Students', 'Alumni'];
+const people = (await getCollection('people')).filter((entry) => !entry.data.draft).sort((a, b) => a.data.order - b.data.order);
+const groups = categoryOrder.map((category) => ({ category, members: people.filter((person) => person.data.category === category) })).filter((group) => group.members.length);
+---
+
+<BaseLayout title="People" description="People in the Multimodal Intelligence Lab." currentPath="/people/">
+  <PageHero eyebrow="Our community" title="People" intro="Researchers and students working across multimodal learning, computer vision and responsible artificial intelligence." stat={String(people.filter((person) => person.data.current).length)} statLabel="current profiles" />
+  <section class="section collection-section">
+    <div class="shell">
+      <div class="category-jump" aria-label="People categories">
+        {groups.map((group) => <a href={`#${group.category.toLowerCase().replaceAll(' ', '-')}`}>{group.category}<span>{group.members.length}</span></a>)}
+      </div>
+      {groups.map((group) => (
+        <section class="people-group" id={group.category.toLowerCase().replaceAll(' ', '-')}>
+          <div class="people-group-heading"><p class="eyebrow dark">{String(categoryOrder.indexOf(group.category) + 1).padStart(2, '0')}</p><h2>{group.category}</h2></div>
+          <div class="people-grid">{group.members.map((person) => <PersonCard person={person} />)}</div>
+        </section>
+      ))}
+    </div>
+  </section>
+</BaseLayout>

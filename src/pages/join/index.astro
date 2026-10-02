@@ -1,0 +1,16 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import site from '../../data/site.json';
+---
+
+<BaseLayout title="Join us" description="Opportunities to join the Multimodal Intelligence Lab." currentPath="/join/">
+  <PageHero eyebrow="Opportunities" title="Join the lab" intro="We welcome enquiries from prospective PhD students, research fellows, visitors and collaborators whose interests align with our research." />
+  <section class="section join-section">
+    <div class="shell join-grid">
+      <article><span>01</span><h2>PhD study</h2><p>Funded and self-funded PhD opportunities are available across our research themes. Prospective applicants should contact us with a CV and a concise research proposal.</p><a class="text-link" href="https://www.exeter.ac.uk/study/pg-research/funding/" target="_blank" rel="noreferrer">University funding information <span>↗</span></a></article>
+      <article><span>02</span><h2>Fellowships</h2><p>We support aligned applications to UKRI, Royal Academy of Engineering, Royal Society, Leverhulme and Marie Skłodowska-Curie fellowship schemes.</p><a class="text-link" href="https://www.ukri.org/what-we-offer/developing-people-and-skills/epsrc/fellowships/" target="_blank" rel="noreferrer">Explore EPSRC fellowships <span>↗</span></a></article>
+      <article class="join-contact"><span>03</span><h2>Start a conversation</h2><p>Tell us about your background, research interests and the type of opportunity you are seeking.</p><a class="button button-primary" href={`mailto:${site.email}`}>Email the lab</a></article>
+    </div>
+  </section>
+</BaseLayout>

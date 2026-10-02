@@ -1,0 +1,48 @@
+---
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { sitePath } from '../lib/paths';
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  currentPath?: string;
+}
+
+const {
+  title = 'Multimodal Intelligence Lab',
+  description = 'Multimodal Intelligence Lab at the University of Exeter.',
+  currentPath = '/'
+} = Astro.props;
+const pageTitle = title === 'Multimodal Intelligence Lab' ? title : `${title} · Multimodal Intelligence Lab`;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#071626" />
+    <link rel="icon" type="image/svg+xml" href={sitePath('favicon.svg')} />
+    <title>{pageTitle}</title>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <Header currentPath={currentPath} />
+    <main id="main-content">
+      <slot />
+    </main>
+    <Footer />
+    <script is:inline>
+      const menuButton = document.querySelector('[data-menu-button]');
+      const menu = document.querySelector('[data-menu]');
+      menuButton?.addEventListener('click', () => {
+        const expanded = menuButton.getAttribute('aria-expanded') === 'true';
+        menuButton.setAttribute('aria-expanded', String(!expanded));
+        menu?.toggleAttribute('data-open', !expanded);
+      });
+    </script>
+  </body>
+</html>

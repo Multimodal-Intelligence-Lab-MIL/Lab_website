@@ -1,0 +1,22 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+
+const entries = (await getCollection('news')).filter((entry) => !entry.data.draft).sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+const rendered = await Promise.all(entries.map(async (entry) => ({ entry, content: await render(entry) })));
+---
+
+<BaseLayout title="News" description="News and updates from the Multimodal Intelligence Lab." currentPath="/news/">
+  <PageHero eyebrow="Lab journal" title="News" intro="Publications, awards, opportunities and events from the Multimodal Intelligence Lab." stat={String(entries.length)} statLabel="updates in the current archive" />
+  <section class="section collection-section">
+    <div class="shell news-archive">
+      {rendered.map(({ entry, content: { Content } }) => (
+        <article class="news-entry" id={entry.id}>
+          <div class="news-date"><strong>{entry.data.date.toLocaleDateString('en-GB', { day: '2-digit' })}</strong><span>{entry.data.date.toLocaleDateString('en-GB', { month: 'short', year: 'numeric' })}</span></div>
+          <div class="news-entry-body"><p class="news-meta">{entry.data.category}</p><h2>{entry.data.title}</h2><p class="news-summary">{entry.data.summary}</p><div class="prose"><Content /></div>{entry.data.externalUrl && <a class="text-link" href={entry.data.externalUrl} target="_blank" rel="noreferrer">Read related page <span>↗</span></a>}</div>
+        </article>
+      ))}
+    </div>
+  </section>
+</BaseLayout>

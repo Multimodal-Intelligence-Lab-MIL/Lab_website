@@ -1,0 +1,62 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import PublicationCard from '../../components/PublicationCard.astro';
+
+const publications = (await getCollection('publications'))
+  .filter((entry) => !entry.data.draft)
+  .sort((a, b) => b.data.year - a.data.year || a.data.title.localeCompare(b.data.title));
+const years = [...new Set(publications.map((entry) => entry.data.year))].sort((a, b) => b - a);
+const categories = [...new Set(publications.map((entry) => entry.data.category))].sort();
+---
+
+<BaseLayout title="Publications" description="Publications from the Multimodal Intelligence Lab." currentPath="/publications/">
+  <PageHero eyebrow="Research output" title="Publications" intro="Selected journal articles, conference papers, preprints and datasets from the lab. Use the filters to explore the collection." stat={String(publications.length)} statLabel="records in the current catalogue" />
+  <section class="section collection-section">
+    <div class="shell">
+      <div class="filter-bar" data-publication-filters>
+        <label class="search-field"><span>Search publications</span><input type="search" placeholder="Title, author or venue" data-publication-search /></label>
+        <label><span>Year</span><select data-publication-year><option value="all">All years</option>{years.map((year) => <option value={year}>{year}</option>)}</select></label>
+        <label><span>Type</span><select data-publication-category><option value="all">All types</option>{categories.map((category) => <option value={category}>{category}</option>)}</select></label>
+      </div>
+      <p class="result-count" data-result-count>{publications.length} publications</p>
+      <div class="publication-list">
+        {publications.map((entry, index) => <PublicationCard entry={entry} priority={index < 2} />)}
+      </div>
+      <div class="empty-state" hidden data-publication-empty><h2>No matching publications</h2><p>Try another year, type or search term.</p></div>
+    </div>
+  </section>
+  <script is:inline>
+    const cards = [...document.querySelectorAll('[data-publication]')];
+    const search = document.querySelector('[data-publication-search]');
+    const year = document.querySelector('[data-publication-year]');
+    const category = document.querySelector('[data-publication-category]');
+    const count = document.querySelector('[data-result-count]');
+    const empty = document.querySelector('[data-publication-empty]');
+    const applyFilters = () => {
+      const term = search?.value.trim().toLowerCase() || '';
+      let visible = 0;
+      cards.forEach((card) => {
+        const show = (!term || card.dataset.search.includes(term)) &&
+          (!year || year.value === 'all' || card.dataset.year === year.value) &&
+          (!category || category.value === 'all' || card.dataset.category === category.value);
+        card.hidden = !show;
+        if (show) visible += 1;
+      });
+      if (count) count.textContent = `${visible} publication${visible === 1 ? '' : 's'}`;
+      if (empty) empty.hidden = visible !== 0;
+    };
+    [search, year, category].forEach((element) => element?.addEventListener('input', applyFilters));
+    document.querySelectorAll('[data-bibtex-toggle]').forEach((button) => button.addEventListener('click', () => {
+      const panel = button.closest('[data-publication]')?.querySelector('[data-bibtex-panel]');
+      if (panel) panel.hidden = !panel.hidden;
+    }));
+    document.querySelectorAll('[data-copy-bibtex]').forEach((button) => button.addEventListener('click', async () => {
+      const text = button.closest('[data-bibtex-panel]')?.querySelector('pre')?.textContent || '';
+      await navigator.clipboard.writeText(text);
+      button.textContent = 'Copied';
+      window.setTimeout(() => button.textContent = 'Copy', 1400);
+    }));
+  </script>
+</BaseLayout>

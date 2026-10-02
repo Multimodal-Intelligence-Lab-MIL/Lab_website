@@ -1,0 +1,24 @@
+---
+import { sitePath } from '../lib/paths';
+interface Props { person: any }
+const { person } = Astro.props;
+const data = person.data;
+const image = data.image || 'assets/images/3d-avatar-face.jpg';
+---
+
+<article class="person-card" data-person data-category={data.category}>
+  <div class="person-photo"><img src={sitePath(image)} alt={`Portrait of ${data.name}`} loading="lazy" /></div>
+  <div class="person-card-body">
+    <p class="person-category">{data.category}</p>
+    <h3>{data.name}</h3>
+    {data.role && <p class="person-role">{data.role}</p>}
+    {data.bio && <p class="person-bio">{data.bio}</p>}
+    <div class="person-links">
+      {data.email && <a href={`mailto:${data.email}`}>Email</a>}
+      {data.scholar && <a href={data.scholar} target="_blank" rel="noreferrer">Scholar</a>}
+      {data.website && <a href={data.website} target="_blank" rel="noreferrer">Website</a>}
+      {data.github && <a href={data.github} target="_blank" rel="noreferrer">GitHub</a>}
+      {data.linkedin && <a href={data.linkedin} target="_blank" rel="noreferrer">LinkedIn</a>}
+    </div>
+  </div>
+</article>

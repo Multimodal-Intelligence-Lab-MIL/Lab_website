@@ -1,0 +1,48 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { sitePath } from '../../lib/paths';
+
+export async function getStaticPaths() {
+  const entries = (await getCollection('publications')).filter((entry) => !entry.data.draft);
+  return entries.map((entry) => ({ params: { id: entry.id }, props: { entry } }));
+}
+const { entry } = Astro.props;
+const publication = entry.data;
+const links = [
+  ['Paper', publication.paperUrl || publication.pdf], ['arXiv', publication.arxiv], ['Project page', publication.project],
+  ['Code', publication.code], ['Dataset', publication.dataset], ['Video', publication.video]
+].filter(([, url]) => Boolean(url));
+---
+
+<BaseLayout title={publication.title} description={publication.abstract || `${publication.title} by ${publication.authors}`} currentPath="/publications/">
+  <article class="paper-detail">
+    <header class="paper-detail-hero">
+      <div class="shell paper-detail-grid">
+        <div>
+          <a class="back-link" href={sitePath('publications/')}>← All publications</a>
+          <p class="eyebrow"><span></span>{publication.category} · {publication.year}</p>
+          <h1>{publication.title}</h1>
+          <p class="paper-authors">{publication.authors}</p>
+          <p class="paper-venue">{publication.venue || 'Publication details to be added'}</p>
+          <div class="paper-actions">{links.map(([label, url]) => <a class="button button-primary" href={url} target="_blank" rel="noreferrer">{label}</a>)}</div>
+        </div>
+        <div class="paper-detail-image">
+          {publication.image ? <img src={sitePath(publication.image)} alt="" /> : <div class="publication-fallback"><span>MIL</span><small>Multimodal<br />Intelligence Lab</small></div>}
+        </div>
+      </div>
+    </header>
+    <div class="shell paper-detail-body">
+      <section><p class="eyebrow dark">Abstract</p><h2>Overview</h2><p>{publication.abstract || 'The abstract for this publication has not been added yet.'}</p></section>
+      <aside>
+        <dl>
+          <div><dt>Year</dt><dd>{publication.year}</dd></div>
+          <div><dt>Type</dt><dd>{publication.category}</dd></div>
+          {publication.doi && <div><dt>DOI</dt><dd>{publication.doi}</dd></div>}
+          {publication.keywords?.length && <div><dt>Keywords</dt><dd>{publication.keywords.join(' · ')}</dd></div>}
+        </dl>
+      </aside>
+      {publication.bibtex && <section class="paper-bibtex"><p class="eyebrow dark">Citation</p><h2>BibTeX</h2><pre>{publication.bibtex}</pre></section>}
+    </div>
+  </article>
+</BaseLayout>

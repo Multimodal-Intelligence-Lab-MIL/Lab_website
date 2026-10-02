@@ -1,0 +1,147 @@
+# REQUIRED BEFORE PUBLISHING:
+# Repository configured for Multimodal Intelligence Lab.
+# Replace the OAuth proxy URL before enabling admin login. See SETUP.md.
+backend:
+  name: github
+  repo: Multimodal-Intelligence-Lab-MIL/Lab_website
+  branch: main
+  base_url: https://REPLACE-WITH-YOUR-OAUTH-PROXY.example
+  auth_endpoint: auth
+
+local_backend: true
+publish_mode: simple
+media_folder: public/uploads
+public_folder: uploads
+
+slug:
+  encoding: ascii
+  clean_accents: true
+  sanitize_replacement: "-"
+
+collections:
+  - name: news
+    label: News
+    label_singular: News item
+    folder: src/content/news
+    create: true
+    extension: md
+    format: frontmatter
+    identifier_field: title
+    summary: "{{date}} · {{title}}"
+    sortable_fields: [date, title, category]
+    view_filters:
+      - { label: Drafts, field: draft, pattern: true }
+      - { label: Featured, field: featured, pattern: true }
+    fields:
+      - { label: Title, name: title, widget: string }
+      - { label: Date, name: date, widget: datetime, date_format: YYYY-MM-DD, time_format: false, format: YYYY-MM-DD }
+      - { label: Category, name: category, widget: select, options: [Publication, Award, Event, Opportunity, General], default: General }
+      - { label: Summary, name: summary, widget: text }
+      - { label: Main text, name: body, widget: markdown, required: false }
+      - { label: Image, name: image, widget: image, required: false, hint: "Optional. Uploaded files are committed to public/uploads." }
+      - { label: Related URL, name: externalUrl, widget: string, required: false }
+      - { label: Featured on home page, name: featured, widget: boolean, default: false }
+      - { label: Keep as draft, name: draft, widget: boolean, default: false }
+
+  - name: publications
+    label: Publications
+    label_singular: Publication
+    folder: src/content/publications
+    create: true
+    extension: md
+    format: frontmatter
+    identifier_field: title
+    summary: "{{year}} · {{title}}"
+    sortable_fields: [year, title, category]
+    preview_path: "publications/{{slug}}/"
+    view_filters:
+      - { label: Drafts, field: draft, pattern: true }
+      - { label: Featured, field: featured, pattern: true }
+    fields:
+      - { label: Title, name: title, widget: string, required: false, hint: "Can be filled automatically from BibTeX when left empty before the first save." }
+      - { label: Authors, name: authors, widget: text, required: false, hint: "Use full names separated by commas, or import them from BibTeX." }
+      - { label: Venue, name: venue, widget: string, required: false }
+      - { label: Year, name: year, widget: number, value_type: int, min: 1900, max: 2100, required: false, hint: "Can be imported from BibTeX." }
+      - { label: Type, name: category, widget: select, options: [Journal, Conference, Workshop, Preprint, Dataset, Other], default: Other }
+      - { label: Feature image, name: image, widget: image, required: false, hint: "If empty, the site uses the MIL default publication artwork." }
+      - { label: Abstract, name: abstract, widget: text, required: false }
+      - { label: Award or note, name: award, widget: string, required: false }
+      - { label: DOI, name: doi, widget: string, required: false }
+      - { label: Main paper URL, name: paperUrl, widget: string, required: false }
+      - { label: PDF URL, name: pdf, widget: string, required: false }
+      - { label: arXiv URL, name: arxiv, widget: string, required: false }
+      - { label: Project page, name: project, widget: string, required: false }
+      - { label: Code URL, name: code, widget: string, required: false }
+      - { label: Dataset URL, name: dataset, widget: string, required: false }
+      - { label: Video URL, name: video, widget: string, required: false }
+      - { label: Keywords, name: keywords, widget: list, required: false, field: { label: Keyword, name: keyword, widget: string } }
+      - { label: BibTeX import, name: bibtex, widget: bibtex-import, required: false }
+      - { label: Featured, name: featured, widget: boolean, default: false }
+      - { label: Keep as draft, name: draft, widget: boolean, default: false }
+
+  - name: people
+    label: People
+    label_singular: Person
+    folder: src/content/people
+    create: true
+    extension: md
+    format: frontmatter
+    identifier_field: name
+    summary: "{{category}} · {{name}}"
+    sortable_fields: [category, order, name]
+    fields:
+      - { label: Name, name: name, widget: string }
+      - label: Category
+        name: category
+        widget: select
+        options: [Faculty, Postdoctoral Researchers, PhD Students, Research Assistants, Visiting Scholars, MSc Students, Undergraduate Students, Alumni]
+      - { label: Role or co-supervision, name: role, widget: string, required: false }
+      - { label: Biography, name: bio, widget: text, required: false }
+      - { label: Portrait, name: image, widget: image, required: false, hint: "If empty, the default avatar is used." }
+      - { label: Email, name: email, widget: string, required: false }
+      - { label: Google Scholar, name: scholar, widget: string, required: false }
+      - { label: Personal website, name: website, widget: string, required: false }
+      - { label: GitHub, name: github, widget: string, required: false }
+      - { label: LinkedIn, name: linkedin, widget: string, required: false }
+      - { label: Display order, name: order, widget: number, value_type: int, default: 100 }
+      - { label: Current member, name: current, widget: boolean, default: true }
+      - { label: Keep as draft, name: draft, widget: boolean, default: false }
+
+  - name: research
+    label: Research themes
+    label_singular: Research theme
+    folder: src/content/research
+    create: true
+    extension: md
+    format: frontmatter
+    identifier_field: title
+    sortable_fields: [order, title]
+    fields:
+      - { label: Full title, name: title, widget: string }
+      - { label: Short title, name: shortTitle, widget: string }
+      - { label: Summary, name: summary, widget: text }
+      - { label: Main text, name: body, widget: markdown }
+      - { label: Accent, name: accent, widget: select, options: [cyan, violet, mint, blue], default: cyan }
+      - { label: Display order, name: order, widget: number, value_type: int, default: 100 }
+      - { label: Featured, name: featured, widget: boolean, default: true }
+      - { label: Keep as draft, name: draft, widget: boolean, default: false }
+
+  - name: settings
+    label: Site settings
+    files:
+      - label: Lab information
+        name: site
+        file: src/data/site.json
+        format: json
+        fields:
+          - { label: Lab name, name: name, widget: string }
+          - { label: Short name, name: shortName, widget: string }
+          - { label: Department, name: department, widget: string }
+          - { label: Short description, name: description, widget: text }
+          - { label: Mission, name: mission, widget: text }
+          - { label: Contact email, name: email, widget: string }
+          - { label: Address, name: address, widget: text }
+          - { label: GitHub URL, name: github, widget: string }
+          - { label: X URL, name: x, widget: string, required: false }
+          - { label: LinkedIn URL, name: linkedin, widget: string, required: false }
+          - { label: YouTube URL, name: youtube, widget: string, required: false }

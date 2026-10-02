@@ -1,0 +1,23 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+
+const entries = (await getCollection('research')).filter((entry) => !entry.data.draft).sort((a, b) => a.data.order - b.data.order);
+const rendered = await Promise.all(entries.map(async (entry) => ({ entry, content: await render(entry) })));
+---
+
+<BaseLayout title="Research" description="Research themes of the Multimodal Intelligence Lab." currentPath="/research/">
+  <PageHero eyebrow="Research programme" title="Research" intro="We connect methods and applications across multimodal learning, medical intelligence, environmental monitoring and safer digital societies." stat="04" statLabel="interconnected research themes" />
+  <section class="section research-page">
+    <div class="shell research-theme-list">
+      {rendered.map(({ entry, content: { Content } }, index) => (
+        <article class={`research-theme accent-${entry.data.accent}`}>
+          <div class="theme-number">{String(index + 1).padStart(2, '0')}</div>
+          <div><p class="eyebrow dark">{entry.data.shortTitle}</p><h2>{entry.data.title}</h2></div>
+          <div class="theme-copy"><p class="theme-summary">{entry.data.summary}</p><div class="prose"><Content /></div></div>
+        </article>
+      ))}
+    </div>
+  </section>
+</BaseLayout>

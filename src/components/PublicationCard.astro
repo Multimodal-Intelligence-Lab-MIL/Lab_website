@@ -1,0 +1,50 @@
+---
+import { sitePath } from '../lib/paths';
+
+interface Props {
+  entry: any;
+  priority?: boolean;
+}
+const { entry, priority = false } = Astro.props;
+const publication = entry.data;
+const links = [
+  ['Paper', publication.paperUrl || publication.pdf],
+  ['arXiv', publication.arxiv],
+  ['Project', publication.project],
+  ['Code', publication.code],
+  ['Dataset', publication.dataset],
+  ['Video', publication.video]
+].filter(([, url]) => Boolean(url));
+---
+
+<article class="publication-card" data-publication data-year={publication.year} data-category={publication.category} data-search={`${publication.title} ${publication.authors} ${publication.venue ?? ''}`.toLowerCase()}>
+  <a class="publication-cover" href={sitePath(`publications/${entry.id}/`)} aria-label={`Read details for ${publication.title}`}>
+    {publication.image ? (
+      <img src={sitePath(publication.image)} alt="" loading={priority ? 'eager' : 'lazy'} />
+    ) : (
+      <div class="publication-fallback">
+        <span>MIL</span><small>Multimodal<br />Intelligence Lab</small>
+      </div>
+    )}
+    <span class="publication-year">{publication.year}</span>
+  </a>
+  <div class="publication-content">
+    <div class="publication-topline">
+      <span>{publication.category}</span>
+      {publication.award && <strong>{publication.award}</strong>}
+    </div>
+    <h2><a href={sitePath(`publications/${entry.id}/`)}>{publication.title}</a></h2>
+    <p class="publication-authors">{publication.authors}</p>
+    <p class="publication-venue">{publication.venue || 'Venue to be added'}{publication.venue ? `, ${publication.year}` : ''}</p>
+    <div class="publication-links">
+      {links.map(([label, url]) => <a href={url} target="_blank" rel="noreferrer">{label}</a>)}
+      {publication.bibtex && <button type="button" data-bibtex-toggle>BibTeX</button>}
+    </div>
+    {publication.bibtex && (
+      <div class="bibtex-panel" hidden data-bibtex-panel>
+        <div><span>BibTeX</span><button type="button" data-copy-bibtex>Copy</button></div>
+        <pre>{publication.bibtex}</pre>
+      </div>
+    )}
+  </div>
+</article>
