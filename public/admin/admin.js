@@ -90,6 +90,9 @@
     publications: [...(adminData.initialMedia?.publications || [])],
     people: [...(adminData.initialMedia?.people || [])]
   };
+  const otherFilesByType = { publications: [], people: [] };
+  const mediaVersionByType = { publications: 'main', people: 'main' };
+  const imagePattern = /\.(avif|gif|jpe?g|png|svg|webp)$/i;
 
   const state = {
     contentType: '',
@@ -338,47 +341,101 @@
     if (!mediaList || !mediaConfig[state.contentType]) return;
     mediaList.replaceChildren();
     const config = mediaConfig[state.contentType];
-    const paths = (mediaByType[state.contentType] || [])
+    const imagePaths = (mediaByType[state.contentType] || [])
       .filter((path) => path.startsWith(config.publicPrefix))
       .sort();
+    const otherPaths = (otherFilesByType[state.contentType] || []).sort();
+    const files = [
+      ...imagePaths.map((path) => ({ path, isImage: true })),
+      ...otherPaths.map((path) => ({ path, isImage: false }))
+    ];
 
-    if (!paths.length) {
+    if (!files.length) {
       const empty = document.createElement('p');
       empty.className = 'media-empty';
-      empty.textContent = 'No uploaded images in this folder yet.';
+      empty.textContent = 'No uploaded files found in this folder yet.';
       mediaList.append(empty);
       return;
     }
 
-    paths.forEach(function (path) {
+    files.forEach(function ({ path, isImage }) {
       const row = document.createElement('div');
-      row.className = 'media-row';
+      row.className = `media-row${isImage ? '' : ' media-row-unsupported'}`;
+
+      let preview;
+      if (isImage) {
+        preview = document.createElement('a');
+        preview.className = 'media-thumbnail';
+        preview.href = rawMediaUrl(path);
+        preview.target = '_blank';
+        preview.rel = 'noreferrer';
+        preview.title = 'Open full-size image';
+        const image = document.createElement('img');
+        image.src = rawMediaUrl(path);
+        image.alt = '';
+        image.loading = 'lazy';
+        const fallback = document.createElement('span');
+        fallback.textContent = 'IMAGE';
+        fallback.hidden = true;
+        image.addEventListener('error', function () {
+          image.hidden = true;
+          fallback.hidden = false;
+        });
+        preview.append(image, fallback);
+      } else {
+        preview = document.createElement('div');
+        preview.className = 'media-thumbnail media-file-thumbnail';
+        const extension = path.split('.').pop() || 'FILE';
+        preview.textContent = extension.slice(0, 5).toUpperCase();
+      }
+
+      const details = document.createElement('div');
+      details.className = 'media-details';
+      const fileName = document.createElement('strong');
+      fileName.textContent = path.split('/').pop() || path;
       const name = document.createElement('code');
       name.textContent = path;
-      const actions = document.createElement('span');
-      const useButton = document.createElement('button');
-      useButton.type = 'button';
-      useButton.textContent = 'Use';
-      useButton.addEventListener('click', function () {
-        const imageSelect = contentForm?.querySelector('[name="image"]');
-        if (!imageSelect) return;
-        if (!Array.from(imageSelect.options).some((option) => option.value === path)) {
-          imageSelect.add(new Option(path, path));
-        }
-        imageSelect.value = path;
-        imageSelect.dispatchEvent(new Event('input', { bubbles: true }));
-        contentStatus.textContent = `Selected ${path}. Copy the full file again after finishing the form.`;
-        imageSelect.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      });
+      details.append(fileName, name);
+      if (!isImage) {
+        const warning = document.createElement('small');
+        warning.textContent = 'This file cannot be used in an image field. Export it as JPG, PNG or WebP first.';
+        details.append(warning);
+      }
+
+      const actions = document.createElement('div');
+      actions.className = 'media-actions';
+      if (isImage) {
+        const useButton = document.createElement('button');
+        useButton.type = 'button';
+        useButton.textContent = 'Use image';
+        useButton.addEventListener('click', function () {
+          const imageSelect = contentForm?.querySelector('[name="image"]');
+          if (!imageSelect) return;
+          if (!Array.from(imageSelect.options).some((option) => option.value === path)) {
+            imageSelect.add(new Option(path, path));
+          }
+          imageSelect.value = path;
+          imageSelect.dispatchEvent(new Event('input', { bubbles: true }));
+          contentStatus.textContent = `Selected ${path}. Copy the full file again after finishing the form.`;
+          imageSelect.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        });
+        actions.append(useButton);
+      }
       const deleteAnchor = document.createElement('a');
       deleteAnchor.href = `${repositoryUrl}/delete/${branch}/public/${path}`;
       deleteAnchor.target = '_blank';
       deleteAnchor.rel = 'noreferrer';
       deleteAnchor.textContent = 'Delete on GitHub';
-      actions.append(useButton, deleteAnchor);
-      row.append(name, actions);
+      actions.append(deleteAnchor);
+      row.append(preview, details, actions);
       mediaList.append(row);
     });
+  }
+
+  function rawMediaUrl(path) {
+    const encodedPath = path.split('/').map(encodeURIComponent).join('/');
+    const version = encodeURIComponent(mediaVersionByType[state.contentType] || 'main');
+    return `https://raw.githubusercontent.com/${repositorySlug}/${encodeURIComponent(branch)}/public/${encodedPath}?v=${version}`;
   }
 
   function updateMediaSelect() {
@@ -414,7 +471,7 @@
     mediaControls.hidden = false;
     mediaPath.textContent = config.folder;
     uploadLink.href = `${repositoryUrl}/upload/${branch}/${config.folder}`;
-    mediaStatus.textContent = 'After committing on GitHub, return here and click “Refresh image list”.';
+    mediaStatus.textContent = 'Supported images: JPG, PNG, WebP, GIF, AVIF and SVG. PPTX and PDF files are shown after refresh but cannot be selected as images.';
     renderMediaList();
   }
 
@@ -599,24 +656,45 @@
     const config = mediaConfig[state.contentType];
     if (!config) return;
     refreshMediaButton.disabled = true;
-    mediaStatus.textContent = 'Reading the latest files from GitHub…';
+    mediaStatus.textContent = `Reading the latest ${branch} commit and files from GitHub…`;
 
     try {
-      const response = await fetch(`https://api.github.com/repos/${repositorySlug}/git/trees/${encodeURIComponent(branch)}?recursive=1`, {
+      const refreshKey = Date.now();
+      const requestOptions = {
         cache: 'no-store',
         headers: { Accept: 'application/vnd.github+json' }
-      });
-      if (!response.ok) throw new Error(`GitHub returned ${response.status}`);
-      const result = await response.json();
-      const imagePattern = /\.(avif|gif|jpe?g|png|svg|webp)$/i;
-      const uploaded = (result.tree || [])
-        .filter((item) => item.type === 'blob' && item.path.startsWith(`${config.folder}/`) && imagePattern.test(item.path))
+      };
+      const commitResponse = await fetch(
+        `https://api.github.com/repos/${repositorySlug}/commits/${encodeURIComponent(branch)}?refresh=${refreshKey}`,
+        requestOptions
+      );
+      if (!commitResponse.ok) throw new Error(`GitHub commit request returned ${commitResponse.status}`);
+      const commit = await commitResponse.json();
+      const commitSha = commit.sha;
+      const treeSha = commit.commit?.tree?.sha;
+      if (!commitSha || !treeSha) throw new Error('GitHub did not return the latest commit tree');
+
+      const treeResponse = await fetch(
+        `https://api.github.com/repos/${repositorySlug}/git/trees/${treeSha}?recursive=1&refresh=${refreshKey}`,
+        requestOptions
+      );
+      if (!treeResponse.ok) throw new Error(`GitHub tree request returned ${treeResponse.status}`);
+      const result = await treeResponse.json();
+      const folderFiles = (result.tree || [])
+        .filter((item) => item.type === 'blob' && item.path.startsWith(`${config.folder}/`))
         .map((item) => item.path.replace(/^public\//, ''));
+      const uploaded = folderFiles.filter((path) => imagePattern.test(path));
+      const otherFiles = folderFiles.filter((path) => !imagePattern.test(path));
       const preserved = (mediaByType[state.contentType] || []).filter((path) => !path.startsWith(config.publicPrefix));
       mediaByType[state.contentType] = [...new Set([...preserved, ...uploaded])].sort();
+      otherFilesByType[state.contentType] = [...new Set(otherFiles)].sort();
+      mediaVersionByType[state.contentType] = commitSha;
       renderMediaList();
       updateMediaSelect();
-      mediaStatus.textContent = `Image list refreshed: ${uploaded.length} file${uploaded.length === 1 ? '' : 's'} in this upload folder.`;
+      const otherSummary = otherFiles.length
+        ? ` ${otherFiles.length} other file${otherFiles.length === 1 ? '' : 's'} shown below cannot be selected as images.`
+        : '';
+      mediaStatus.textContent = `Refreshed from ${branch} @ ${commitSha.slice(0, 7)}: ${uploaded.length} image${uploaded.length === 1 ? '' : 's'}.${otherSummary}`;
     } catch (error) {
       mediaStatus.textContent = `Could not refresh the GitHub image list. ${error.message}. You can retry after confirming the image commit.`;
     } finally {
