@@ -6,7 +6,7 @@
 
 - 继续使用 GitHub 仓库保存源码和内容。
 - 继续通过 GitHub Pages 发布，不维护传统服务器或数据库。
-- `/admin/` 提供 News、Publication、People、Research 和站点信息的可视化编辑。
+- `/admin/` 提供 News、Publication、People、Research 和站点信息的集中编辑入口。
 - 图片上传后保存为 GitHub 静态文件。
 - 每次后台保存对应一次可追踪的 Git commit。
 - 论文支持大图、外部资源链接、BibTeX、默认封面和独立详情页。
@@ -22,14 +22,14 @@ GitHub Pages ───────────────► Astro 生成的静
                                       ▲
                                       │ GitHub Actions 构建
                                       │
-管理员 ─► /admin/ ─► GitHub OAuth ─► GitHub repository
+管理员 ─► /admin/ ─► GitHub 网页编辑器 ─► GitHub repository
                                       │
                                       ├─ src/content/**/*.md
                                       ├─ src/data/site.json
                                       └─ public/uploads/**/*
 ```
 
-GitHub 是唯一内容源。Decap CMS 不拥有独立数据库；它把表单操作转换为 GitHub 文件提交。Astro 在每次提交后读取这些文件并生成公开页面。
+GitHub 是唯一内容源。`/admin/` 不拥有独立数据库，而是把管理员引导到对应的 GitHub 文件编辑、创建和上传页面。Astro 在每次提交后读取这些文件并生成公开页面。
 
 ## 3. 技术组成
 
@@ -40,12 +40,12 @@ GitHub 是唯一内容源。Decap CMS 不拥有独立数据库；它把表单操
 - 生成 SEO 友好的静态页面和每篇论文的独立路径。
 - 网站不需要 Node.js 服务器常驻运行。
 
-### Decap CMS
+### GitHub 编辑入口
 
-- 管理页面路由位于 `src/pages/admin/`，配置与扩展脚本位于 `public/admin/`。
-- 使用 GitHub backend 读取和提交仓库文件。
-- 使用 GitHub OAuth 验证管理员身份。
-- 通过 `public/admin/config.yml` 定义可编辑字段和上传目录。
+- 管理页面路由位于 `src/pages/admin/`，样式与交互脚本位于 `public/admin/`。
+- 使用写在静态脚本中的 `MIL / MIL` 作为轻量入口门禁。
+- 构建时列出当前内容，并生成每个 Markdown 文件的 GitHub 编辑链接。
+- 新内容使用与 Astro schema 对齐的模板；最终保存由 GitHub `Commit changes` 完成。
 
 ### GitHub Actions 与 GitHub Pages
 
@@ -59,7 +59,7 @@ GitHub 是唯一内容源。Decap CMS 不拥有独立数据库；它把表单操
 .
 ├─ .github/workflows/deploy.yml   自动构建与发布
 ├─ public/
-│  ├─ admin/                      Decap CMS 后台
+│  ├─ admin/                      后台样式、门禁与编辑交互
 │  ├─ assets/                     从旧站迁移的稳定素材
 │  ├─ uploads/                    后台上传的新图片
 │  └─ favicon.svg
@@ -81,7 +81,7 @@ GitHub 是唯一内容源。Decap CMS 不拥有独立数据库；它把表单操
 └─ pnpm-lock.yaml
 ```
 
-`public/assets/` 用于已有、名称稳定的素材；`public/uploads/` 用于 Decap CMS 后续上传。两者最终都会原样复制进静态网站。
+`public/assets/` 用于已有、名称稳定的素材；`public/uploads/` 用于从后台入口跳转到 GitHub 后上传的新图片。两者最终都会原样复制进静态网站。
 
 ## 5. 内容模型
 
@@ -129,10 +129,10 @@ GitHub 是唯一内容源。Decap CMS 不拥有独立数据库；它把表单操
 
 ## 6. 保存与发布流程
 
-1. 管理员登录 `/admin/`。
-2. Decap CMS 从 `main` 分支读取内容。
-3. 管理员填写表单或上传图片。
-4. 点击保存后，Decap CMS 调用 GitHub API：
+1. 管理员使用 `MIL / MIL` 进入 `/admin/`。
+2. 管理页展示构建时读取到的现有内容。
+3. 管理员打开对应 GitHub 编辑器，修改 Markdown/JSON 或上传图片。
+4. 点击 GitHub 的 `Commit changes`：
    - 内容写入 `src/content/`；
    - 图片写入 `public/uploads/`；
    - 生成一次 Git commit。
@@ -143,21 +143,16 @@ GitHub 是唯一内容源。Decap CMS 不拥有独立数据库；它把表单操
 
 ## 7. BibTeX 工作流
 
-后台加载 `public/admin/cms-hooks.js`：
+后台的 Publication 模板预留完整 `bibtex` 字段，并保留 title、authors、venue、year、DOI、PDF、arXiv、Project 和 Code 等人工可编辑字段。原始 BibTeX 会完整保留，用于前台复制和引用。
 
-- 解析单条 BibTeX。
-- 识别 title、author、journal/booktitle、year、DOI、URL 和 eprint。
-- 保存时为尚未填写的对应字段提供解析结果。
-- 原始 BibTeX 完整保留，用于前台复制和引用。
-
-解析后的字段仍可人工修改。批量 BibTeX、Crossref 或 arXiv 自动补全可以在后续作为独立导入模块增加，不改变现有内容模型。
+自动解析 BibTeX、批量导入、Crossref 或 arXiv 自动补全可以在后续作为独立模块增加，不改变现有内容模型。
 
 ## 8. 权限与安全边界
 
 - 网站前端不包含 GitHub Client Secret 或写入 Token。
-- GitHub OAuth Secret 只存在于 OAuth 代理的 Secret 配置中。
-- 只有拥有仓库写入权限的 GitHub 用户可以提交内容。
-- `/admin/` 页面本身可以被访问，但无法绕过 GitHub 权限写入仓库。
+- `MIL / MIL` 写在公开静态脚本中，只是用户明确接受的入口区分，不构成安全认证。
+- 只有拥有仓库写入权限的 GitHub 用户才能在 GitHub 编辑器中提交内容。
+- `/admin/` 不直接调用 GitHub 写入 API，也不缓存 GitHub 凭据。
 - 公开内容没有隐私保护能力，不应把内部文件、未公开个人信息或密钥放进仓库。
 
 ## 9. 路由
@@ -200,4 +195,4 @@ GitHub 是唯一内容源。Decap CMS 不拥有独立数据库；它把表单操
 - 不把大型 PDF、视频或数据集提交进仓库，改用稳定的外部链接。
 - 上传图片前压缩，并为公开人物图片确认使用权限。
 - 定期检查外部链接和离职成员状态。
-- 修改字段结构时，同步更新 `src/content.config.ts` 与 `public/admin/config.yml`。
+- 修改字段结构时，同步更新 `src/content.config.ts` 与 `/admin/` 中的新内容模板。

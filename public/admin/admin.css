@@ -1,5 +1,185 @@
-body { background: #f7fbfd; }
-[class*="AppHeaderContent"] { background: rgba(255,255,255,.92) !important; border-bottom: 1px solid rgba(31,104,150,.16); }
-[class*="AppHeaderContent"] * { text-shadow: none !important; }
-[class*="SidebarContainer"] { background: #edf6fa !important; }
-[class*="CardCard"] { border: 1px solid rgba(31,104,150,.14) !important; box-shadow: 0 10px 35px rgba(26,92,133,.06) !important; }
+:root {
+  color-scheme: light;
+  --ink: #102b3d;
+  --muted: #637c8c;
+  --line: rgba(39, 112, 153, 0.16);
+  --blue: #1779a7;
+  --blue-deep: #0b557e;
+  --paper: rgba(255, 255, 255, 0.78);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  color: var(--ink);
+  background: linear-gradient(145deg, #ffffff 0%, #f4fafc 46%, #edf6fb 100%);
+  overflow-x: hidden;
+}
+
+button, input, select { font: inherit; }
+a { color: inherit; }
+
+.ambient {
+  position: fixed;
+  z-index: -2;
+  width: 44rem;
+  height: 44rem;
+  border-radius: 50%;
+  filter: blur(12px);
+  opacity: .42;
+  animation: drift 15s ease-in-out infinite alternate;
+}
+
+.ambient-one { top: -21rem; right: -12rem; background: radial-gradient(circle, rgba(65, 177, 226, .28), transparent 68%); }
+.ambient-two { bottom: -24rem; left: -12rem; background: radial-gradient(circle, rgba(122, 206, 219, .23), transparent 68%); animation-delay: -7s; }
+
+.signal-grid {
+  position: fixed;
+  inset: 0;
+  z-index: -3;
+  opacity: .28;
+  background-image: linear-gradient(rgba(24, 111, 151, .055) 1px, transparent 1px), linear-gradient(90deg, rgba(24, 111, 151, .055) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: linear-gradient(to bottom, black, transparent 78%);
+}
+
+.brand { display: inline-flex; align-items: center; gap: .75rem; color: var(--ink); text-decoration: none; }
+.brand-mark { display: grid; place-items: center; width: 2.55rem; height: 2.55rem; border-radius: 12px; color: white; font-weight: 800; background: linear-gradient(145deg, #258bb9, #0d5d87); box-shadow: 0 10px 28px rgba(17, 105, 148, .2); }
+.brand strong, .brand small { display: block; }
+.brand strong { font-size: 1rem; letter-spacing: .13em; }
+.brand small { margin-top: .1rem; color: var(--muted); font-size: .73rem; }
+
+.login-view { min-height: 100vh; display: grid; place-items: center; padding: 2rem; }
+.login-card {
+  width: min(100%, 31rem);
+  padding: 2.2rem;
+  border: 1px solid rgba(62, 133, 171, .18);
+  border-radius: 28px;
+  background: rgba(255, 255, 255, .76);
+  box-shadow: 0 34px 90px rgba(30, 91, 125, .12);
+  backdrop-filter: blur(22px);
+}
+.login-card .brand { margin-bottom: 3.6rem; }
+.eyebrow { margin: 0 0 .8rem; color: var(--blue); font-size: .72rem; font-weight: 750; letter-spacing: .17em; text-transform: uppercase; }
+.login-card h1, .admin-intro h1 { margin: 0; font-family: Georgia, "Times New Roman", serif; font-weight: 500; letter-spacing: -.045em; }
+.login-card h1 { font-size: clamp(2.5rem, 8vw, 4rem); line-height: .98; }
+.login-copy { margin: 1.2rem 0 2rem; color: var(--muted); line-height: 1.7; }
+.login-card form { display: grid; gap: 1rem; }
+label span { display: block; margin-bottom: .45rem; color: #426478; font-size: .76rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+input, select {
+  width: 100%;
+  min-height: 3.1rem;
+  padding: .75rem .95rem;
+  color: var(--ink);
+  border: 1px solid rgba(43, 116, 154, .22);
+  border-radius: 11px;
+  outline: none;
+  background: rgba(255, 255, 255, .82);
+  transition: border-color .2s ease, box-shadow .2s ease;
+}
+input:focus, select:focus { border-color: rgba(23, 121, 167, .7); box-shadow: 0 0 0 4px rgba(23, 121, 167, .09); }
+.primary-button, .outline-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 3rem;
+  padding: .8rem 1.1rem;
+  border-radius: 10px;
+  font-weight: 750;
+  text-decoration: none;
+  cursor: pointer;
+}
+.primary-button { border: 0; color: white; background: linear-gradient(135deg, #1c83b2, #0b5f89); box-shadow: 0 10px 24px rgba(18, 102, 143, .18); }
+.primary-button:hover { filter: brightness(1.04); }
+.outline-button { border: 1px solid rgba(26, 112, 153, .24); color: var(--blue-deep); background: rgba(255, 255, 255, .62); }
+.form-error { margin: -.25rem 0 0; color: #ad3d4b; font-size: .86rem; }
+.security-note { margin: 1.4rem 0 0; color: #78909e; font-size: .76rem; line-height: 1.55; }
+
+.admin-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 5.3rem;
+  padding: 1rem max(1.25rem, calc((100vw - 1180px) / 2));
+  border-bottom: 1px solid var(--line);
+  background: rgba(250, 253, 254, .8);
+  backdrop-filter: blur(22px);
+}
+.header-actions { display: flex; align-items: center; gap: .55rem; }
+.header-actions a, .header-actions button { padding: .62rem .85rem; border: 0; border-radius: 9px; color: #426579; background: transparent; font-size: .82rem; font-weight: 650; text-decoration: none; cursor: pointer; }
+.header-actions a:hover, .header-actions button:hover { background: rgba(38, 127, 170, .08); color: var(--blue-deep); }
+
+.admin-shell { width: min(calc(100% - 2.5rem), 1180px); margin: 0 auto; padding: 4.5rem 0 5rem; }
+.admin-intro { display: grid; grid-template-columns: 1.2fr .8fr; align-items: end; gap: 4rem; padding-bottom: 3.3rem; }
+.admin-intro h1 { font-size: clamp(3.2rem, 7vw, 6.4rem); line-height: .9; }
+.admin-intro h1 em { color: #3389ae; font-weight: 400; }
+.admin-intro > p { max-width: 32rem; margin: 0; color: var(--muted); font-size: 1.04rem; line-height: 1.8; }
+
+.workflow-grid { display: grid; grid-template-columns: 1.35fr 1fr 1fr; gap: 1rem; }
+.workflow-card { min-height: 23rem; padding: 1.45rem; border: 1px solid var(--line); border-radius: 18px; background: var(--paper); box-shadow: 0 18px 48px rgba(34, 94, 126, .06); backdrop-filter: blur(14px); }
+.workflow-card > div { display: flex; height: calc(100% - 2rem); flex-direction: column; }
+.step-number { display: block; margin-bottom: 1.9rem; color: #8aabba; font-family: ui-monospace, monospace; font-size: .75rem; }
+.card-label { margin: 0 0 .55rem; color: var(--blue); font-size: .68rem; font-weight: 750; letter-spacing: .14em; text-transform: uppercase; }
+.workflow-card h2 { margin: 0 0 .85rem; font-family: Georgia, serif; font-size: 1.55rem; font-weight: 500; }
+.workflow-card p:not(.card-label):not(.create-status) { margin: 0 0 1.3rem; color: var(--muted); line-height: 1.68; }
+.workflow-card .outline-button { margin-top: auto; }
+.create-card form { display: grid; gap: .75rem; margin-top: auto; }
+.create-status { min-height: 1.3rem; margin: 0; color: var(--blue-deep); font-size: .78rem; line-height: 1.45; }
+
+.library-section { margin-top: 5.5rem; }
+.section-heading { display: grid; grid-template-columns: 1fr .75fr; align-items: end; gap: 3rem; padding-bottom: 1.8rem; border-bottom: 1px solid var(--line); }
+.section-heading h2 { margin: 0; font-family: Georgia, serif; font-size: clamp(2.3rem, 4vw, 3.8rem); font-weight: 500; letter-spacing: -.035em; }
+.section-heading > p { margin: 0; color: var(--muted); line-height: 1.7; }
+.content-tabs { display: flex; gap: .6rem; padding: 1.25rem 0; overflow-x: auto; }
+.content-tabs button { display: flex; gap: .65rem; padding: .72rem .92rem; border: 1px solid transparent; border-radius: 999px; color: #557386; background: transparent; white-space: nowrap; cursor: pointer; }
+.content-tabs button span { display: inline-grid; place-items: center; min-width: 1.55rem; height: 1.55rem; padding: 0 .4rem; border-radius: 999px; background: rgba(31, 120, 161, .09); font-size: .72rem; }
+.content-tabs button[aria-selected="true"] { border-color: rgba(30, 116, 156, .19); color: var(--blue-deep); background: rgba(255, 255, 255, .76); }
+.entry-list { overflow: hidden; border: 1px solid var(--line); border-radius: 16px; background: rgba(255, 255, 255, .68); }
+.entry-row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 4.7rem; padding: .85rem 1.2rem; border-bottom: 1px solid var(--line); text-decoration: none; transition: background .2s ease, padding .2s ease; }
+.entry-row:last-child { border-bottom: 0; }
+.entry-row:hover { padding-left: 1.45rem; background: rgba(225, 243, 250, .58); }
+.entry-row strong, .entry-row small { display: block; }
+.entry-row strong { font-size: .96rem; }
+.entry-row small { margin-top: .28rem; color: var(--muted); font-size: .78rem; }
+.edit-mark { color: var(--blue); font-size: .78rem; font-weight: 750; white-space: nowrap; }
+.empty-state { padding: 2rem; border: 1px dashed rgba(31, 112, 150, .25); border-radius: 14px; color: var(--muted); text-align: center; }
+
+.commit-guide { display: grid; grid-template-columns: repeat(4, 1fr); gap: .75rem; margin-top: 2rem; }
+.commit-guide p { display: flex; align-items: center; gap: .65rem; margin: 0; padding: .9rem; color: #587487; font-size: .76rem; }
+.commit-guide span { display: grid; place-items: center; width: 1.65rem; height: 1.65rem; border: 1px solid rgba(28, 112, 153, .22); border-radius: 50%; color: var(--blue); font-family: ui-monospace, monospace; }
+
+.admin-footer { display: flex; justify-content: space-between; gap: 1rem; width: min(calc(100% - 2.5rem), 1180px); margin: 0 auto; padding: 1.5rem 0 2.5rem; border-top: 1px solid var(--line); color: #78909e; font-size: .78rem; }
+.admin-footer a { text-decoration: none; }
+
+@keyframes drift { to { transform: translate3d(2rem, 1.5rem, 0) scale(1.05); } }
+
+@media (max-width: 900px) {
+  .workflow-grid { grid-template-columns: 1fr 1fr; }
+  .create-card { grid-column: 1 / -1; }
+  .commit-guide { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 680px) {
+  .admin-header { align-items: flex-start; gap: 1rem; }
+  .header-actions { flex-wrap: wrap; justify-content: flex-end; }
+  .header-actions a { display: none; }
+  .admin-shell { padding-top: 3rem; }
+  .admin-intro, .section-heading { grid-template-columns: 1fr; gap: 1.4rem; }
+  .admin-intro h1 { font-size: 3.5rem; }
+  .workflow-grid { grid-template-columns: 1fr; }
+  .create-card { grid-column: auto; }
+  .workflow-card { min-height: 0; }
+  .commit-guide { grid-template-columns: 1fr; }
+  .admin-footer { flex-direction: column; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
+}

@@ -11,13 +11,13 @@
 
 ## 2. 后台仓库地址
 
-`public/admin/config.yml` 已配置为：
+`/admin/` 的 GitHub 编辑链接已配置为：
 
-```yaml
-repo: Multimodal-Intelligence-Lab-MIL/Lab_website
+```text
+https://github.com/Multimodal-Intelligence-Lab-MIL/Lab_website
 ```
 
-`branch` 为 `main`。Decap CMS 的每次保存、上传、删除都会形成一次 Git commit。如果以后复制到其他仓库，再修改这里的仓库地址。
+编辑目标为 `main` 分支。新增内容、修改内容和上传图片最后都在 GitHub 网页中点击 `Commit changes`。如果以后复制到其他仓库，需要同步修改 `src/pages/admin/index.astro` 中的 `repositoryUrl`。
 
 ## 3. 启用 GitHub Pages
 
@@ -33,32 +33,24 @@ Astro 会在 GitHub Actions 中自动判断：
 
 因此公开页面、图片和内部链接在两种地址下都可以工作。
 
-## 4. 配置 `/admin/` 的 GitHub 登录
+## 4. 使用 `/admin/`
 
-GitHub Pages 不能安全保存 GitHub Client Secret，因此 Decap CMS 的标准 GitHub 登录需要一个 OAuth 代理。代理只处理登录授权；内容仍保存在你的 GitHub 仓库。
+后台采用轻量前端门禁，不需要 OAuth 代理或额外服务器：
 
-建议按 Decap CMS 官方 GitHub backend 文档中的 **Using GitHub with an OAuth Proxy** 配置：
-
-- https://decapcms.org/docs/github-backend/
-- https://decapcms.org/docs/backends-overview/
-
-配置步骤：
-
-1. 在 GitHub `Settings → Developer settings → OAuth Apps` 创建 OAuth App。
-2. Homepage URL 填公开网站地址。
-3. Authorization callback URL 填 OAuth 代理文档要求的 `/callback` 地址。
-4. 按所选 OAuth 代理的说明，将 GitHub Client ID、Client Secret 和网站域名保存为代理端 Secret，不要写进本仓库。
-5. 将 `public/admin/config.yml` 中的 `base_url` 改成代理地址：
-
-```yaml
-base_url: https://your-oauth-proxy.example
-auth_endpoint: auth
+```text
+用户名：MIL
+密码：MIL
 ```
 
-6. 把需要登录后台的 GitHub 用户添加为仓库 collaborator，并给予写入权限。
-7. 重新推送后访问 `https://你的站点/admin/`，选择 GitHub 登录。
+这组账号密码写在 `public/admin/admin.js` 中，只用于区分后台入口。真正的仓库写入仍由 GitHub 当前登录账号控制，因此日常使用前请先在浏览器登录一个拥有该仓库写权限的 GitHub 账号。
 
-没有完成 OAuth 配置时，公开网站仍然正常工作，只是 `/admin/` 暂时不能登录。也可以直接在 GitHub 中编辑 `src/content/` 文件。
+后台提供：
+
+- 现有 News、Publication、People 和 Research 条目的编辑链接；
+- 新内容 Markdown 模板和自动复制；
+- `public/uploads/` 图片上传入口；
+- Lab 信息 JSON 编辑入口；
+- GitHub Actions 部署状态入口。
 
 ## 5. 自定义域名（可选）
 
@@ -74,12 +66,11 @@ auth_endpoint: auth
 
 ## 6. 日常使用
 
-1. 访问 `/admin/`。
-2. 使用有写入权限的 GitHub 账号登录。
-3. 新增或修改 News、Publication、People、Research 或 Site settings。
-4. 点击保存。
-5. Decap CMS 提交一次 Git commit。
-6. GitHub Actions 自动重新构建并发布。
+1. 先在浏览器登录有仓库写权限的 GitHub 账号。
+2. 访问 `/admin/`，使用 `MIL / MIL` 进入编辑入口。
+3. 选择已有条目，或复制模板创建 News、Publication、People、Research。
+4. 在 GitHub 编辑器中修改内容并点击 `Commit changes`。
+5. GitHub Actions 自动重新构建并发布。
 
 发布不是数据库实时更新，需要等待 GitHub Actions 构建完成。构建失败时，旧网站仍然保留，可在仓库 Actions 页面查看错误并修正对应内容。
 

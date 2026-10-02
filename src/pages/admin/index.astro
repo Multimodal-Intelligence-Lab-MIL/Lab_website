@@ -1,3 +1,118 @@
+---
+import { getCollection } from 'astro:content';
+import { sitePath } from '../../lib/paths';
+
+const repositoryUrl = 'https://github.com/Multimodal-Intelligence-Lab-MIL/Lab_website';
+const contentFile = (id: string) => id.endsWith('.md') ? id : `${id}.md`;
+const editUrl = (folder: string, id: string) => `${repositoryUrl}/edit/main/${folder}/${contentFile(id)}`;
+
+const news = (await getCollection('news'))
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+  .map((item) => ({
+    title: item.data.title,
+    meta: `${item.data.date.toLocaleDateString('en-GB')} · ${item.data.category}`,
+    url: editUrl('src/content/news', item.id)
+  }));
+
+const publications = (await getCollection('publications'))
+  .sort((a, b) => b.data.year - a.data.year || a.data.title.localeCompare(b.data.title))
+  .map((item) => ({
+    title: item.data.title,
+    meta: `${item.data.year} · ${item.data.category}`,
+    url: editUrl('src/content/publications', item.id)
+  }));
+
+const people = (await getCollection('people'))
+  .sort((a, b) => a.data.order - b.data.order || a.data.name.localeCompare(b.data.name))
+  .map((item) => ({
+    title: item.data.name,
+    meta: item.data.category,
+    url: editUrl('src/content/people', item.id)
+  }));
+
+const research = (await getCollection('research'))
+  .sort((a, b) => a.data.order - b.data.order)
+  .map((item) => ({
+    title: item.data.title,
+    meta: item.data.shortTitle,
+    url: editUrl('src/content/research', item.id)
+  }));
+
+const panels = [
+  { key: 'news', label: 'Lab news', items: news },
+  { key: 'publications', label: 'Publications', items: publications },
+  { key: 'people', label: 'People', items: people },
+  { key: 'research', label: 'Research', items: research }
+];
+
+const templates = {
+  news: `---
+title: "News title"
+date: ${new Date().toISOString().slice(0, 10)}
+category: General
+summary: "A short summary for the news list."
+featured: false
+draft: false
+---
+
+Write the full news item here.
+`,
+  publications: `---
+title: "Paper title"
+authors: "First Author, Second Author"
+venue: "Journal or conference"
+year: ${new Date().getFullYear()}
+category: Conference
+image: ""
+abstract: ""
+doi: ""
+paperUrl: ""
+pdf: ""
+arxiv: ""
+project: ""
+code: ""
+keywords: []
+featured: false
+draft: false
+bibtex: |-
+  @article{key,
+    title = {Paper title},
+    author = {First Author and Second Author},
+    year = {${new Date().getFullYear()}}
+  }
+---
+`,
+  people: `---
+name: "Full name"
+category: PhD Students
+role: ""
+bio: ""
+image: ""
+email: ""
+scholar: ""
+website: ""
+github: ""
+linkedin: ""
+order: 100
+current: true
+draft: false
+---
+`,
+  research: `---
+title: "Full research theme title"
+shortTitle: "Short title"
+summary: "One-sentence summary."
+accent: blue
+order: 100
+featured: true
+draft: false
+---
+
+Write the research description here.
+`
+};
+---
+
 <!doctype html>
 <html lang="en">
   <head>
@@ -5,12 +120,166 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="robots" content="noindex, nofollow" />
     <meta name="theme-color" content="#f7fbfd" />
-    <title>MIL Content Manager</title>
+    <title>MIL Admin Gateway</title>
     <link rel="stylesheet" href="admin.css" />
   </head>
-  <body>
-    <noscript>The content manager requires JavaScript.</noscript>
-    <script is:inline src="https://cdn.jsdelivr.net/npm/decap-cms@3.15.1/dist/decap-cms.js"></script>
-    <script is:inline src="cms-hooks.js"></script>
+  <body data-repository-url={repositoryUrl}>
+    <div class="ambient ambient-one" aria-hidden="true"></div>
+    <div class="ambient ambient-two" aria-hidden="true"></div>
+    <div class="signal-grid" aria-hidden="true"></div>
+
+    <section class="login-view" data-login-view>
+      <div class="login-card">
+        <a class="brand" href={sitePath('')}>
+          <span class="brand-mark">M</span>
+          <span><strong>MIL</strong><small>Content gateway</small></span>
+        </a>
+        <p class="eyebrow">Private editing entrance</p>
+        <h1>Manage the lab website.</h1>
+        <p class="login-copy">Sign in to open the editing dashboard. GitHub will handle the final commit.</p>
+        <form data-login-form autocomplete="off">
+          <label>
+            <span>Username</span>
+            <input name="username" type="text" autocomplete="off" required autofocus />
+          </label>
+          <label>
+            <span>Password</span>
+            <input name="password" type="password" autocomplete="off" required />
+          </label>
+          <p class="form-error" data-login-error role="alert" hidden>Incorrect username or password.</p>
+          <button class="primary-button" type="submit">Enter admin</button>
+        </form>
+        <p class="security-note">This is a lightweight visual gate. Repository write access is still controlled by GitHub.</p>
+      </div>
+    </section>
+
+    <div class="admin-view" data-admin-view hidden>
+      <header class="admin-header">
+        <a class="brand" href={sitePath('')}>
+          <span class="brand-mark">M</span>
+          <span><strong>MIL</strong><small>Website administration</small></span>
+        </a>
+        <div class="header-actions">
+          <a href={sitePath('')} target="_blank" rel="noreferrer">View website</a>
+          <a href={`${repositoryUrl}/actions`} target="_blank" rel="noreferrer">Deploy status</a>
+          <button type="button" data-logout>Log out</button>
+        </div>
+      </header>
+
+      <main class="admin-shell">
+        <section class="admin-intro">
+          <div>
+            <p class="eyebrow">Git-backed content management</p>
+            <h1>Edit clearly.<br /><em>Commit deliberately.</em></h1>
+          </div>
+          <p>Choose a content type, copy a prepared template, and finish the edit in GitHub. Every GitHub commit automatically rebuilds the public site.</p>
+        </section>
+
+        <section class="workflow-grid">
+          <article class="workflow-card create-card">
+            <span class="step-number">01</span>
+            <div>
+              <p class="card-label">Create content</p>
+              <h2>Start from a validated template</h2>
+              <form data-create-form>
+                <label>
+                  <span>Content type</span>
+                  <select name="contentType">
+                    <option value="news">Lab news</option>
+                    <option value="publications">Publication</option>
+                    <option value="people">Lab member</option>
+                    <option value="research">Research theme</option>
+                  </select>
+                </label>
+                <label>
+                  <span>File name / slug</span>
+                  <input name="slug" type="text" placeholder="example-item-title" required />
+                </label>
+                <button class="primary-button" type="submit">Copy template &amp; open GitHub</button>
+                <p class="create-status" data-create-status aria-live="polite"></p>
+              </form>
+            </div>
+          </article>
+
+          <article class="workflow-card">
+            <span class="step-number">02</span>
+            <div>
+              <p class="card-label">Media</p>
+              <h2>Upload images and files</h2>
+              <p>Upload portraits, publication artwork or news images to the static uploads folder, then use the returned path in the Markdown file.</p>
+              <a class="outline-button" href={`${repositoryUrl}/upload/main/public/uploads`} target="_blank" rel="noreferrer">Open image uploader</a>
+            </div>
+          </article>
+
+          <article class="workflow-card">
+            <span class="step-number">03</span>
+            <div>
+              <p class="card-label">Site settings</p>
+              <h2>Lab identity and contact</h2>
+              <p>Edit the lab name, mission, contact details and social links in one JSON file.</p>
+              <a class="outline-button" href={`${repositoryUrl}/edit/main/src/data/site.json`} target="_blank" rel="noreferrer">Edit site settings</a>
+            </div>
+          </article>
+        </section>
+
+        <section class="library-section">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Content library</p>
+              <h2>Edit existing entries</h2>
+            </div>
+            <p>Select an entry below. GitHub opens the source file; edit it and press <strong>Commit changes</strong>.</p>
+          </div>
+
+          <div class="content-tabs" role="tablist" aria-label="Content types">
+            {panels.map((panel, index) => (
+              <button
+                type="button"
+                role="tab"
+                aria-selected={index === 0 ? 'true' : 'false'}
+                data-tab={panel.key}
+              >
+                {panel.label}<span>{panel.items.length}</span>
+              </button>
+            ))}
+          </div>
+
+          {panels.map((panel, index) => (
+            <div class="content-panel" role="tabpanel" data-panel={panel.key} hidden={index !== 0}>
+              {panel.items.length > 0 ? (
+                <div class="entry-list">
+                  {panel.items.map((item) => (
+                    <a class="entry-row" href={item.url} target="_blank" rel="noreferrer">
+                      <span><strong>{item.title}</strong><small>{item.meta}</small></span>
+                      <span class="edit-mark">Edit ↗</span>
+                    </a>
+                  ))}
+                </div>
+              ) : (
+                <div class="empty-state">No entries yet. Use the create panel above to add the first one.</div>
+              )}
+            </div>
+          ))}
+        </section>
+
+        <section class="commit-guide">
+          <p><span>1</span> Edit or upload on GitHub</p>
+          <p><span>2</span> Click “Commit changes”</p>
+          <p><span>3</span> Wait for GitHub Actions</p>
+          <p><span>4</span> Refresh the public site</p>
+        </section>
+      </main>
+
+      <footer class="admin-footer">
+        <span>MIL content gateway</span>
+        <a href={`${repositoryUrl}/tree/main/src/content`} target="_blank" rel="noreferrer">Browse all source content ↗</a>
+      </footer>
+    </div>
+
+    {Object.entries(templates).map(([key, value]) => (
+      <textarea data-content-template={key} hidden>{value}</textarea>
+    ))}
+
+    <script is:inline src="admin.js"></script>
   </body>
 </html>
