@@ -3,113 +3,96 @@ import { getCollection } from 'astro:content';
 import { sitePath } from '../../lib/paths';
 
 const repositoryUrl = 'https://github.com/Multimodal-Intelligence-Lab-MIL/Lab_website';
+const repositorySlug = 'Multimodal-Intelligence-Lab-MIL/Lab_website';
+const branch = 'main';
 const contentFile = (id: string) => id.endsWith('.md') ? id : `${id}.md`;
-const editUrl = (folder: string, id: string) => `${repositoryUrl}/edit/main/${folder}/${contentFile(id)}`;
+const editUrl = (folder: string, id: string) => `${repositoryUrl}/edit/${branch}/${folder}/${contentFile(id)}`;
 
-const news = (await getCollection('news'))
+const serialiseData = (data: Record<string, unknown>) => Object.fromEntries(
+  Object.entries(data).map(([key, value]) => [
+    key,
+    value instanceof Date ? value.toISOString().slice(0, 10) : value
+  ])
+);
+
+const newsEntries = (await getCollection('news'))
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
   .map((item) => ({
+    id: item.id,
     title: item.data.title,
     meta: `${item.data.date.toLocaleDateString('en-GB')} · ${item.data.category}`,
-    url: editUrl('src/content/news', item.id)
+    path: `src/content/news/${contentFile(item.id)}`,
+    url: editUrl('src/content/news', item.id),
+    data: serialiseData(item.data),
+    body: item.body || ''
   }));
 
-const publications = (await getCollection('publications'))
+const publicationEntries = (await getCollection('publications'))
   .sort((a, b) => b.data.year - a.data.year || a.data.title.localeCompare(b.data.title))
   .map((item) => ({
+    id: item.id,
     title: item.data.title,
     meta: `${item.data.year} · ${item.data.category}`,
-    url: editUrl('src/content/publications', item.id)
+    path: `src/content/publications/${contentFile(item.id)}`,
+    url: editUrl('src/content/publications', item.id),
+    data: serialiseData(item.data),
+    body: item.body || ''
   }));
 
-const people = (await getCollection('people'))
+const peopleEntries = (await getCollection('people'))
   .sort((a, b) => a.data.order - b.data.order || a.data.name.localeCompare(b.data.name))
   .map((item) => ({
+    id: item.id,
     title: item.data.name,
     meta: item.data.category,
-    url: editUrl('src/content/people', item.id)
+    path: `src/content/people/${contentFile(item.id)}`,
+    url: editUrl('src/content/people', item.id),
+    data: serialiseData(item.data),
+    body: item.body || ''
   }));
 
-const research = (await getCollection('research'))
+const researchEntries = (await getCollection('research'))
   .sort((a, b) => a.data.order - b.data.order)
   .map((item) => ({
+    id: item.id,
     title: item.data.title,
     meta: item.data.shortTitle,
-    url: editUrl('src/content/research', item.id)
+    path: `src/content/research/${contentFile(item.id)}`,
+    url: editUrl('src/content/research', item.id),
+    data: serialiseData(item.data),
+    body: item.body || ''
   }));
 
 const panels = [
-  { key: 'news', label: 'Lab news', items: news },
-  { key: 'publications', label: 'Publications', items: publications },
-  { key: 'people', label: 'People', items: people },
-  { key: 'research', label: 'Research', items: research }
+  { key: 'news', label: 'Lab news', items: newsEntries },
+  { key: 'publications', label: 'Publications', items: publicationEntries },
+  { key: 'people', label: 'People', items: peopleEntries },
+  { key: 'research', label: 'Research', items: researchEntries }
 ];
 
-const templates = {
-  news: `---
-title: "News title"
-date: ${new Date().toISOString().slice(0, 10)}
-category: General
-summary: "A short summary for the news list."
-featured: false
-draft: false
----
+const currentPublicationImages = publicationEntries
+  .map((entry) => String(entry.data.image || ''))
+  .filter(Boolean);
+const currentPeopleImages = peopleEntries
+  .map((entry) => String(entry.data.image || ''))
+  .filter(Boolean);
+const initialMedia = {
+  publications: [...new Set(currentPublicationImages)].sort(),
+  people: [...new Set(currentPeopleImages)].sort()
+};
 
-Write the full news item here.
-`,
-  publications: `---
-title: "Paper title"
-authors: "First Author, Second Author"
-venue: "Journal or conference"
-year: ${new Date().getFullYear()}
-category: Conference
-image: ""
-abstract: ""
-doi: ""
-paperUrl: ""
-pdf: ""
-arxiv: ""
-project: ""
-code: ""
-keywords: []
-featured: false
-draft: false
-bibtex: |-
-  @article{key,
-    title = {Paper title},
-    author = {First Author and Second Author},
-    year = {${new Date().getFullYear()}}
-  }
----
-`,
-  people: `---
-name: "Full name"
-category: PhD Students
-role: ""
-bio: ""
-image: ""
-email: ""
-scholar: ""
-website: ""
-github: ""
-linkedin: ""
-order: 100
-current: true
-draft: false
----
-`,
-  research: `---
-title: "Full research theme title"
-shortTitle: "Short title"
-summary: "One-sentence summary."
-accent: blue
-order: 100
-featured: true
-draft: false
----
-
-Write the research description here.
-`
+const adminData = {
+  repositoryUrl,
+  repositorySlug,
+  branch,
+  content: {
+    news: newsEntries,
+    publications: publicationEntries,
+    people: peopleEntries,
+    research: researchEntries
+  },
+  initialMedia,
+  siteBase: sitePath('')
 };
 ---
 
@@ -123,7 +106,7 @@ Write the research description here.
     <title>MIL Admin Gateway</title>
     <link rel="stylesheet" href="admin.css" />
   </head>
-  <body data-repository-url={repositoryUrl}>
+  <body>
     <div class="ambient ambient-one" aria-hidden="true"></div>
     <div class="ambient ambient-two" aria-hidden="true"></div>
     <div class="signal-grid" aria-hidden="true"></div>
@@ -136,7 +119,7 @@ Write the research description here.
         </a>
         <p class="eyebrow">Private editing entrance</p>
         <h1>Manage the lab website.</h1>
-        <p class="login-copy">Sign in to open the editing dashboard. GitHub will handle the final commit.</p>
+        <p class="login-copy">Sign in to prepare repository changes. GitHub will verify write access and handle every commit.</p>
         <form data-login-form autocomplete="off">
           <label>
             <span>Username</span>
@@ -149,7 +132,7 @@ Write the research description here.
           <p class="form-error" data-login-error role="alert" hidden>Incorrect username or password.</p>
           <button class="primary-button" type="submit">Enter admin</button>
         </form>
-        <p class="security-note">This is a lightweight visual gate. Repository write access is still controlled by GitHub.</p>
+        <p class="security-note">This is a lightweight visual gate. Repository write access is still controlled by your existing GitHub account.</p>
       </div>
     </section>
 
@@ -170,21 +153,22 @@ Write the research description here.
         <section class="admin-intro">
           <div>
             <p class="eyebrow">Git-backed content management</p>
-            <h1>Edit clearly.<br /><em>Commit deliberately.</em></h1>
+            <h1>Prepare here.<br /><em>Commit on GitHub.</em></h1>
           </div>
-          <p>Choose a content type, copy a prepared template, and finish the edit in GitHub. Every GitHub commit automatically rebuilds the public site.</p>
+          <p>Choose the content and operation first. The gateway will prepare the correct media folder, fields and repository path without introducing another service or account.</p>
         </section>
 
-        <section class="workflow-grid">
-          <article class="workflow-card create-card">
+        <section class="workflow" aria-label="Content editing workflow">
+          <article class="workflow-card workflow-selection">
             <span class="step-number">01</span>
             <div>
-              <p class="card-label">Create content</p>
-              <h2>Start from a validated template</h2>
-              <form data-create-form>
+              <p class="card-label">Choose the change</p>
+              <h2>Select content and operation</h2>
+              <form data-selection-form>
                 <label>
                   <span>Content type</span>
-                  <select name="contentType">
+                  <select name="contentType" required>
+                    <option value="">Please select</option>
                     <option value="news">Lab news</option>
                     <option value="publications">Publication</option>
                     <option value="people">Lab member</option>
@@ -192,32 +176,83 @@ Write the research description here.
                   </select>
                 </label>
                 <label>
-                  <span>File name / slug</span>
-                  <input name="slug" type="text" placeholder="example-item-title" required />
+                  <span>Operation</span>
+                  <select name="operation" disabled required>
+                    <option value="">Please select</option>
+                    <option value="create">Create a new entry</option>
+                    <option value="edit">Edit an existing entry</option>
+                    <option value="delete">Delete an existing entry</option>
+                  </select>
                 </label>
-                <button class="primary-button" type="submit">Copy template &amp; open GitHub</button>
-                <p class="create-status" data-create-status aria-live="polite"></p>
+                <label data-entry-field hidden>
+                  <span>Existing entry</span>
+                  <select name="entryId">
+                    <option value="">Please select</option>
+                  </select>
+                </label>
+                <p class="create-status" data-selection-status aria-live="polite">Please select a content type first.</p>
               </form>
             </div>
           </article>
 
-          <article class="workflow-card">
+          <article class="workflow-card workflow-media" data-media-step aria-disabled="true">
             <span class="step-number">02</span>
             <div>
               <p class="card-label">Media</p>
-              <h2>Upload images and files</h2>
-              <p>Upload portraits, publication artwork or news images to the static uploads folder, then use the returned path in the Markdown file.</p>
-              <a class="outline-button" href={`${repositoryUrl}/upload/main/public/uploads`} target="_blank" rel="noreferrer">Open image uploader</a>
+              <h2>Upload or delete images</h2>
+              <div class="step-locked" data-media-locked>Please select the first step before managing images.</div>
+              <div data-media-controls hidden>
+                <p>GitHub will open the matching upload folder. Commit the image there, return to this page, and refresh the list before choosing it in the content form.</p>
+                <p class="repository-path" data-media-path></p>
+                <div class="button-row">
+                  <a class="outline-button" data-upload-link target="_blank" rel="noreferrer">Open GitHub uploader</a>
+                  <button class="outline-button" type="button" data-refresh-media>Refresh image list</button>
+                </div>
+                <p class="create-status" data-media-status aria-live="polite"></p>
+                <div class="media-list" data-media-list></div>
+              </div>
             </div>
           </article>
 
-          <article class="workflow-card">
-            <span class="step-number">03</span>
+          <article class="workflow-card workflow-editor" data-editor-step aria-disabled="true">
+            <span class="step-number" data-editor-step-number>03</span>
             <div>
-              <p class="card-label">Site settings</p>
-              <h2>Lab identity and contact</h2>
-              <p>Edit the lab name, mission, contact details and social links in one JSON file.</p>
-              <a class="outline-button" href={`${repositoryUrl}/edit/main/src/data/site.json`} target="_blank" rel="noreferrer">Edit site settings</a>
+              <p class="card-label">Content file</p>
+              <h2 data-editor-title>Complete the fields</h2>
+              <div class="step-locked" data-editor-locked>Please select the first step before editing content.</div>
+
+              <div data-content-editor hidden>
+                <div class="paste-guide">
+                  <strong>Final GitHub steps</strong>
+                  <ol>
+                    <li>Complete every required field below.</li>
+                    <li>Click <strong>Copy complete file content</strong>.</li>
+                    <li>Click <strong>Open GitHub editor</strong>.</li>
+                    <li>Paste into the large <strong>file editing area</strong> on GitHub — not the commit message box.</li>
+                    <li>Click <strong>Commit changes</strong> on GitHub.</li>
+                  </ol>
+                </div>
+                <form data-content-form>
+                  <div class="field-grid" data-content-fields></div>
+                  <label class="slug-field" data-slug-field>
+                    <span>Generated file name</span>
+                    <div class="slug-control"><input name="slug" type="text" required /><b>.md</b></div>
+                    <small>Generated from the title for new entries. You can correct it before copying.</small>
+                  </label>
+                  <p class="repository-path" data-content-path></p>
+                  <div class="button-row final-actions">
+                    <button class="primary-button" type="button" data-copy-content>1. Copy complete file content</button>
+                    <button class="outline-button" type="button" data-open-github disabled>2. Open GitHub editor</button>
+                  </div>
+                  <p class="create-status" data-content-status aria-live="polite"></p>
+                </form>
+              </div>
+
+              <div data-delete-panel hidden>
+                <p>This opens GitHub's delete page for the selected source file. Review the file once more, then commit the deletion on GitHub.</p>
+                <p class="repository-path" data-delete-path></p>
+                <a class="primary-button" data-delete-link target="_blank" rel="noreferrer">Open GitHub delete page</a>
+              </div>
             </div>
           </article>
         </section>
@@ -226,19 +261,14 @@ Write the research description here.
           <div class="section-heading">
             <div>
               <p class="eyebrow">Content library</p>
-              <h2>Edit existing entries</h2>
+              <h2>Load an existing entry</h2>
             </div>
-            <p>Select an entry below. GitHub opens the source file; edit it and press <strong>Commit changes</strong>.</p>
+            <p>Select an entry to load it into the workflow above. You can then edit its structured fields or switch the operation to delete.</p>
           </div>
 
           <div class="content-tabs" role="tablist" aria-label="Content types">
             {panels.map((panel, index) => (
-              <button
-                type="button"
-                role="tab"
-                aria-selected={index === 0 ? 'true' : 'false'}
-                data-tab={panel.key}
-              >
+              <button type="button" role="tab" aria-selected={index === 0 ? 'true' : 'false'} data-tab={panel.key}>
                 {panel.label}<span>{panel.items.length}</span>
               </button>
             ))}
@@ -249,37 +279,36 @@ Write the research description here.
               {panel.items.length > 0 ? (
                 <div class="entry-list">
                   {panel.items.map((item) => (
-                    <a class="entry-row" href={item.url} target="_blank" rel="noreferrer">
+                    <button class="entry-row" type="button" data-load-type={panel.key} data-load-entry={item.id}>
                       <span><strong>{item.title}</strong><small>{item.meta}</small></span>
-                      <span class="edit-mark">Edit ↗</span>
-                    </a>
+                      <span class="edit-mark">Load into workflow ↑</span>
+                    </button>
                   ))}
                 </div>
               ) : (
-                <div class="empty-state">No entries yet. Use the create panel above to add the first one.</div>
+                <div class="empty-state">No entries yet. Select this content type and create the first one.</div>
               )}
             </div>
           ))}
         </section>
 
         <section class="commit-guide">
-          <p><span>1</span> Edit or upload on GitHub</p>
-          <p><span>2</span> Click “Commit changes”</p>
-          <p><span>3</span> Wait for GitHub Actions</p>
-          <p><span>4</span> Refresh the public site</p>
+          <p><span>1</span> Prepare and copy here</p>
+          <p><span>2</span> Open the GitHub editor</p>
+          <p><span>3</span> Paste into the file area</p>
+          <p><span>4</span> Commit changes</p>
         </section>
       </main>
 
       <footer class="admin-footer">
         <span>MIL content gateway</span>
-        <a href={`${repositoryUrl}/tree/main/src/content`} target="_blank" rel="noreferrer">Browse all source content ↗</a>
+        <a href={`${repositoryUrl}/tree/${branch}/src/content`} target="_blank" rel="noreferrer">Browse all source content ↗</a>
       </footer>
     </div>
 
-    {Object.entries(templates).map(([key, value]) => (
-      <textarea data-content-template={key} hidden>{value}</textarea>
-    ))}
-
+    <script is:inline define:vars={{ adminData }}>
+      window.__MIL_ADMIN_DATA__ = adminData;
+    </script>
     <script is:inline src="admin.js"></script>
   </body>
 </html>

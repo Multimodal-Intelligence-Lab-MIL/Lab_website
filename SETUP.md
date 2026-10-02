@@ -46,10 +46,10 @@ Astro 会在 GitHub Actions 中自动判断：
 
 后台提供：
 
-- 现有 News、Publication、People 和 Research 条目的编辑链接；
-- 新内容 Markdown 模板和自动复制；
-- `public/uploads/` 图片上传入口；
-- Lab 信息 JSON 编辑入口；
+- News、Publication、People 和 Research 的新增、编辑与删除入口；
+- 与内容 schema 对齐的字段表单和 Markdown 自动生成；
+- Publication 与 People 对应图片目录的上传、删除和刷新入口；
+- 已有内容的表单回填和图片路径选择；
 - GitHub Actions 部署状态入口。
 
 ## 5. 自定义域名（可选）
@@ -68,9 +68,11 @@ Astro 会在 GitHub Actions 中自动判断：
 
 1. 先在浏览器登录有仓库写权限的 GitHub 账号。
 2. 访问 `/admin/`，使用 `MIL / MIL` 进入编辑入口。
-3. 选择已有条目，或复制模板创建 News、Publication、People、Research。
-4. 在 GitHub 编辑器中修改内容并点击 `Commit changes`。
-5. GitHub Actions 自动重新构建并发布。
+3. 第一步选择内容类型以及新增、编辑或删除操作。
+4. Publication 或 People 可以在第二步跳转 GitHub 上传、删除图片；提交图片后回到后台刷新图片列表。
+5. 第三步填写字段，点击 `Copy complete file content`，复制成功后再点击 `Open GitHub editor`。
+6. 在 GitHub 的文件编辑区域粘贴完整内容，不要粘贴到 commit message；最后点击 `Commit changes`。
+7. GitHub Actions 自动重新构建并发布。
 
 发布不是数据库实时更新，需要等待 GitHub Actions 构建完成。构建失败时，旧网站仍然保留，可在仓库 Actions 页面查看错误并修正对应内容。
 

@@ -20,7 +20,7 @@ body {
   overflow-x: hidden;
 }
 
-button, input, select { font: inherit; }
+button, input, select, textarea { font: inherit; }
 a { color: inherit; }
 
 .ambient {
@@ -70,7 +70,7 @@ a { color: inherit; }
 .login-copy { margin: 1.2rem 0 2rem; color: var(--muted); line-height: 1.7; }
 .login-card form { display: grid; gap: 1rem; }
 label span { display: block; margin-bottom: .45rem; color: #426478; font-size: .76rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
-input, select {
+input, select, textarea {
   width: 100%;
   min-height: 3.1rem;
   padding: .75rem .95rem;
@@ -81,7 +81,9 @@ input, select {
   background: rgba(255, 255, 255, .82);
   transition: border-color .2s ease, box-shadow .2s ease;
 }
-input:focus, select:focus { border-color: rgba(23, 121, 167, .7); box-shadow: 0 0 0 4px rgba(23, 121, 167, .09); }
+textarea { min-height: 7rem; resize: vertical; line-height: 1.55; }
+input:focus, select:focus, textarea:focus { border-color: rgba(23, 121, 167, .7); box-shadow: 0 0 0 4px rgba(23, 121, 167, .09); }
+button:disabled, select:disabled { cursor: not-allowed; opacity: .5; }
 .primary-button, .outline-button {
   display: inline-flex;
   align-items: center;
@@ -122,16 +124,43 @@ input:focus, select:focus { border-color: rgba(23, 121, 167, .7); box-shadow: 0 
 .admin-intro h1 em { color: #3389ae; font-weight: 400; }
 .admin-intro > p { max-width: 32rem; margin: 0; color: var(--muted); font-size: 1.04rem; line-height: 1.8; }
 
-.workflow-grid { display: grid; grid-template-columns: 1.35fr 1fr 1fr; gap: 1rem; }
-.workflow-card { min-height: 23rem; padding: 1.45rem; border: 1px solid var(--line); border-radius: 18px; background: var(--paper); box-shadow: 0 18px 48px rgba(34, 94, 126, .06); backdrop-filter: blur(14px); }
-.workflow-card > div { display: flex; height: calc(100% - 2rem); flex-direction: column; }
+.workflow { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; scroll-margin-top: 7rem; }
+.workflow-card { min-height: 25rem; padding: 1.45rem; border: 1px solid var(--line); border-radius: 18px; background: var(--paper); box-shadow: 0 18px 48px rgba(34, 94, 126, .06); backdrop-filter: blur(14px); }
+.workflow-card[aria-disabled="true"] { background: rgba(248, 251, 252, .58); }
+.workflow-card > div { display: flex; min-height: calc(100% - 2rem); flex-direction: column; }
+.workflow-editor { grid-column: 1 / -1; min-height: 0; }
 .step-number { display: block; margin-bottom: 1.9rem; color: #8aabba; font-family: ui-monospace, monospace; font-size: .75rem; }
 .card-label { margin: 0 0 .55rem; color: var(--blue); font-size: .68rem; font-weight: 750; letter-spacing: .14em; text-transform: uppercase; }
 .workflow-card h2 { margin: 0 0 .85rem; font-family: Georgia, serif; font-size: 1.55rem; font-weight: 500; }
 .workflow-card p:not(.card-label):not(.create-status) { margin: 0 0 1.3rem; color: var(--muted); line-height: 1.68; }
-.workflow-card .outline-button { margin-top: auto; }
-.create-card form { display: grid; gap: .75rem; margin-top: auto; }
+.workflow-selection form { display: grid; gap: .85rem; margin-top: auto; }
 .create-status { min-height: 1.3rem; margin: 0; color: var(--blue-deep); font-size: .78rem; line-height: 1.45; }
+.step-locked { display: grid; flex: 1; place-items: center; min-height: 11rem; padding: 1.5rem; border: 1px dashed rgba(31, 112, 150, .24); border-radius: 13px; color: #7b94a2; text-align: center; }
+.repository-path { padding: .75rem .85rem; border: 1px solid rgba(30, 116, 156, .13); border-radius: 9px; color: #41687d !important; background: rgba(226, 242, 248, .54); font: .76rem/1.5 ui-monospace, monospace; overflow-wrap: anywhere; }
+.button-row { display: flex; flex-wrap: wrap; gap: .7rem; margin: 1rem 0; }
+.button-row .outline-button { margin-top: 0; }
+.paste-guide { margin-bottom: 1.4rem; padding: 1rem 1.15rem; border-left: 3px solid #258bb9; border-radius: 0 12px 12px 0; background: rgba(223, 242, 249, .55); }
+.paste-guide strong { color: var(--blue-deep); }
+.paste-guide ol { margin: .65rem 0 0; padding-left: 1.25rem; color: #526f80; line-height: 1.75; }
+.field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.form-field { min-width: 0; }
+.field-wide { grid-column: 1 / -1; }
+.form-field small, .slug-field small { display: block; margin-top: .42rem; color: #758d9b; font-size: .75rem; line-height: 1.45; }
+.checkbox-field { display: flex; align-items: center; gap: .65rem; min-height: 3rem; padding: .75rem .9rem; border: 1px solid rgba(43, 116, 154, .18); border-radius: 11px; background: rgba(255, 255, 255, .62); }
+.checkbox-field input { width: 1rem; min-height: 0; margin: 0; accent-color: var(--blue); }
+.checkbox-field span { margin: 0; }
+.slug-field { display: block; margin-top: 1.2rem; }
+.slug-control { display: flex; align-items: center; border: 1px solid rgba(43, 116, 154, .22); border-radius: 11px; background: rgba(255, 255, 255, .82); overflow: hidden; }
+.slug-control input { border: 0; border-radius: 0; background: transparent; }
+.slug-control b { padding-right: 1rem; color: #78909e; font: 500 .85rem ui-monospace, monospace; }
+.final-actions { margin-bottom: .65rem; }
+.media-list { display: grid; gap: .55rem; max-height: 18rem; margin-top: .8rem; overflow-y: auto; }
+.media-row { display: flex; align-items: center; justify-content: space-between; gap: .8rem; padding: .7rem .8rem; border: 1px solid rgba(31, 112, 150, .14); border-radius: 9px; background: rgba(255, 255, 255, .66); }
+.media-row code { min-width: 0; color: #476a7e; font-size: .7rem; overflow-wrap: anywhere; }
+.media-row > span { display: flex; flex: 0 0 auto; gap: .35rem; }
+.media-row button, .media-row a { padding: .4rem .55rem; border: 0; border-radius: 7px; color: var(--blue-deep); background: rgba(29, 119, 160, .08); font-size: .7rem; font-weight: 700; text-decoration: none; cursor: pointer; }
+.media-row a { color: #a13b49; background: rgba(176, 54, 70, .07); }
+.media-empty { margin: 0 !important; padding: 1rem; border: 1px dashed rgba(31, 112, 150, .2); border-radius: 9px; text-align: center; }
 
 .library-section { margin-top: 5.5rem; }
 .section-heading { display: grid; grid-template-columns: 1fr .75fr; align-items: end; gap: 3rem; padding-bottom: 1.8rem; border-bottom: 1px solid var(--line); }
@@ -142,7 +171,7 @@ input:focus, select:focus { border-color: rgba(23, 121, 167, .7); box-shadow: 0 
 .content-tabs button span { display: inline-grid; place-items: center; min-width: 1.55rem; height: 1.55rem; padding: 0 .4rem; border-radius: 999px; background: rgba(31, 120, 161, .09); font-size: .72rem; }
 .content-tabs button[aria-selected="true"] { border-color: rgba(30, 116, 156, .19); color: var(--blue-deep); background: rgba(255, 255, 255, .76); }
 .entry-list { overflow: hidden; border: 1px solid var(--line); border-radius: 16px; background: rgba(255, 255, 255, .68); }
-.entry-row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 4.7rem; padding: .85rem 1.2rem; border-bottom: 1px solid var(--line); text-decoration: none; transition: background .2s ease, padding .2s ease; }
+.entry-row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; width: 100%; min-height: 4.7rem; padding: .85rem 1.2rem; border: 0; border-bottom: 1px solid var(--line); color: inherit; background: transparent; text-align: left; text-decoration: none; cursor: pointer; transition: background .2s ease, padding .2s ease; }
 .entry-row:last-child { border-bottom: 0; }
 .entry-row:hover { padding-left: 1.45rem; background: rgba(225, 243, 250, .58); }
 .entry-row strong, .entry-row small { display: block; }
@@ -161,8 +190,6 @@ input:focus, select:focus { border-color: rgba(23, 121, 167, .7); box-shadow: 0 
 @keyframes drift { to { transform: translate3d(2rem, 1.5rem, 0) scale(1.05); } }
 
 @media (max-width: 900px) {
-  .workflow-grid { grid-template-columns: 1fr 1fr; }
-  .create-card { grid-column: 1 / -1; }
   .commit-guide { grid-template-columns: 1fr 1fr; }
 }
 
@@ -173,9 +200,13 @@ input:focus, select:focus { border-color: rgba(23, 121, 167, .7); box-shadow: 0 
   .admin-shell { padding-top: 3rem; }
   .admin-intro, .section-heading { grid-template-columns: 1fr; gap: 1.4rem; }
   .admin-intro h1 { font-size: 3.5rem; }
-  .workflow-grid { grid-template-columns: 1fr; }
-  .create-card { grid-column: auto; }
+  .workflow { grid-template-columns: 1fr; }
+  .workflow-editor { grid-column: auto; }
   .workflow-card { min-height: 0; }
+  .field-grid { grid-template-columns: 1fr; }
+  .field-wide { grid-column: auto; }
+  .button-row { flex-direction: column; }
+  .media-row { align-items: flex-start; flex-direction: column; }
   .commit-guide { grid-template-columns: 1fr; }
   .admin-footer { flex-direction: column; }
 }

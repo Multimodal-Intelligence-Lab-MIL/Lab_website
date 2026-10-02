@@ -44,8 +44,10 @@ GitHub 是唯一内容源。`/admin/` 不拥有独立数据库，而是把管理
 
 - 管理页面路由位于 `src/pages/admin/`，样式与交互脚本位于 `public/admin/`。
 - 使用写在静态脚本中的 `MIL / MIL` 作为轻量入口门禁。
-- 构建时列出当前内容，并生成每个 Markdown 文件的 GitHub 编辑链接。
-- 新内容使用与 Astro schema 对齐的模板；最终保存由 GitHub `Commit changes` 完成。
+- 构建时把当前内容注入 Admin，用于选择、回填和生成 Markdown。
+- Admin 按内容类型提供新增、编辑、删除以及条件式图片管理步骤。
+- 图片提交后可从公开 GitHub tree API 刷新列表，不需要等待网站重新部署。
+- Admin 只准备和复制完整文件内容；最终粘贴与保存仍由 GitHub 编辑器和 `Commit changes` 完成。
 
 ### GitHub Actions 与 GitHub Pages
 
