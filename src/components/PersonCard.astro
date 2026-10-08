@@ -3,11 +3,24 @@ import { sitePath } from '../lib/paths';
 interface Props { person: any }
 const { person } = Astro.props;
 const data = person.data;
-const image = data.image || 'assets/images/3d-avatar-face.jpg';
+const initials = data.name
+  .replace(/^(dr|prof(?:essor)?)\.?\s+/i, '')
+  .split(/\s+/)
+  .filter(Boolean)
+  .slice(0, 2)
+  .map((part: string) => part[0])
+  .join('')
+  .toUpperCase();
 ---
 
 <article class="person-card" data-person data-category={data.category}>
-  <div class="person-photo"><img src={sitePath(image)} alt={`Portrait of ${data.name}`} loading="lazy" /></div>
+  <div class:list={['person-photo', !data.image && 'person-photo-placeholder']}>
+    {data.image ? (
+      <img src={sitePath(data.image)} alt={`Portrait of ${data.name}`} loading="lazy" />
+    ) : (
+      <div role="img" aria-label={`No portrait is available for ${data.name}`}><span aria-hidden="true">{initials}</span></div>
+    )}
+  </div>
   <div class="person-card-body">
     <p class="person-category">{data.category}</p>
     <h3>{data.name}</h3>

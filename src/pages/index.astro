@@ -66,7 +66,7 @@ const news = (await getCollection('news'))
         {news.map((item, index) => (
           <article class="news-feature">
             <span class="news-index">0{index + 1}</span>
-            <div><p class="news-meta">{item.data.date.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })} · {item.data.category}</p><h3><a href={sitePath(`news/#${item.id}`)}>{item.data.title}</a></h3></div>
+            <div><p class="news-meta">{item.data.dateLabel || item.data.date.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })} · {item.data.category}</p><h3><a href={sitePath(`news/#${item.id}`)}>{item.data.title}</a></h3></div>
           </article>
         ))}
       </div>

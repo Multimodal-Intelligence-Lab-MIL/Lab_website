@@ -11,7 +11,7 @@ const { entry } = Astro.props;
 const publication = entry.data;
 const links = [
   ['Paper', publication.paperUrl || publication.pdf], ['arXiv', publication.arxiv], ['Project page', publication.project],
-  ['Code', publication.code], ['Dataset', publication.dataset], ['Video', publication.video]
+  ['Code', publication.code], ['Dataset', publication.dataset], ['Video', publication.video], ['Source', publication.sourceUrl]
 ].filter(([, url]) => Boolean(url));
 ---
 
@@ -28,7 +28,7 @@ const links = [
           <div class="paper-actions">{links.map(([label, url]) => <a class="button button-primary" href={url} target="_blank" rel="noreferrer">{label}</a>)}</div>
         </div>
         <div class="paper-detail-image">
-          {publication.image ? <img src={sitePath(publication.image)} alt="" /> : <div class="publication-fallback"><span>MIL</span><small>Multimodal<br />Intelligence Lab</small></div>}
+          {publication.image ? <img src={sitePath(publication.image)} alt={publication.imageAlt || ''} /> : <div class="publication-fallback"><span>MIL</span><small>Multimodal<br />Intelligence Lab</small></div>}
         </div>
       </div>
     </header>

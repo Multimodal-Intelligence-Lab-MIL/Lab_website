@@ -58,5 +58,27 @@ const categories = [...new Set(publications.map((entry) => entry.data.category))
       button.textContent = 'Copied';
       window.setTimeout(() => button.textContent = 'Copy', 1400);
     }));
+    const setAbstractOpen = (card, open) => {
+      const button = card.querySelector('[data-abstract-toggle]');
+      const panel = card.querySelector('[data-abstract-panel]');
+      if (!button || !panel) return;
+      card.toggleAttribute('data-abstract-open', open);
+      button.setAttribute('aria-expanded', String(open));
+      button.textContent = open ? 'Hide abstract' : 'Show abstract';
+      panel.setAttribute('aria-hidden', String(!open));
+    };
+    document.querySelectorAll('[data-abstract-toggle]').forEach((button) => button.addEventListener('click', () => {
+      const card = button.closest('[data-publication]');
+      if (!card) return;
+      const willOpen = !card.hasAttribute('data-abstract-open');
+      document.querySelectorAll('[data-publication][data-abstract-open]').forEach((openCard) => {
+        if (openCard !== card) setAbstractOpen(openCard, false);
+      });
+      setAbstractOpen(card, willOpen);
+    }));
+    document.addEventListener('keydown', (event) => {
+      if (event.key !== 'Escape') return;
+      document.querySelectorAll('[data-publication][data-abstract-open]').forEach((card) => setAbstractOpen(card, false));
+    });
   </script>
 </BaseLayout>

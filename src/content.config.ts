@@ -11,6 +11,9 @@ const news = defineCollection({
     summary: z.string(),
     image: z.string().optional(),
     externalUrl: z.string().optional(),
+    sourceUrl: z.string().optional(),
+    relatedPublications: z.array(z.string()).optional(),
+    dateLabel: z.string().optional(),
     featured: z.boolean().default(false),
     draft: z.boolean().default(false)
   })
@@ -25,6 +28,7 @@ const publications = defineCollection({
     year: z.number(),
     category: z.enum(['Journal', 'Conference', 'Workshop', 'Preprint', 'Dataset', 'Other']).default('Other'),
     image: z.string().optional(),
+    imageAlt: z.string().optional(),
     abstract: z.string().optional(),
     award: z.string().optional(),
     doi: z.string().optional(),
@@ -35,6 +39,7 @@ const publications = defineCollection({
     code: z.string().optional(),
     dataset: z.string().optional(),
     video: z.string().optional(),
+    sourceUrl: z.string().optional(),
     bibtex: z.string().optional(),
     keywords: z.array(z.string()).optional(),
     featured: z.boolean().default(false),

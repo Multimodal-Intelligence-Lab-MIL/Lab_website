@@ -7,37 +7,49 @@ interface Props {
 }
 const { entry, priority = false } = Astro.props;
 const publication = entry.data;
+const detailUrl = sitePath(`publications/${entry.id}/`);
+const abstractId = `publication-abstract-${entry.id}`;
 const links = [
   ['Paper', publication.paperUrl || publication.pdf],
   ['arXiv', publication.arxiv],
   ['Project', publication.project],
   ['Code', publication.code],
   ['Dataset', publication.dataset],
-  ['Video', publication.video]
+  ['Video', publication.video],
+  ['Source', publication.sourceUrl]
 ].filter(([, url]) => Boolean(url));
 ---
 
 <article class="publication-card" data-publication data-year={publication.year} data-category={publication.category} data-search={`${publication.title} ${publication.authors} ${publication.venue ?? ''}`.toLowerCase()}>
-  <a class="publication-cover" href={sitePath(`publications/${entry.id}/`)} aria-label={`Read details for ${publication.title}`}>
-    {publication.image ? (
-      <img src={sitePath(publication.image)} alt="" loading={priority ? 'eager' : 'lazy'} />
-    ) : (
-      <div class="publication-fallback">
-        <span>MIL</span><small>Multimodal<br />Intelligence Lab</small>
-      </div>
+  <div class="publication-visual">
+    <a class="publication-cover" href={detailUrl} aria-label={`Read details for ${publication.title}`}>
+      {publication.image ? (
+        <img src={sitePath(publication.image)} alt={publication.imageAlt || ''} loading={priority ? 'eager' : 'lazy'} />
+      ) : (
+        <div class="publication-fallback">
+          <span>MIL</span><small>Multimodal<br />Intelligence Lab</small>
+        </div>
+      )}
+      <span class="publication-year">{publication.year}</span>
+    </a>
+    {publication.abstract && (
+      <aside class="publication-abstract-panel" id={abstractId} aria-hidden="true" data-abstract-panel>
+        <span>Abstract</span>
+        <p>{publication.abstract}</p>
+      </aside>
     )}
-    <span class="publication-year">{publication.year}</span>
-  </a>
+  </div>
   <div class="publication-content">
     <div class="publication-topline">
       <span>{publication.category}</span>
       {publication.award && <strong>{publication.award}</strong>}
     </div>
-    <h2><a href={sitePath(`publications/${entry.id}/`)}>{publication.title}</a></h2>
+    <h2><a href={detailUrl}>{publication.title}</a></h2>
     <p class="publication-authors">{publication.authors}</p>
     <p class="publication-venue">{publication.venue || 'Venue to be added'}{publication.venue ? `, ${publication.year}` : ''}</p>
     <div class="publication-links">
       {links.map(([label, url]) => <a href={url} target="_blank" rel="noreferrer">{label}</a>)}
+      {publication.abstract && <button type="button" aria-expanded="false" aria-controls={abstractId} data-abstract-toggle>Show abstract</button>}
       {publication.bibtex && <button type="button" data-bibtex-toggle>BibTeX</button>}
     </div>
     {publication.bibtex && (

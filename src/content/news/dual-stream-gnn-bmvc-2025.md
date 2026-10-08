@@ -1,10 +1,15 @@
 ---
 title: "Dual-stream graph neural networks paper accepted to BMVC 2025"
-date: 2025-07-18
+date: 2025-07-01
+dateLabel: "July 2025"
 category: Publication
-summary: "Congratulations to Jiangbei and the team on the acceptance of Multimodal Hate Detection Using Dual-Stream Graph Neural Networks."
+summary: "Congrats to Jiangbei and the team for a paper, Multimodal Hate Detection Using Dual-Stream Graph Neural Networks, getting accepted in BMVC 2025."
+externalUrl: "https://arxiv.org/abs/2509.13515"
+sourceUrl: "https://www.exeter.ac.uk/staff-profile/index.php?username=zf253"
+relatedPublications:
+  - multimodal-hate-detection-dual-stream
 featured: true
 draft: false
 ---
 
-The paper presents a dual-stream graph neural network for multimodal hate detection and will appear at BMVC 2025.
+Congrats to **Jiangbei** and the team for a paper, [Multimodal Hate Detection Using Dual-Stream Graph Neural Networks](https://arxiv.org/abs/2509.13515), getting **accepted** in [BMVC 2025](https://bmvc2025.bmva.org/).
