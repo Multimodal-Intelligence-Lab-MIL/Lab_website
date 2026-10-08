@@ -186,10 +186,9 @@ button:disabled, select:disabled { cursor: not-allowed; opacity: .5; }
 .media-actions button, .media-actions a { padding: .48rem .62rem; border: 0; border-radius: 7px; color: var(--blue-deep); background: rgba(29, 119, 160, .08); font-size: .7rem; font-weight: 700; text-decoration: none; white-space: nowrap; cursor: pointer; }
 .media-actions a { color: #a13b49; background: rgba(176, 54, 70, .07); }
 .media-empty { margin: 0 !important; padding: 1rem; border: 1px dashed rgba(31, 112, 150, .2); border-radius: 9px; text-align: center; }
-.workflow-publication-reference { display: flex; height: 25rem; min-height: 25rem; flex-direction: column; overflow: hidden; }
-.workflow-publication-reference > .step-number { flex: 0 0 auto; }
-.workflow-publication-reference > div { flex: 1 1 auto; min-height: 0; overflow: hidden; }
-.publication-reference-list { display: grid; align-content: start; flex: 1 1 0; min-height: 0; margin-top: .2rem; overflow-y: auto; overscroll-behavior: contain; scrollbar-gutter: stable; border: 1px solid rgba(31, 112, 150, .16); border-radius: 13px; background: rgba(235, 247, 251,.46); scrollbar-color: rgba(31, 112, 150,.42) transparent; scrollbar-width: thin; }
+.workflow-publication-reference { height: auto; min-height: 0; overflow: hidden; }
+.workflow-publication-reference > div { min-height: 0; }
+.publication-reference-list { display: grid; align-content: start; flex: 0 0 clamp(13rem, 32vh, 16rem); height: clamp(13rem, 32vh, 16rem); min-height: 0; margin-top: .2rem; overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain; scrollbar-gutter: stable; border: 1px solid rgba(31, 112, 150, .16); border-radius: 13px; background: rgba(235, 247, 251,.46); scrollbar-color: rgba(31, 112, 150,.42) transparent; scrollbar-width: thin; }
 .publication-reference-list::-webkit-scrollbar { width: 9px; }
 .publication-reference-list::-webkit-scrollbar-thumb { border: 2px solid transparent; border-radius: 999px; background: rgba(31, 112, 150, .36); background-clip: padding-box; }
 .publication-reference-row { display: grid; grid-template-columns: 42px minmax(0, 1fr) auto; gap: .75rem; align-items: center; padding: .72rem .75rem; border-bottom: 1px solid rgba(31, 112, 150, .12); }
@@ -244,7 +243,7 @@ button:disabled, select:disabled { cursor: not-allowed; opacity: .5; }
   .workflow { grid-template-columns: 1fr; }
   .workflow-editor { grid-column: auto; }
   .workflow-card { min-height: 0; }
-  .workflow-publication-reference { height: 28rem; min-height: 28rem; }
+  .workflow-publication-reference { height: auto; min-height: 0; }
   .field-grid { grid-template-columns: 1fr; }
   .field-wide { grid-column: auto; }
   .button-row { flex-direction: column; }
