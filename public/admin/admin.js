@@ -28,7 +28,7 @@
 
   const fieldConfig = {
     news: [
-      { key: 'body', label: 'News Markdown', type: 'markdown', required: true, wide: true, rows: 18, body: true, help: 'Write the complete update directly in Markdown. The homepage renders this source as formatted text.' },
+      { key: 'body', label: 'News Markdown', type: 'markdown', required: true, wide: true, rows: 18, body: true, help: 'Write the complete update directly in Markdown. For a paper link, copy its relative URL from “Publication URL reference” in the upper-right panel and place it inside [paper title](URL). Use a complete https:// URL for conferences and other external websites.' },
       { key: 'date', label: 'Date', type: 'date', required: true, default: today },
       { key: 'dateLabel', label: 'Display date label (optional)', type: 'text', help: 'Use this only when the source gives a month rather than an exact day, for example “Sep 2026”.' },
       { key: 'category', label: 'Category', type: 'select', required: true, default: 'General', options: ['Publication', 'Award', 'Event', 'Opportunity', 'General'] },
@@ -110,6 +110,7 @@
   const entrySelect = entryField?.querySelector('[name="entryId"]');
   const selectionStatus = document.querySelector('[data-selection-status]');
   const mediaStep = document.querySelector('[data-media-step]');
+  const newsReference = document.querySelector('[data-news-reference]');
   const mediaLocked = document.querySelector('[data-media-locked]');
   const mediaControls = document.querySelector('[data-media-controls]');
   const mediaPath = document.querySelector('[data-media-path]');
@@ -348,11 +349,22 @@
     guideTitle.textContent = 'Markdown reference';
     const examples = document.createElement('pre');
     examples.textContent = [
+      'Basic syntax',
+      '------------',
       '**bold text**',
+      '*italic text*',
       '[paper title](publications/publication-slug/)',
       '[conference name](https://conference.example.org/)',
+      '- bullet point',
+      '1. numbered item',
       '',
-      'Blank line = new paragraph'
+      'Leave one blank line between paragraphs.',
+      '',
+      'Complete News example',
+      '---------------------',
+      'A paper, [FairMT: Fairness for Heterogeneous Multi-Task Learning](publications/fairmt/), has been **accepted** to [NeurIPS 2026](https://neurips.cc/).',
+      '',
+      'Congrats to **Guanyu** and all co-authors!'
     ].join('\n');
     guide.append(guideTitle, examples);
 
@@ -610,6 +622,7 @@
 
   function configureMediaStep(ready) {
     const config = mediaConfig[state.contentType];
+    if (newsReference) newsReference.hidden = state.contentType !== 'news';
     if (state.contentType && !config) {
       mediaStep.hidden = true;
       if (editorStepNumber) editorStepNumber.textContent = '02';
@@ -769,6 +782,22 @@
       return copied;
     }
   }
+
+  document.querySelectorAll('[data-copy-publication-url]').forEach(function (button) {
+    button.addEventListener('click', async function () {
+      const relativeUrl = button.dataset.copyPublicationUrl || '';
+      const status = document.querySelector('[data-publication-copy-status]');
+      const copied = relativeUrl ? await copyText(relativeUrl) : false;
+      if (status) status.textContent = copied
+        ? `Copied ${relativeUrl}`
+        : 'The browser blocked copying. Select the URL directly from the list.';
+      if (copied) {
+        const originalLabel = button.textContent;
+        button.textContent = 'Copied';
+        window.setTimeout(() => { button.textContent = originalLabel; }, 1200);
+      }
+    });
+  });
 
   copyButton?.addEventListener('click', async function () {
     if (!contentForm.reportValidity()) {

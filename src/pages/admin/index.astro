@@ -201,6 +201,31 @@ const adminData = {
             </div>
           </article>
 
+          <article class="workflow-card workflow-publication-reference" data-news-reference hidden>
+            <span class="step-number">REF</span>
+            <div>
+              <p class="card-label">Publication URL reference</p>
+              <h2>Link to a paper on this website</h2>
+              <p>Publications are listed newest first. Copy the relative URL and place it inside a Markdown link in the News editor.</p>
+              <div class="publication-reference-list">
+                {publicationEntries.map((publication) => {
+                  const relativeUrl = `publications/${publication.id}/`;
+                  return (
+                    <div class="publication-reference-row">
+                      <span>{publication.data.year}</span>
+                      <div>
+                        <a href={sitePath(relativeUrl)} target="_blank" rel="noreferrer">{publication.title}</a>
+                        <code>{relativeUrl}</code>
+                      </div>
+                      <button type="button" data-copy-publication-url={relativeUrl}>Copy URL</button>
+                    </div>
+                  );
+                })}
+              </div>
+              <p class="create-status" data-publication-copy-status aria-live="polite"></p>
+            </div>
+          </article>
+
           <article class="workflow-card workflow-media" data-media-step aria-disabled="true">
             <span class="step-number">02</span>
             <div>
