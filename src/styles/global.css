@@ -109,7 +109,6 @@ nav[data-menu] .nav-contact { padding: .62rem .95rem; color: #145f91; background
 .home-news-date strong { color: #2677a5; font: 500 .74rem var(--mono); letter-spacing: .04em; }
 .home-news-date span { color: #8799a5; font: .61rem var(--mono); letter-spacing: .09em; text-transform: uppercase; }
 .home-news-copy { max-width: 850px; }
-.home-news-copy h3 { margin-bottom: .9rem; font-size: clamp(1.35rem, 2.6vw, 2rem); line-height: 1.18; font-weight: 600; }
 .news-prose { color: #4d6270; font-size: .98rem; line-height: 1.75; }
 .news-prose p { margin-bottom: .9rem; }
 .news-prose a { color: #176f9e; font-weight: 600; text-decoration-color: rgba(23,111,158,.35); text-underline-offset: .18em; }

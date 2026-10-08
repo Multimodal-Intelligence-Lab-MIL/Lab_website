@@ -146,16 +146,11 @@ button:disabled, select:disabled { cursor: not-allowed; opacity: .5; }
 .form-field { min-width: 0; }
 .field-wide { grid-column: 1 / -1; }
 .form-field small, .slug-field small { display: block; margin-top: .42rem; color: #758d9b; font-size: .75rem; line-height: 1.45; }
-.rich-text-field > label { display: block; color: #426478; font-size: .76rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
-.rich-text-field > textarea { min-height: 18rem; margin-top: .65rem; font-size: 1rem; line-height: 1.7; }
-.rich-link-builder { margin-top: 1rem; padding: 1rem; border: 1px solid rgba(31, 120, 161, .2); border-radius: 13px; background: rgba(226, 244, 250, .52); }
-.rich-link-heading strong, .rich-link-heading small { display: block; }
-.rich-link-heading strong { color: #225f7f; font-size: .8rem; }
-.rich-link-heading small { margin-top: .2rem; }
-.rich-link-controls { display: grid; grid-template-columns: minmax(150px, .55fr) minmax(260px, 1fr) auto; gap: .75rem; align-items: end; margin-top: .9rem; }
-.rich-link-controls label { min-width: 0; }
-.rich-link-controls .rich-link-apply { min-height: 3.1rem; white-space: nowrap; }
-.rich-link-status { min-height: 1.25rem; margin: .65rem 0 0 !important; color: #526f80 !important; font-size: .76rem; }
+.markdown-field > label { display: block; color: #426478; font-size: .76rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+.markdown-field > textarea { min-height: 28rem; margin-top: .65rem; padding: 1.1rem; tab-size: 2; color: #17384b; background: #f9fcfd; font: .9rem/1.75 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+.markdown-guide { margin-top: .8rem; padding: .9rem 1rem; border: 1px solid rgba(31, 120, 161, .16); border-radius: 11px; background: rgba(226, 244, 250, .45); }
+.markdown-guide strong { color: #225f7f; font-size: .75rem; }
+.markdown-guide pre { margin: .55rem 0 0; overflow-x: auto; color: #526f80; font: .75rem/1.65 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; white-space: pre-wrap; }
 .bibtex-field { padding: 1.1rem; border: 1px solid rgba(31, 120, 161, .2); border-radius: 13px; background: rgba(226, 244, 250, .52); }
 .bibtex-field > label { display: block; margin-bottom: .45rem; color: #225f7f; font-size: .76rem; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; }
 .bibtex-field textarea { min-height: 14rem; background: rgba(255, 255, 255, .92); font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .82rem; }
@@ -235,8 +230,6 @@ button:disabled, select:disabled { cursor: not-allowed; opacity: .5; }
   .workflow-card { min-height: 0; }
   .field-grid { grid-template-columns: 1fr; }
   .field-wide { grid-column: auto; }
-  .rich-link-controls { grid-template-columns: 1fr; }
-  .rich-link-controls .rich-link-apply { width: 100%; }
   .button-row { flex-direction: column; }
   .bibtex-tools { align-items: stretch; flex-direction: column; }
   .bibtex-tools .outline-button { width: 100%; }

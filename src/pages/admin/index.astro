@@ -14,12 +14,18 @@ const serialiseData = (data: Record<string, unknown>) => Object.fromEntries(
     value instanceof Date ? value.toISOString().slice(0, 10) : value
   ])
 );
+const markdownExcerpt = (value: string) => value
+  .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+  .replace(/[*_`>#]/g, '')
+  .replace(/\s+/g, ' ')
+  .trim()
+  .slice(0, 96);
 
 const newsEntries = (await getCollection('news'))
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
   .map((item) => ({
     id: item.id,
-    title: item.data.title,
+    title: markdownExcerpt(item.body || '') || `News · ${item.data.date.toLocaleDateString('en-GB')}`,
     meta: `${item.data.date.toLocaleDateString('en-GB')} · ${item.data.category}`,
     path: `src/content/news/${contentFile(item.id)}`,
     url: editUrl('src/content/news', item.id),

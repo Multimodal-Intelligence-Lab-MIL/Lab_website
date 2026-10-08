@@ -72,7 +72,6 @@ const news = await Promise.all(newsEntries.map(async (entry) => ({ entry, conten
                 <span>{entry.data.category}</span>
               </div>
               <div class="home-news-copy">
-                <h3>{entry.data.title}</h3>
                 <div class="prose news-prose"><Content /></div>
               </div>
             </article>
