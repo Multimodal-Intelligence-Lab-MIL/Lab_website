@@ -1,6 +1,6 @@
 ---
 name: "Atefe Hassani"
-category: Research Assistants
+category: Alumni
 bio: "Interested in multimodal vision-language models and their applications in medical imaging."
 image: "assets/images/atefe-hassani.jpeg"
 email: "hasaniatefe0@gmail.com"
@@ -9,6 +9,6 @@ website: "https://hassaniatefe.github.io/"
 github: "https://github.com/HassaniAtefe"
 linkedin: "https://www.linkedin.com/in/atefehassani/"
 order: 30
-current: true
+current: false
 draft: false
 ---

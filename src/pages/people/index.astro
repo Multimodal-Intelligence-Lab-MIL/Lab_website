@@ -7,7 +7,78 @@ import PersonCard from '../../components/PersonCard.astro';
 const categoryOrder = ['Faculty', 'Postdoctoral Researchers', 'PhD Students', 'Research Assistants', 'Visiting Scholars', 'MSc Students', 'Undergraduate Students'];
 const people = (await getCollection('people')).filter((entry) => !entry.data.draft).sort((a, b) => a.data.order - b.data.order);
 const groups = categoryOrder.map((category) => ({ category, members: people.filter((person) => person.data.category === category) })).filter((group) => group.members.length);
-const alumni = people.filter((person) => person.data.category === 'Alumni');
+const alumniGroups = [
+  { label: 'Postdocs', members: [
+    { name: 'Dr Tailin Chen' },
+    { name: 'Dr Jiangbei Yue', destination: 'Research Fellow at University of Leeds' }
+  ] },
+  { label: 'PhDs', members: [
+    { name: 'Dr Fu Wang', destination: 'Postdoc at University of Liverpool' }
+  ] },
+  { label: 'RAs', members: [
+    { name: 'Dr Guanyu Hu' },
+    { name: 'Atefe Hassani', destination: 'PhD at University of Manchester' },
+    { name: 'Yinghui Zhang', destination: 'Shanghai AI Lab' },
+    { name: 'Dr Qiyue Sun' },
+    { name: 'Dr Jiachen Luo' },
+    { name: 'Rahul Singh', destination: 'Rocket Learning' }
+  ] },
+  { label: 'UG 25–26', members: [
+    { name: 'Sam McMullen' },
+    { name: 'Crystal Tsui' },
+    { name: 'Daniel Cook' },
+    { name: 'Jiaxin Wen', destination: 'MSc at UCL' },
+    { name: 'Georgiy Savchenko', destination: 'MPhil at University of Cambridge' }
+  ] },
+  { label: 'MSc 24–25', members: [
+    { name: 'Blazej Badora' },
+    { name: 'Jack Donohoe' },
+    { name: 'Yan Hu' },
+    { name: 'Kason Lao' },
+    { name: 'Xujing Li' },
+    { name: 'Aishwarya Murugappan' },
+    { name: 'Tianyuan Zhao' }
+  ] },
+  { label: 'UG 24–25', members: [
+    { name: 'Ruby Ham', destination: 'Fremantle' },
+    { name: 'Chenyang Lai', destination: 'MSc at University of Manchester' },
+    { name: 'Dayana M Roslan Shah', destination: 'EVYD' },
+    { name: 'Fedor Morgunov', destination: 'K2 Cloud' },
+    { name: 'Vihan Sharma', destination: 'Co-founder at Efficura' },
+    { name: 'Shuonan Yang', destination: 'MSc at University of Manchester' }
+  ] },
+  { label: 'UG 23–24', members: [
+    { name: 'Sam Cooklin' },
+    { name: 'Sangeeth Sohan' }
+  ] },
+  { label: 'MSc 23–24', members: [
+    { name: 'Rishav Bhattacharyya', destination: 'Trainline' },
+    { name: 'Qianqian Han', destination: 'PhD at University of Exeter' },
+    { name: 'Snehil Kumar', destination: 'PhD at University of Exeter' },
+    { name: 'Dongyuan Wang', destination: 'PhD at University College Dublin' },
+    { name: 'Hongding Yang' },
+    { name: 'Kunyang Ye' },
+    { name: 'Yinghui Zhang' }
+  ] },
+  { label: 'UG 22–23', members: [
+    { name: 'Kerem Arsoy' },
+    { name: 'Nathan Baker', destination: 'Cogent Labs' },
+    { name: 'Jason Gurung' },
+    { name: 'Alfie Hart' },
+    { name: 'Jason Jashari' },
+    { name: 'John Norman' },
+    { name: 'Kimonas Tsiliras' }
+  ] },
+  { label: 'MSc 22–23', members: [
+    { name: 'Tianyu Gong' }
+  ] },
+  { label: 'Visitors', members: [
+    { name: 'Ihssene Brahimi' },
+    { name: 'Zixuan Liu' },
+    { name: 'Enhui Zhou' }
+  ] }
+];
+const alumniCount = new Set(alumniGroups.flatMap((group) => group.members.map((member) => member.name))).size;
 ---
 
 <BaseLayout title="People" description="People in the Multimodal Intelligence Lab." currentPath="/people/">
@@ -16,7 +87,7 @@ const alumni = people.filter((person) => person.data.category === 'Alumni');
     <div class="shell">
       <div class="category-jump" aria-label="People categories">
         {groups.map((group) => <a href={`#${group.category.toLowerCase().replaceAll(' ', '-')}`}>{group.category}<span>{group.members.length}</span></a>)}
-        <a href="#alumni">Alumni<span>{alumni.length}</span></a>
+        <a href="#alumni">Alumni<span>{alumniCount}</span></a>
       </div>
       {groups.map((group) => (
         <section class="people-group" id={group.category.toLowerCase().replaceAll(' ', '-')}>
@@ -26,23 +97,21 @@ const alumni = people.filter((person) => person.data.category === 'Alumni');
       ))}
       <section class="people-group people-group--alumni" id="alumni">
         <div class="people-group-heading"><p class="eyebrow dark">{String(categoryOrder.length + 1).padStart(2, '0')}</p><h2>Alumni</h2></div>
-        {alumni.length > 0 ? (
-          <div class="alumni-list">
-            {alumni.map((person) => (
-              <article class="alumni-row">
-                <h3>{person.data.name}</h3>
-                <p>{person.data.role || person.data.bio || 'Former member of the Multimodal Intelligence Lab.'}</p>
-                <div class="alumni-links">
-                  {person.data.website && <a href={person.data.website} target="_blank" rel="noreferrer">Website</a>}
-                  {person.data.scholar && <a href={person.data.scholar} target="_blank" rel="noreferrer">Scholar</a>}
-                  {person.data.linkedin && <a href={person.data.linkedin} target="_blank" rel="noreferrer">LinkedIn</a>}
-                </div>
-              </article>
-            ))}
-          </div>
-        ) : (
-          <p class="alumni-empty">Alumni profiles will be added here.</p>
-        )}
+        <div class="alumni-list">
+          {alumniGroups.map((group) => (
+            <article class="alumni-row">
+              <h3>{group.label}</h3>
+              <p class="alumni-members">
+                {group.members.map((member) => (
+                  <span class="alumni-member">
+                    <strong>{member.name}</strong>
+                    {member.destination && <small>{member.destination}</small>}
+                  </span>
+                ))}
+              </p>
+            </article>
+          ))}
+        </div>
       </section>
     </div>
   </section>

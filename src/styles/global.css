@@ -209,9 +209,16 @@ nav[data-menu] .nav-contact { padding: .62rem .95rem; color: #145f91; background
 .people-group--alumni .people-group-heading { padding-bottom: 1rem; }
 .people-group--alumni .people-group-heading h2 { font-size: clamp(1.8rem, 3.5vw, 2.8rem); }
 .alumni-list { border-top: 1px solid var(--line); }
-.alumni-row { display: grid; grid-template-columns: minmax(160px, .45fr) minmax(240px, 1fr) auto; gap: 1.2rem; align-items: baseline; padding: 1rem 0; border-bottom: 1px solid var(--line); }
+.alumni-row { display: grid; grid-template-columns: minmax(105px, .2fr) minmax(0, 1fr); gap: 1.2rem; align-items: baseline; padding: .82rem 0; border-bottom: 1px solid var(--line); }
 .alumni-row h3 { margin: 0; font-size: 1rem; }
 .alumni-row p, .alumni-empty { margin: 0; color: var(--muted); font-size: .84rem; }
+.alumni-members { display: flex; flex-wrap: wrap; gap: .35rem .8rem; }
+.alumni-member { display: inline-flex; align-items: baseline; gap: .28rem; }
+.alumni-member:not(:last-child)::after { margin-left: .5rem; color: #aac0cb; content: '·'; }
+.alumni-member strong { color: var(--ink); font-size: .86rem; font-weight: 600; }
+.alumni-member small { color: var(--muted); font-size: .76rem; }
+.alumni-member small::before { content: '('; }
+.alumni-member small::after { content: ')'; }
 .alumni-links { display: flex; flex-wrap: wrap; gap: .8rem; }
 .alumni-links a { color: #2677a5; font-size: .72rem; font-weight: 600; text-decoration: none; }
 .alumni-links a:hover, .alumni-links a:focus-visible { color: var(--ink); text-decoration: underline; }
