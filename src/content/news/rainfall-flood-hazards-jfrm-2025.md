@@ -12,4 +12,4 @@ featured: false
 draft: false
 ---
 
-Congrats to **Zhufeng** and the team for [Assessment of Rainfall-Driven Urban Surface Water Flood Hazards Using Convolutional Neural Networks](https://doi.org/10.1111/jfr3.70102) getting **accepted** in the [Journal of Flood Risk Management](https://onlinelibrary.wiley.com/journal/1753318x).
+Congrats to **Zhufeng** and the team for [Assessment of Rainfall-Driven Urban Surface Water Flood Hazards Using Convolutional Neural Networks](publications/rainfall-driven-flood-hazards/) getting **accepted** in the [Journal of Flood Risk Management](https://onlinelibrary.wiley.com/journal/1753318x).

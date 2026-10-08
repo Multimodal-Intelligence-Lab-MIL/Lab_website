@@ -12,4 +12,4 @@ featured: false
 draft: false
 ---
 
-A paper, [Probing 3D Anomalies via Multi-View Registration and Dual-Residual Analysis](https://doi.org/10.1016/j.neucom.2026.133558), has been **accepted** to [Neurocomputing](https://www.sciencedirect.com/journal/neurocomputing). Congrats to **Yuxing** and all co-authors!
+A paper, [Probing 3D Anomalies via Multi-View Registration and Dual-Residual Analysis](publications/probing-3d-anomalies/), has been **accepted** to [Neurocomputing](https://www.sciencedirect.com/journal/neurocomputing). Congrats to **Yuxing** and all co-authors!

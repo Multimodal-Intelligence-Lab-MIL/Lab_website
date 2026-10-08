@@ -12,4 +12,4 @@ featured: false
 draft: false
 ---
 
-Congrats to **Shuaiyu** and the team for [Enhancing Marine Pollution Detection in Remote Sensing via Self-Supervised Boundary Awareness](https://bmva-archive.org.uk/bmvc/2025/assets/workshops/MVEO/Paper_13/paper.pdf) getting **accepted** in the [BMVC 2025](https://bmvc2025.bmva.org/) MVEO Workshop.
+Congrats to **Shuaiyu** and the team for [Enhancing Marine Pollution Detection in Remote Sensing via Self-Supervised Boundary Awareness](publications/boundary-aware-marine-pollution/) getting **accepted** in the [BMVC 2025](https://bmvc2025.bmva.org/) MVEO Workshop.

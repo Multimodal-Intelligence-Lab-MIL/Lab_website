@@ -4,17 +4,19 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import PageHero from '../../components/PageHero.astro';
 import PersonCard from '../../components/PersonCard.astro';
 
-const categoryOrder = ['Faculty', 'Postdoctoral Researchers', 'PhD Students', 'Research Assistants', 'Visiting Scholars', 'MSc Students', 'Undergraduate Students', 'Alumni'];
+const categoryOrder = ['Faculty', 'Postdoctoral Researchers', 'PhD Students', 'Research Assistants', 'Visiting Scholars', 'MSc Students', 'Undergraduate Students'];
 const people = (await getCollection('people')).filter((entry) => !entry.data.draft).sort((a, b) => a.data.order - b.data.order);
 const groups = categoryOrder.map((category) => ({ category, members: people.filter((person) => person.data.category === category) })).filter((group) => group.members.length);
+const alumni = people.filter((person) => person.data.category === 'Alumni');
 ---
 
 <BaseLayout title="People" description="People in the Multimodal Intelligence Lab." currentPath="/people/">
-  <PageHero eyebrow="Our community" title="People" intro="Researchers and students working across multimodal learning, computer vision and responsible artificial intelligence." stat={String(people.filter((person) => person.data.current).length)} statLabel="current profiles" />
+  <PageHero eyebrow="Our community" title="People" intro="Researchers and students working across multimodal learning, computer vision and responsible artificial intelligence." stat={String(people.filter((person) => person.data.current && person.data.category !== 'Alumni').length)} statLabel="current profiles" />
   <section class="section collection-section">
     <div class="shell">
       <div class="category-jump" aria-label="People categories">
         {groups.map((group) => <a href={`#${group.category.toLowerCase().replaceAll(' ', '-')}`}>{group.category}<span>{group.members.length}</span></a>)}
+        <a href="#alumni">Alumni<span>{alumni.length}</span></a>
       </div>
       {groups.map((group) => (
         <section class="people-group" id={group.category.toLowerCase().replaceAll(' ', '-')}>
@@ -22,6 +24,26 @@ const groups = categoryOrder.map((category) => ({ category, members: people.filt
           <div class="people-grid">{group.members.map((person) => <PersonCard person={person} />)}</div>
         </section>
       ))}
+      <section class="people-group people-group--alumni" id="alumni">
+        <div class="people-group-heading"><p class="eyebrow dark">{String(categoryOrder.length + 1).padStart(2, '0')}</p><h2>Alumni</h2></div>
+        {alumni.length > 0 ? (
+          <div class="alumni-list">
+            {alumni.map((person) => (
+              <article class="alumni-row">
+                <h3>{person.data.name}</h3>
+                <p>{person.data.role || person.data.bio || 'Former member of the Multimodal Intelligence Lab.'}</p>
+                <div class="alumni-links">
+                  {person.data.website && <a href={person.data.website} target="_blank" rel="noreferrer">Website</a>}
+                  {person.data.scholar && <a href={person.data.scholar} target="_blank" rel="noreferrer">Scholar</a>}
+                  {person.data.linkedin && <a href={person.data.linkedin} target="_blank" rel="noreferrer">LinkedIn</a>}
+                </div>
+              </article>
+            ))}
+          </div>
+        ) : (
+          <p class="alumni-empty">Alumni profiles will be added here.</p>
+        )}
+      </section>
     </div>
   </section>
 </BaseLayout>

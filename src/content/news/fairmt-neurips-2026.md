@@ -12,4 +12,4 @@ featured: true
 draft: false
 ---
 
-A paper, [FairMT: Fairness for Heterogeneous Multi-Task Learning](https://arxiv.org/abs/2512.00469), has been **accepted** to [NeurIPS 2026](https://neurips.cc/). Congrats to **Guanyu** and all co-authors!
+A paper, [FairMT: Fairness for Heterogeneous Multi-Task Learning](publications/fairmt/), has been **accepted** to [NeurIPS 2026](https://neurips.cc/). Congrats to **Guanyu** and all co-authors!

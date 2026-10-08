@@ -12,4 +12,4 @@ featured: true
 draft: false
 ---
 
-Congrats to **Jiangbei** and the team for a paper, [Multimodal Hate Detection Using Dual-Stream Graph Neural Networks](https://arxiv.org/abs/2509.13515), getting **accepted** in [BMVC 2025](https://bmvc2025.bmva.org/).
+Congrats to **Jiangbei** and the team for a paper, [Multimodal Hate Detection Using Dual-Stream Graph Neural Networks](publications/multimodal-hate-detection-dual-stream/), getting **accepted** in [BMVC 2025](https://bmvc2025.bmva.org/).

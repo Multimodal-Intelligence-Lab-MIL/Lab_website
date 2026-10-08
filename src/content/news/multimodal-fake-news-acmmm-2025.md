@@ -12,4 +12,4 @@ featured: false
 draft: false
 ---
 
-Congrats to **Ruby (UG)** and the team for [Integrating Semantic, Sentiment, and Object-level Cues for Multimodal Video-based Fake News Detection](https://doi.org/10.1145/3746275.3762214) getting **accepted** in an [ACM Multimedia 2025](https://acmmm2025.org/) Workshop.
+Congrats to **Ruby (UG)** and the team for [Integrating Semantic, Sentiment, and Object-level Cues for Multimodal Video-based Fake News Detection](publications/multimodal-fake-news-cues/) getting **accepted** in an [ACM Multimedia 2025](https://acmmm2025.org/) Workshop.

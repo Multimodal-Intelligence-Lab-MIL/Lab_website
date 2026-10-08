@@ -12,4 +12,4 @@ featured: false
 draft: false
 ---
 
-A paper, [Cross-Modal Progressive Modeling for Neuro-Visual Representation Learning](https://doi.org/10.1016/j.neucom.2026.133450), has been **accepted** to [Neurocomputing](https://www.sciencedirect.com/journal/neurocomputing). Congrats to **Yueming** and all co-authors!
+A paper, [Cross-Modal Progressive Modeling for Neuro-Visual Representation Learning](publications/cross-modal-progressive-modeling/), has been **accepted** to [Neurocomputing](https://www.sciencedirect.com/journal/neurocomputing). Congrats to **Yueming** and all co-authors!

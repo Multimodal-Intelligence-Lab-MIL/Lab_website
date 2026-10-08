@@ -13,4 +13,4 @@ featured: true
 draft: false
 ---
 
-Congrats to **Shuaiyu, Shuonan** and the team for two papers about [SAM-based marine pollution detection](https://arxiv.org/abs/2603.10231) and [training-free hateful video detection](https://arxiv.org/abs/2601.15115), getting **accepted** in [ICASSP 2026](https://2026.ieeeicassp.org/).
+Congrats to **Shuaiyu, Shuonan** and the team for two papers about [SAM-based marine pollution detection](publications/oilsam2/) and [training-free hateful video detection](publications/mars-hateful-video-detection/), getting **accepted** in [ICASSP 2026](https://2026.ieeeicassp.org/).

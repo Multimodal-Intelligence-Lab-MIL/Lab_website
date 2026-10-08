@@ -12,4 +12,4 @@ featured: false
 draft: false
 ---
 
-Congrats to **Shuonan** (UG) and the team for a paper, [Revealing Temporal Label Noise in Multimodal Hateful Video Classification](https://arxiv.org/abs/2508.04900), getting **accepted** in [ACM Multimedia 2025](https://acmmm2025.org/) Workshop.
+Congrats to **Shuonan** (UG) and the team for a paper, [Revealing Temporal Label Noise in Multimodal Hateful Video Classification](publications/revealing-temporal-label-noise/), getting **accepted** in [ACM Multimedia 2025](https://acmmm2025.org/) Workshop.

@@ -12,4 +12,4 @@ featured: true
 draft: false
 ---
 
-Congrats to **Zhufeng** and the team for [Discriminator-Guided Generative Adversarial Networks for Urban Flood Prediction](https://doi.org/10.1029/2025WR040510) getting **accepted** in [Water Resources Research](https://agupubs.onlinelibrary.wiley.com/journal/19447973).
+Congrats to **Zhufeng** and the team for [Discriminator-Guided Generative Adversarial Networks for Urban Flood Prediction](publications/discriminator-guided-flood-prediction/) getting **accepted** in [Water Resources Research](https://agupubs.onlinelibrary.wiley.com/journal/19447973).

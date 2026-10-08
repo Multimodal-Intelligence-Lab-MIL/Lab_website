@@ -12,6 +12,6 @@ featured: false
 draft: false
 ---
 
-A main paper, [CPR: Chained Perceptual Refinement for Coarse-to-Fine Medical Image Classification](https://arxiv.org/abs/2607.02591), and a workshop paper have been **accepted** to [MICCAI 2026](https://conferences.miccai.org/2026/en/default.asp). Congrats to all co-authors!
+A main paper, [CPR: Chained Perceptual Refinement for Coarse-to-Fine Medical Image Classification](publications/cpr-medical-image-classification/), and a workshop paper have been **accepted** to [MICCAI 2026](https://conferences.miccai.org/2026/en/default.asp). Congrats to all co-authors!
 
 The source announcement does not yet identify the workshop paper; it will be linked once public metadata becomes available.

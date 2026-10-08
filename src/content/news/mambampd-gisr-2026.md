@@ -12,4 +12,4 @@ featured: true
 draft: false
 ---
 
-A paper, [MambaMPD: A Mamba-Driven Segmentation Framework for Marine Pollution Detection from Remote Sensing Imagery](https://doi.org/10.1080/15481603.2026.2730893), has been **accepted** to [GIScience & Remote Sensing](https://www.tandfonline.com/journals/tgrs20). Congrats to **Shuaiyu** and all co-authors!
+A paper, [MambaMPD: A Mamba-Driven Segmentation Framework for Marine Pollution Detection from Remote Sensing Imagery](publications/mambampd/), has been **accepted** to [GIScience & Remote Sensing](https://www.tandfonline.com/journals/tgrs20). Congrats to **Shuaiyu** and all co-authors!

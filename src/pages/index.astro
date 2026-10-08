@@ -3,15 +3,15 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import SignalField from '../components/SignalField.astro';
 import site from '../data/site.json';
 import { sitePath } from '../lib/paths';
-import { getCollection } from 'astro:content';
+import { getCollection, render } from 'astro:content';
 
 const research = (await getCollection('research'))
   .filter((item) => !item.data.draft && item.data.featured)
   .sort((a, b) => a.data.order - b.data.order);
-const news = (await getCollection('news'))
+const newsEntries = (await getCollection('news'))
   .filter((item) => !item.data.draft)
-  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
-  .slice(0, 3);
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+const news = await Promise.all(newsEntries.map(async (entry) => ({ entry, content: await render(entry) })));
 ---
 
 <BaseLayout title={site.name} description={site.description} currentPath="/">
@@ -56,19 +56,28 @@ const news = (await getCollection('news'))
     </div>
   </section>
 
-  <section class="section latest-section">
+  <section class="section latest-section" id="news">
     <div class="shell">
       <div class="section-heading inline-heading">
-        <div><p class="eyebrow">Lab updates</p><h2>Latest news</h2></div>
-        <a class="text-link light" href={sitePath('news/')}>All news <span aria-hidden="true">↗</span></a>
+        <div><p class="eyebrow">Lab updates</p><h2>News</h2></div>
+        <p class="news-window-count">{news.length} updates · scroll to explore</p>
       </div>
-      <div class="news-feature-list">
-        {news.map((item, index) => (
-          <article class="news-feature">
-            <span class="news-index">0{index + 1}</span>
-            <div><p class="news-meta">{item.data.dateLabel || item.data.date.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })} · {item.data.category}</p><h3><a href={sitePath(`news/#${item.id}`)}>{item.data.title}</a></h3></div>
-          </article>
-        ))}
+      <div class="home-news-window">
+        <div class="home-news-toolbar" aria-hidden="true"><span></span><span></span><span></span><small>All lab updates</small></div>
+        <div class="home-news-scroll" tabindex="0" aria-label="All lab news, scrollable">
+          {news.map(({ entry, content: { Content } }) => (
+            <article class="home-news-entry" id={`news-${entry.id}`}>
+              <div class="home-news-date">
+                <strong>{entry.data.dateLabel || entry.data.date.toLocaleDateString('en-GB', { month: 'short', year: 'numeric' })}</strong>
+                <span>{entry.data.category}</span>
+              </div>
+              <div class="home-news-copy">
+                <h3>{entry.data.title}</h3>
+                <div class="prose news-prose"><Content /></div>
+              </div>
+            </article>
+          ))}
+        </div>
       </div>
     </div>
   </section>

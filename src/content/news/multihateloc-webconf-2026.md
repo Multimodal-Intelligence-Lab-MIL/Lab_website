@@ -12,4 +12,4 @@ featured: false
 draft: false
 ---
 
-Congrats to **Qiyue, Tailin** and the team for a paper, [MultiHateLoc: Towards Temporal Localisation of Multimodal Hate Content in Online Videos](https://arxiv.org/abs/2512.10408), getting **accepted** at [The Web Conference 2026](https://www2026.thewebconf.org/).
+Congrats to **Qiyue, Tailin** and the team for a paper, [MultiHateLoc: Towards Temporal Localisation of Multimodal Hate Content in Online Videos](publications/multihateloc/), getting **accepted** at [The Web Conference 2026](https://www2026.thewebconf.org/).

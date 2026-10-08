@@ -12,4 +12,4 @@ featured: true
 draft: false
 ---
 
-A paper, [Generalist–specialist transfer learning for cross-city spatial generalization in pluvial flood prediction](https://doi.org/10.1016/j.watres.2026.126650), has been **accepted** to [Water Research](https://www.sciencedirect.com/journal/water-research). Congrats to **Zhufeng** and all co-authors!
+A paper, [Generalist–specialist transfer learning for cross-city spatial generalization in pluvial flood prediction](publications/generalist-specialist-flood-prediction/), has been **accepted** to [Water Research](https://www.sciencedirect.com/journal/water-research). Congrats to **Zhufeng** and all co-authors!

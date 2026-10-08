@@ -1,53 +1,25 @@
 ---
-import { getCollection, render } from 'astro:content';
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import PageHero from '../../components/PageHero.astro';
 import { sitePath } from '../../lib/paths';
 
-const entries = (await getCollection('news')).filter((entry) => !entry.data.draft).sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
-const publications = (await getCollection('publications')).filter((entry) => !entry.data.draft);
-const publicationsById = new Map(publications.map((publication) => [publication.id, publication]));
-const rendered = await Promise.all(entries.map(async (entry) => ({
-  entry,
-  content: await render(entry),
-  relatedPublications: (entry.data.relatedPublications || [])
-    .map((id) => publicationsById.get(id))
-    .filter((publication) => publication !== undefined)
-})));
+const homeUrl = sitePath('');
+const newsUrl = sitePath('#news');
 ---
 
-<BaseLayout title="News" description="News and updates from the Multimodal Intelligence Lab." currentPath="/news/">
-  <PageHero eyebrow="Lab journal" title="News" intro="Publications, awards, opportunities and events from the Multimodal Intelligence Lab." stat={String(entries.length)} statLabel="updates in the current archive" />
-  <section class="section collection-section">
-    <div class="shell news-archive">
-      {rendered.map(({ entry, content: { Content }, relatedPublications }) => (
-        <article class="news-entry" id={entry.id}>
-          {entry.data.dateLabel ? (
-            <div class="news-date news-date-label"><strong>{entry.data.dateLabel}</strong></div>
-          ) : (
-            <div class="news-date"><strong>{entry.data.date.toLocaleDateString('en-GB', { day: '2-digit' })}</strong><span>{entry.data.date.toLocaleDateString('en-GB', { month: 'short', year: 'numeric' })}</span></div>
-          )}
-          <div class="news-entry-body">
-            <p class="news-meta">{entry.data.category}</p>
-            <h2>{entry.data.title}</h2>
-            <p class="news-summary">{entry.data.summary}</p>
-            <div class="prose"><Content /></div>
-            {relatedPublications.length > 0 && (
-              <div class="news-related-publications" aria-label="Related publications">
-                {relatedPublications.map((publication) => (
-                  <a href={sitePath(`publications/${publication.id}/`)}>
-                    <span>Publication</span>{publication.data.title}
-                  </a>
-                ))}
-              </div>
-            )}
-            <div class="news-entry-links">
-              {entry.data.externalUrl && <a class="text-link" href={entry.data.externalUrl} target="_blank" rel="noreferrer">Read related page <span>↗</span></a>}
-              {entry.data.sourceUrl && entry.data.sourceUrl !== entry.data.externalUrl && <a class="text-link" href={entry.data.sourceUrl} target="_blank" rel="noreferrer">View source <span>↗</span></a>}
-            </div>
-          </div>
-        </article>
-      ))}
-    </div>
-  </section>
-</BaseLayout>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="robots" content="noindex" />
+    <meta http-equiv="refresh" content={`0;url=${newsUrl}`} />
+    <link rel="canonical" href={newsUrl} />
+    <title>News · Multimodal Intelligence Lab</title>
+  </head>
+  <body>
+    <p>News now lives on the <a href={newsUrl}>home page</a>.</p>
+    <script is:inline define:vars={{ homeUrl, newsUrl }}>
+      const legacyId = window.location.hash.replace(/^#/, '');
+      window.location.replace(legacyId ? `${homeUrl}#news-${legacyId}` : newsUrl);
+    </script>
+  </body>
+</html>

@@ -12,4 +12,4 @@ featured: false
 draft: false
 ---
 
-Congrats to **Shuonan** and the team for [Reasoning-Aware Multimodal Fusion for Hateful Video Detection](https://openreview.net/forum?id=U9KnNiuMu1) getting **accepted** to [Transactions on Machine Learning Research](https://jmlr.org/tmlr/).
+Congrats to **Shuonan** and the team for [Reasoning-Aware Multimodal Fusion for Hateful Video Detection](publications/reasoning-aware-multimodal-fusion/) getting **accepted** to [Transactions on Machine Learning Research](https://jmlr.org/tmlr/).

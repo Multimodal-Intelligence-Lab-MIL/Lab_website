@@ -12,4 +12,4 @@ featured: false
 draft: false
 ---
 
-Congrats to **Shuaiyu** and the team for a paper, [Enhancing Remote Sensing Change Detection via Masked Edge Reconstruction](https://openaccess.thecvf.com/content/WACV2026W/CV4EO/html/Chen_Enhancing_Remote_Sensing_Change_Detection_via_Masked_Edge_Reconstruction_WACVW_2026_paper.html), getting **accepted** in the [WACV 2026](https://wacv.thecvf.com/) CV4EO Workshop.
+Congrats to **Shuaiyu** and the team for a paper, [Enhancing Remote Sensing Change Detection via Masked Edge Reconstruction](publications/masked-edge-reconstruction/), getting **accepted** in the [WACV 2026](https://wacv.thecvf.com/) CV4EO Workshop.

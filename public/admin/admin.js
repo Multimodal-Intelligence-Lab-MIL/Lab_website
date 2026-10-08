@@ -30,12 +30,10 @@
     news: [
       { key: 'title', label: 'Title', type: 'text', required: true, primary: true },
       { key: 'date', label: 'Date', type: 'date', required: true, default: today },
+      { key: 'dateLabel', label: 'Display date label (optional)', type: 'text', help: 'Use this only when the source gives a month rather than an exact day, for example “Sep 2026”.' },
       { key: 'category', label: 'Category', type: 'select', required: true, default: 'General', options: ['Publication', 'Award', 'Event', 'Opportunity', 'General'] },
-      { key: 'summary', label: 'Summary', type: 'textarea', required: true, wide: true, rows: 3 },
-      { key: 'externalUrl', label: 'External URL', type: 'url', wide: true },
-      { key: 'featured', label: 'Featured', type: 'checkbox', default: false },
       { key: 'draft', label: 'Draft', type: 'checkbox', default: false },
-      { key: 'body', label: 'Full news text (Markdown)', type: 'textarea', wide: true, rows: 10, body: true }
+      { key: 'body', label: 'News text', type: 'richtext', required: true, wide: true, rows: 12, body: true, help: 'Write naturally. To add a link, highlight the exact words first, then choose an external URL or a Publication below.' }
     ],
     publications: [
       { key: 'bibtex', label: '1. Paste BibTeX first', type: 'textarea', wide: true, rows: 11, block: true, importer: true, help: 'Paste one complete BibTeX entry, then let the form identify its title, authors, venue, year, DOI, links, abstract and keywords.' },
@@ -233,6 +231,8 @@
   }
 
   function makeField(field, value) {
+    if (field.type === 'richtext') return makeRichTextField(field, value);
+
     const fieldElement = document.createElement(field.importer ? 'div' : 'label');
     fieldElement.className = field.wide ? 'form-field field-wide' : 'form-field';
     if (field.importer) fieldElement.classList.add('bibtex-field');
@@ -316,6 +316,130 @@
     return fieldElement;
   }
 
+  function makeRichTextField(field, value) {
+    const fieldElement = document.createElement('div');
+    fieldElement.className = 'form-field field-wide rich-text-field';
+
+    const labelText = document.createElement('label');
+    const editorId = `${field.key}-rich-text-editor`;
+    labelText.htmlFor = editorId;
+    labelText.textContent = `${field.label}${field.required ? ' *' : ''}`;
+
+    const help = document.createElement('small');
+    help.textContent = field.help || '';
+
+    const editor = document.createElement('textarea');
+    editor.id = editorId;
+    editor.name = field.key;
+    editor.rows = field.rows || 10;
+    editor.required = Boolean(field.required);
+    editor.value = String(value ?? '');
+    editor.placeholder = 'Write the full news update here…';
+
+    const linkBuilder = document.createElement('div');
+    linkBuilder.className = 'rich-link-builder';
+
+    const linkHeading = document.createElement('div');
+    linkHeading.className = 'rich-link-heading';
+    const linkTitle = document.createElement('strong');
+    linkTitle.textContent = 'Link selected words';
+    const linkHint = document.createElement('small');
+    linkHint.textContent = 'Highlight text in the editor above, choose a destination, then apply the link.';
+    linkHeading.append(linkTitle, linkHint);
+
+    const controls = document.createElement('div');
+    controls.className = 'rich-link-controls';
+
+    const kindLabel = document.createElement('label');
+    const kindText = document.createElement('span');
+    kindText.textContent = 'Link destination';
+    const kindSelect = document.createElement('select');
+    kindSelect.setAttribute('data-rich-link-kind', '');
+    kindSelect.add(new Option('External URL', 'external'));
+    kindSelect.add(new Option('Website publication', 'publication'));
+    kindLabel.append(kindText, kindSelect);
+
+    const externalLabel = document.createElement('label');
+    externalLabel.setAttribute('data-rich-link-external', '');
+    const externalText = document.createElement('span');
+    externalText.textContent = 'External URL';
+    const externalInput = document.createElement('input');
+    externalInput.type = 'url';
+    externalInput.placeholder = 'https://conference.example.org/';
+    externalLabel.append(externalText, externalInput);
+
+    const publicationLabel = document.createElement('label');
+    publicationLabel.setAttribute('data-rich-link-publication', '');
+    publicationLabel.hidden = true;
+    const publicationText = document.createElement('span');
+    publicationText.textContent = 'Publication';
+    const publicationSelect = document.createElement('select');
+    publicationSelect.add(new Option('Choose a publication', ''));
+    (content.publications || []).forEach(function (publication) {
+      publicationSelect.add(new Option(`${publication.title} — ${publication.meta}`, `publications/${publication.id}/`));
+    });
+    publicationLabel.append(publicationText, publicationSelect);
+
+    const applyLinkButton = document.createElement('button');
+    applyLinkButton.className = 'outline-button rich-link-apply';
+    applyLinkButton.type = 'button';
+    applyLinkButton.textContent = 'Apply link to selected text';
+
+    const status = document.createElement('p');
+    status.className = 'rich-link-status';
+    status.setAttribute('aria-live', 'polite');
+
+    kindSelect.addEventListener('change', function () {
+      const usePublication = kindSelect.value === 'publication';
+      externalLabel.hidden = usePublication;
+      publicationLabel.hidden = !usePublication;
+      status.textContent = '';
+    });
+
+    applyLinkButton.addEventListener('click', function () {
+      const start = editor.selectionStart;
+      const end = editor.selectionEnd;
+      const selectedText = editor.value.slice(start, end);
+      if (!selectedText.trim()) {
+        status.textContent = 'Highlight the words you want to link in the news text first.';
+        editor.focus();
+        return;
+      }
+      if (selectedText.includes('\n')) {
+        status.textContent = 'Please select words within a single paragraph.';
+        editor.focus();
+        return;
+      }
+
+      const destination = kindSelect.value === 'publication'
+        ? publicationSelect.value
+        : externalInput.value.trim();
+      if (!destination) {
+        status.textContent = kindSelect.value === 'publication'
+          ? 'Choose a publication first.'
+          : 'Enter the external URL first.';
+        return;
+      }
+      if (kindSelect.value === 'external' && !/^https?:\/\//i.test(destination)) {
+        status.textContent = 'External links must begin with https:// or http://.';
+        externalInput.focus();
+        return;
+      }
+
+      editor.setRangeText(`[${selectedText}](${destination})`, start, end, 'end');
+      editor.dispatchEvent(new Event('input', { bubbles: true }));
+      editor.focus();
+      status.textContent = kindSelect.value === 'publication'
+        ? 'Publication link added to the selected words.'
+        : 'External link added to the selected words.';
+    });
+
+    controls.append(kindLabel, externalLabel, publicationLabel, applyLinkButton);
+    linkBuilder.append(linkHeading, controls, status);
+    fieldElement.append(labelText, help, editor, linkBuilder);
+    return fieldElement;
+  }
+
   function applyBibtexToForm() {
     const bibtexInput = contentForm?.querySelector('[name="bibtex"]');
     const overwriteInput = contentForm?.querySelector('[data-bibtex-overwrite]');
@@ -390,6 +514,12 @@
       }
     });
 
+    if (state.contentType === 'people') {
+      const categoryControl = contentForm.elements.category;
+      categoryControl?.addEventListener('change', syncPeopleCategoryFields);
+      syncPeopleCategoryFields();
+    }
+
     if (state.operation === 'create') {
       slugField.hidden = false;
       slugInput.required = true;
@@ -405,6 +535,22 @@
     resetCopyState();
     if (contentStatus) contentStatus.textContent = 'Complete the fields, then copy the full file before opening GitHub.';
     updateContentPath();
+  }
+
+  function syncPeopleCategoryFields() {
+    if (state.contentType !== 'people' || !contentForm) return;
+    const categoryControl = contentForm.elements.category;
+    const imageControl = contentForm.elements.image;
+    const currentControl = contentForm.elements.current;
+    const isAlumni = categoryControl?.value === 'Alumni';
+    const imageField = imageControl?.closest('.form-field');
+
+    if (imageField) imageField.hidden = isAlumni;
+    if (imageControl) {
+      imageControl.disabled = isAlumni;
+      if (isAlumni) imageControl.value = '';
+    }
+    if (isAlumni && currentControl) currentControl.checked = false;
   }
 
   function updateContentPath() {

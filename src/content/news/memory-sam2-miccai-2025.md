@@ -12,4 +12,4 @@ featured: true
 draft: false
 ---
 
-Congrats to **Ming** and the team for a paper, [Memory-Augmented SAM2 for Training-Free Surgical Video Segmentation](https://arxiv.org/abs/2507.09577), getting **accepted** in [MICCAI 2025](https://conferences.miccai.org/2025/en/). (**Oral Presentation**)
+Congrats to **Ming** and the team for a paper, [Memory-Augmented SAM2 for Training-Free Surgical Video Segmentation](publications/memory-sam2/), getting **accepted** in [MICCAI 2025](https://conferences.miccai.org/2025/en/). (**Oral Presentation**)

@@ -12,4 +12,4 @@ featured: true
 draft: false
 ---
 
-Congrats to **Yuchen** and the team for a paper, [DeHate: A Holistic Hateful Video Dataset for Explicit and Implicit Hate Detection](https://dl.acm.org/doi/10.1145/3746027.3758272), getting **accepted** in [ACM Multimedia 2025](https://acmmm2025.org/) Dataset Track.
+Congrats to **Yuchen** and the team for a paper, [DeHate: A Holistic Hateful Video Dataset for Explicit and Implicit Hate Detection](publications/dehate/), getting **accepted** in [ACM Multimedia 2025](https://acmmm2025.org/) Dataset Track.

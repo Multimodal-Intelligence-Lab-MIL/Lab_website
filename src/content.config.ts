@@ -8,7 +8,7 @@ const news = defineCollection({
     title: z.string(),
     date: z.coerce.date(),
     category: z.enum(['Publication', 'Award', 'Event', 'Opportunity', 'General']).default('General'),
-    summary: z.string(),
+    summary: z.string().optional().default(''),
     image: z.string().optional(),
     externalUrl: z.string().optional(),
     sourceUrl: z.string().optional(),

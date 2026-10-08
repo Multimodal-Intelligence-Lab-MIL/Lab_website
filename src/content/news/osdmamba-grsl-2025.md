@@ -12,4 +12,4 @@ featured: false
 draft: false
 ---
 
-Congrats to **Shuaiyu** and the team for the full version of [OSDMamba](https://arxiv.org/abs/2506.18006) getting **accepted** in [IEEE Geoscience and Remote Sensing Letters](https://ieeexplore.ieee.org/xpl/RecentIssue.jsp?punumber=8859).
+Congrats to **Shuaiyu** and the team for the full version of [OSDMamba](publications/osdmamba/) getting **accepted** in [IEEE Geoscience and Remote Sensing Letters](https://ieeexplore.ieee.org/xpl/RecentIssue.jsp?punumber=8859).

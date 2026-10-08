@@ -12,4 +12,4 @@ featured: false
 draft: false
 ---
 
-A paper, [CLARA: Clip-Level Multimodal Alignment with VLM-Derived Rationales for Hateful Video Detection](https://arxiv.org/abs/2608.15905), has been **accepted** to [ACM Multimedia 2026](https://2026.acmmm.org/). Congrats to **Yuchen** and all co-authors!
+A paper, [CLARA: Clip-Level Multimodal Alignment with VLM-Derived Rationales for Hateful Video Detection](publications/clara-hateful-video-detection/), has been **accepted** to [ACM Multimedia 2026](https://2026.acmmm.org/). Congrats to **Yuchen** and all co-authors!
