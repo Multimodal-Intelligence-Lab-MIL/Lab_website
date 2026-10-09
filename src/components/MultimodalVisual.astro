@@ -1,161 +1,120 @@
 ---
-// Two hemispheres of connected neurons, surrounded by examples of input signals.
-const leftNeurons = [
-  [274, 195], [241, 208], [221, 234], [258, 233], [281, 253],
-  [202, 263], [235, 267], [264, 280], [194, 298], [220, 305],
-  [249, 310], [280, 313], [206, 334], [232, 345], [263, 342],
-  [280, 371], [244, 375], [220, 368]
-];
-const neurons = [...leftNeurons, ...leftNeurons.map(([x, y]) => [590 - x, y])];
-const connections = neurons.flatMap(([x, y], index) =>
-  neurons.slice(index + 1).flatMap(([otherX, otherY]) =>
-    Math.hypot(x - otherX, y - otherY) < 58
-      ? [{ x, y, otherX, otherY }]
-      : []
-  )
-);
-const audioHeights = Array.from({ length: 31 }, (_, i) =>
-  6 + Math.abs(Math.sin(i * 1.8) * Math.sin(i * .34)) * 46
-);
+const waveform = Array.from({ length: 35 }, (_, i) => 4 + Math.abs(Math.sin(i * 1.7) * Math.sin(i * .25)) * 49);
+const terrain = Array.from({ length: 7 }, (_, row) => Array.from({ length: 18 }, (_, i) => {
+  const height = Math.exp(-Math.pow((i - 8) / 4, 2)) * (29 - row * 2);
+  return `${i * 6},${16 + row * 7 - height + Math.sin(i * .9 + row * .5) * 3}`;
+}).join(' '));
 ---
 
-<div class="multimodal-visual">
-  <svg viewBox="0 0 590 570" role="img" aria-label="Text, images, audio waveforms and sensor signals connected to a brain-shaped neural network">
+<div class="multimodal-visual" data-neural-scene role="img" aria-label="A luminous three-dimensional neural core, gathering cyan image signals, violet language, rose audio and teal sensor data">
+  <div class="core-aura" aria-hidden="true"></div>
+  <svg class="signal-constellation" viewBox="0 0 640 640" fill="none" aria-hidden="true">
     <defs>
-      <radialGradient id="neural-glow">
-        <stop stop-color="#72d3ee" stop-opacity=".3" />
-        <stop offset="1" stop-color="#72d3ee" stop-opacity="0" />
+      <radialGradient id="core-fallback-fill" cx="35%" cy="28%" r="75%">
+        <stop stop-color="#487b9a" /><stop offset=".45" stop-color="#173c60" /><stop offset="1" stop-color="#0b1d3c" />
       </radialGradient>
-      <linearGradient id="neural-fill" x2="1" y2="1">
-        <stop stop-color="#fff" stop-opacity=".85" />
-        <stop offset="1" stop-color="#d9effa" stop-opacity=".7" />
-      </linearGradient>
-      <linearGradient id="landscape-fill" x2="0" y2="1">
-        <stop stop-color="#89cee6" />
-        <stop offset="1" stop-color="#ebf8fc" />
+      <linearGradient id="orbit-spectrum" x1="0" x2="1" y1="0" y2="1">
+        <stop stop-color="var(--signal-vision)" /><stop offset=".45" stop-color="var(--signal-language)" /><stop offset="1" stop-color="var(--signal-audio)" />
       </linearGradient>
     </defs>
-
-    <circle cx="295" cy="286" r="214" fill="url(#neural-glow)" />
-    <g fill="none" stroke="#569fc5" stroke-width="1" opacity=".22">
-      <circle cx="295" cy="286" r="156" />
-      <circle cx="295" cy="286" r="212" stroke-dasharray="3 9" />
-      <path d="M132 116 Q200 116 241 208 M456 117 Q376 135 349 208 M477 295 Q431 298 396 298 M414 471 Q388 397 350 375 M113 436 Q145 345 194 298" />
+    <g class="orbital-guides" stroke="url(#orbit-spectrum)" stroke-width=".65">
+      <ellipse cx="320" cy="320" rx="242" ry="80" transform="rotate(-27 320 320)" />
+      <ellipse cx="320" cy="320" rx="216" ry="175" transform="rotate(32 320 320)" stroke-dasharray="1 10" />
+      <circle cx="320" cy="320" r="188" stroke-dasharray="48 215 1 18" />
     </g>
-    <g class="signal-streams" fill="none" stroke="#368cb6" stroke-width="1.4" stroke-dasharray="3 8" opacity=".5">
-      <path d="M151 135 Q218 153 258 233 M440 128 Q374 159 332 233 M468 294 L370 298 M404 450 Q360 422 327 342 M131 426 Q168 362 220 305" />
+    <g class="orbital-rim" stroke="url(#orbit-spectrum)" stroke-width="1">
+      <path d="M145 323A175 175 0 0 1 309 145M350 492A175 175 0 0 0 495 306" />
     </g>
-
-    <!-- Image inputs: a small stack of landscape, city and medical imagery. -->
-    <g transform="translate(18 62) rotate(-9 70 65)">
-      <rect class="input-card" x="15" y="-13" width="127" height="105" rx="8" />
-      <rect class="input-card" x="7" y="-6" width="127" height="105" rx="8" />
-      <rect class="input-card" width="127" height="105" rx="8" />
-      <rect x="8" y="8" width="111" height="76" rx="4" fill="url(#landscape-fill)" />
-      <circle cx="96" cy="27" r="9" fill="#fff4be" />
-      <path d="M8 72 40 32 69 65 84 50 119 79V84H8Z" fill="#5ea9ba" />
-      <path d="M8 80 35 63 67 77 96 60 119 74V84H8Z" fill="#226b81" />
-      <path d="M13 93H51M56 93H78" stroke="#b5d3df" stroke-width="3" stroke-linecap="round" />
-    </g>
-    <g transform="translate(84 163) rotate(7)">
-      <rect class="input-card" width="82" height="67" rx="6" />
-      <rect x="6" y="6" width="70" height="55" rx="3" fill="#e0edf5" />
-      <path d="M12 55V30H27V55M32 55V18H48V55M53 55V35H69V55" fill="#779caf" />
-      <path d="M37 26H43M37 34H43M37 42H43M17 38H22M58 42H64" stroke="#e7f5fc" stroke-width="2" />
-    </g>
-    <g transform="translate(30 241) rotate(-6)">
-      <rect class="input-card" width="88" height="73" rx="6" />
-      <rect x="6" y="6" width="76" height="61" rx="3" fill="#204156" />
-      <ellipse cx="44" cy="36" rx="22" ry="25" fill="#7897ab" />
-      <path d="M42 18Q22 28 36 47M47 19Q68 31 51 50M44 16V57" fill="none" stroke="#c2d7e4" stroke-width="3" />
-      <circle cx="45" cy="36" r="8" fill="#204156" />
-    </g>
-
-    <!-- Text inputs, without modality captions. -->
-    <g transform="translate(385 43) rotate(7 90 60)">
-      <rect class="input-card" x="12" y="-10" width="157" height="112" rx="8" />
-      <rect class="input-card" width="157" height="112" rx="8" />
-      <g fill="#547a91" font-family="ui-monospace, monospace" font-size="9">
-        <text x="14" y="26">Learning from the world</text>
-        <text x="14" y="43">context → meaning</text>
-        <text x="14" y="60">自然 · 人类 · 科学</text>
-      </g>
-      <g stroke="#bed7e4" stroke-width="3" stroke-linecap="round">
-        <path d="M15 76H139M15 87H121M15 98H75" />
-      </g>
-    </g>
-    <g transform="translate(453 177) rotate(-5)">
-      <rect class="input-card" width="117" height="45" rx="6" />
-      <g fill="#67869c" font-family="ui-monospace, monospace" font-size="8">
-        <text x="10" y="19">01001 10110 01011</text>
-        <text x="10" y="33">11010 00101 10010</text>
-      </g>
-    </g>
-
-    <!-- Audio inputs: overlapping waveforms and a spectrogram. -->
-    <g transform="translate(440 250) rotate(5 67 40)">
-      <rect class="input-card" x="8" y="-10" width="130" height="81" rx="8" />
-      <rect class="input-card" width="130" height="81" rx="8" />
-      <path d="M10 40H120" stroke="#d7e7ee" />
-      {audioHeights.map((height, i) => (
-        <line x1={12 + i * 3.5} x2={12 + i * 3.5} y1={40 - height / 2} y2={40 + height / 2} stroke={i % 3 ? '#459bc3' : '#83cbd5'} stroke-width="2" stroke-linecap="round" />
-      ))}
-    </g>
-    <g transform="translate(457 354) rotate(-5)">
-      <rect class="input-card" width="107" height="67" rx="6" />
-      {Array.from({ length: 22 }, (_, i) => (
-        <rect x={9 + i * 4} y="9" width="2.5" height="49" rx="1" fill={['#72bfd4', '#9baede', '#4198b7'][i % 3]} opacity={.25 + Math.abs(Math.sin(i * .6)) * .6} />
-      ))}
-    </g>
-
-    <!-- Sensor inputs: time series and spatial samples. -->
-    <g transform="translate(294 440) rotate(5 73 41)">
-      <rect class="input-card" x="9" y="9" width="156" height="87" rx="8" />
-      <rect class="input-card" width="156" height="87" rx="8" />
-      <g fill="none" stroke="#dce9f0" stroke-width="1">
-        <path d="M14 17H141M14 36H141M14 55H141M14 74H141M29 13V75M57 13V75M85 13V75M113 13V75" />
-      </g>
-      <path d="M14 47 26 48 31 24 38 67 45 43 57 46 68 42 76 18 83 65 89 40 104 44 115 31 123 54 131 42 141 45" fill="none" stroke="#3d9f9d" stroke-width="2" stroke-linejoin="round" />
-      <path d="M14 62Q33 31 53 58T94 56T141 62" fill="none" stroke="#8e9bcb" stroke-width="1.5" />
-    </g>
-    <g transform="translate(60 400) rotate(-7 67 43)">
-      <rect class="input-card" width="126" height="93" rx="8" />
-      <g fill="#5e9bb8">
-        {Array.from({ length: 32 }, (_, i) => (
-          <circle cx={17 + (i % 8) * 13} cy={21 + Math.floor(i / 8) * 16 + Math.sin(i * 2) * 6} r={i % 4 === 0 ? 2.5 : 1.5} opacity={.4 + (i % 3) * .25} />
-        ))}
-      </g>
-      <path d="M17 76 43 47 75 60 108 29M43 47 43 23M75 60 99 75" stroke="#86b3c8" stroke-width="1" fill="none" />
-    </g>
-
-    <!-- Brain-shaped neural network at the centre. -->
-    <g class="neural-brain">
-      <path d="M284 189C270 171 244 182 237 199C211 194 195 215 201 236C180 247 179 272 190 286C177 307 189 333 204 339C201 362 219 378 236 377C245 396 272 398 284 380Z M306 189C320 171 346 182 353 199C379 194 395 215 389 236C410 247 411 272 400 286C413 307 401 333 386 339C389 362 371 378 354 377C345 396 318 398 306 380Z" fill="url(#neural-fill)" stroke="#73adc9" stroke-width="1.5" />
-      <g stroke="#539abc" stroke-width="1" opacity=".52">
-        {connections.map(({ x, y, otherX, otherY }) => (
-          <line x1={x} y1={y} x2={otherX} y2={otherY} />
-        ))}
-      </g>
-      {neurons.map(([x, y], i) => (
-        <g>
-          <circle class="neuron-halo" cx={x} cy={y} r="7" fill="#79cce1" opacity=".14" style={`animation-delay: ${i * .12}s`} />
-          <circle cx={x} cy={y} r={i % 5 === 0 ? 4 : 2.8} fill={i % 3 === 0 ? '#38a8b5' : '#377ea7'} />
-          <circle cx={x - .6} cy={y - .6} r=".85" fill="#ecfbff" />
+    <g class="signal-source vision-source">
+      <g transform="translate(47 115) rotate(-12 55 40)">
+        <path class="signal-frame rear-frame" d="M14-12H114V58M7-6H107V64" />
+        <rect class="signal-frame" width="110" height="77" rx="3" />
+        <g transform="translate(4 22)" stroke="currentColor" stroke-width=".8">
+          {terrain.map((points, i) => <polyline points={points} opacity={.35 + i * .08} />)}
         </g>
-      ))}
+        <circle cx="83" cy="17" r="4" fill="currentColor" opacity=".65" />
+        <path d="M0 13V0H13M97 77H110V64" stroke="currentColor" />
+      </g>
+      <path class="signal-trace" d="M145 199C196 206 204 244 242 263" />
+      <path class="signal-pulse" d="M145 199C196 206 204 244 242 263" />
+      <circle cx="166" cy="213" r="2.4" fill="currentColor" />
+    </g>
+    <g class="signal-source language-source">
+      <g transform="translate(469 107) rotate(9 50 40)">
+        <path class="signal-frame" d="M0 16V0H16M112 62V78H96" />
+        <g fill="currentColor" font-family="ui-monospace, monospace">
+          <text x="8" y="20" font-size="11" letter-spacing="3">A α 文 Ω</text>
+          <text x="8" y="40" font-size="7.5" opacity=".8">The world in context</text>
+          <text x="8" y="55" font-size="7.5" opacity=".6">meaning · connection</text>
+        </g>
+        <path d="M8 69H47M53 69H80" stroke="currentColor" stroke-width="1.3" opacity=".4" />
+      </g>
+      <path class="signal-trace" d="M480 191C422 203 430 246 398 268" />
+      <path class="signal-pulse" d="M480 191C422 203 430 246 398 268" />
+      <circle cx="459" cy="202" r="2.4" fill="currentColor" />
+    </g>
+    <g class="signal-source audio-source">
+      <g transform="translate(471 442) rotate(8 62 30)">
+        <path d="M0 31H128" stroke="currentColor" opacity=".17" />
+        {waveform.map((height, i) => <line class="audio-bar" x1={5 + i * 3.4} x2={5 + i * 3.4} y1={31 - height / 2} y2={31 + height / 2} stroke="currentColor" stroke-width="1.6" stroke-linecap="round" style={`--bar-delay: ${-i * .19}s`} />)}
+        <path d="M10 70Q31 55 48 69T83 69T118 66" stroke="currentColor" stroke-width=".8" opacity=".4" />
+      </g>
+      <path class="signal-trace" d="M486 438C437 425 423 379 394 376" />
+      <path class="signal-pulse" d="M486 438C437 425 423 379 394 376" />
+      <circle cx="459" cy="424" r="2.4" fill="currentColor" />
+    </g>
+    <g class="signal-source sensor-source">
+      <g transform="translate(45 434) rotate(-8 62 40)">
+        <path d="M10 6V78H126M10 60H126M10 38H126M38 6V78M67 6V78M96 6V78" stroke="currentColor" stroke-width=".6" opacity=".16" />
+        <path d="M11 48 28 48 36 35 43 59 52 22 62 65 71 42 89 43 100 28 107 51 117 39 126 41" stroke="currentColor" stroke-width="1.4" />
+        {[0, 1, 2, 3, 4, 5, 6].map(i => <circle cx={17 + i * 16} cy={11 + Math.sin(i * 2) * 5} r="1.3" fill="currentColor" opacity=".6" />)}
+      </g>
+      <path class="signal-trace" d="M167 442C207 422 210 393 244 372" />
+      <path class="signal-pulse" d="M167 442C207 422 210 393 244 372" />
+      <circle cx="184" cy="430" r="2.4" fill="currentColor" />
+    </g>
+    <g class="core-fallback">
+      <circle cx="320" cy="320" r="132" fill="url(#core-fallback-fill)" />
+      {Array.from({ length: 9 }, (_, i) => <ellipse cx="320" cy="320" rx={20 + i * 14} ry="131" stroke="#7fd5e8" stroke-width=".6" opacity=".45" transform={`rotate(${i * 20} 320 320)`} />)}
+    </g>
+    <g fill="#638aa2" opacity=".35">
+      <circle cx="249" cy="88" r="1.4" /><circle cx="559" cy="302" r="1.4" /><circle cx="338" cy="561" r="1.4" /><circle cx="92" cy="330" r="1.4" />
     </g>
   </svg>
+  <canvas class="neural-canvas" aria-hidden="true"></canvas>
+  <div class="core-ground" aria-hidden="true"></div>
 </div>
 
+<script>
+  import { mountNeuralScene } from '../lib/neural-scene';
+  document.querySelectorAll<HTMLElement>('[data-neural-scene]').forEach(mountNeuralScene);
+</script>
+
 <style>
-  .multimodal-visual { width: 100%; max-width: 590px; justify-self: center; }
-  svg { display: block; width: 100%; height: auto; overflow: visible; }
-  .input-card { fill: #fcfeff; stroke: #bed9e8; stroke-width: 1; }
-  .signal-streams { animation: signal-flow 18s linear infinite; }
-  .neuron-halo { transform-box: fill-box; transform-origin: center; animation: neuron-pulse 4s ease-in-out infinite; }
-  @keyframes signal-flow { to { stroke-dashoffset: -110; } }
-  @keyframes neuron-pulse { 50% { opacity: .38; transform: scale(1.45); } }
-  @media (prefers-reduced-motion: reduce) {
-    .signal-streams, .neuron-halo { animation: none; }
-  }
+  .multimodal-visual { position: relative; width: 112%; max-width: 680px; aspect-ratio: 1; justify-self: center; isolation: isolate; }
+  .signal-constellation, .neural-canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .neural-canvas { pointer-events: none; }
+  .core-aura { position: absolute; inset: 14%; border-radius: 50%; background: conic-gradient(from 30deg, #8f87ee26, #cf77a91a, #70cdb726, #68c9e52e, #8f87ee26); filter: blur(38px); animation: aura-turn 50s linear infinite; }
+  .core-ground { position: absolute; left: 30%; right: 30%; bottom: 14%; height: 3%; border-radius: 50%; background: #325979; opacity: .13; filter: blur(14px); }
+  .orbital-guides { opacity: .24; }
+  .orbital-rim { opacity: .4; transform-origin: 320px 320px; animation: aura-turn 100s linear infinite; }
+  .signal-source { color: var(--signal-vision); }
+  .language-source { color: var(--signal-language); }
+  .audio-source { color: var(--signal-audio); }
+  .sensor-source { color: var(--signal-sensor); }
+  .signal-frame { fill: #ffffff66; stroke: currentColor; stroke-width: .65; stroke-opacity: .45; }
+  .rear-frame { fill: none; opacity: .5; }
+  .signal-trace { stroke: currentColor; stroke-width: .7; opacity: .23; }
+  .signal-pulse { stroke: currentColor; stroke-width: 1.6; stroke-dasharray: 3 26; stroke-linecap: round; opacity: .68; animation: signal-transmission 7s linear infinite; }
+  .language-source .signal-pulse { animation-delay: -1.7s; }
+  .audio-source .signal-pulse { animation-delay: -3.5s; }
+  .sensor-source .signal-pulse { animation-delay: -5.2s; }
+  .audio-bar { transform-box: fill-box; transform-origin: center; animation: audio-breathe 4s ease-in-out var(--bar-delay) infinite; }
+  [data-ready] .core-fallback { display: none; }
+  [data-paused] *, [data-paused]::before { animation-play-state: paused !important; }
+  @keyframes signal-transmission { to { stroke-dashoffset: -116; } }
+  @keyframes aura-turn { to { transform: rotate(360deg); } }
+  @keyframes audio-breathe { 50% { transform: scaleY(.45); opacity: .45; } }
+  @media (max-width: 900px) { .multimodal-visual { width: 100%; max-width: 580px; margin-top: -1rem; } }
+  @media (prefers-reduced-motion: reduce) { .core-aura, .orbital-rim, .signal-pulse, .audio-bar { animation: none; } }
 </style>

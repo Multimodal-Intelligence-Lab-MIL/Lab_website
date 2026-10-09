@@ -50,15 +50,36 @@ nav[data-menu] .nav-contact { padding: .62rem .95rem; color: #145f91; background
 .menu-button { display: none; width: 44px; height: 44px; padding: 10px; color: var(--ink); background: transparent; border: 0; }
 .menu-button span { display: block; width: 100%; height: 1px; margin: 6px 0; background: currentColor; }
 
-.hero { position: relative; padding: 10.5rem 0 6rem; overflow: hidden; color: var(--ink); background: radial-gradient(circle at 78% 43%, rgba(151,216,242,.48) 0, rgba(222,243,251,.6) 23%, rgba(255,255,255,.94) 60%, #f9fcfe 100%); }
-.hero::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(90deg, transparent 49.9%, rgba(25,104,156,.045) 50%, transparent 50.1%); background-size: 18% 100%; }
-.signal-field { position: absolute; inset: 0; overflow: hidden; }
-.signal-field canvas { width: 100%; height: 100%; opacity: .82; }
-.signal-orbit { position: absolute; border: 1px solid rgba(35,128,184,.13); border-radius: 50%; }
-.signal-orbit-a { width: 620px; height: 620px; right: -60px; top: 170px; }
-.signal-orbit-b { width: 390px; height: 390px; right: 55px; top: 285px; border-color: rgba(94,139,207,.15); }
+.hero {
+  --signal-vision: #218eaf;
+  --signal-language: #7964bf;
+  --signal-audio: #b85888;
+  --signal-sensor: #238c7c;
+  --signal-vision-rgb: 96, 214, 241;
+  --signal-language-rgb: 180, 158, 249;
+  --signal-audio-rgb: 240, 143, 193;
+  --signal-sensor-rgb: 99, 222, 187;
+  position: relative; padding: 10.5rem 0 6rem; overflow: hidden; color: var(--ink);
+  background: radial-gradient(ellipse at 80% 48%, #e7f0f9 0, #f2f7fb 35%, #fcfdff 68%);
+}
+.hero::after { content: ''; position: absolute; inset: auto 0 0; height: 1px; background: linear-gradient(90deg, transparent, #bfdae2, #d6cbe5, transparent); }
+.signal-field { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+.signal-ambient { position: absolute; inset: 5% -12% 0 30%; background: radial-gradient(ellipse at 30% 34%, #b0e4ee33, transparent 48%), radial-gradient(ellipse at 74% 39%, #c1b7ef26, transparent 45%), radial-gradient(ellipse at 65% 75%, #ecc4d921, transparent 40%); animation: ambient-drift 24s ease-in-out infinite alternate; }
+.signal-horizon { position: absolute; width: 85%; height: 36%; right: -25%; top: 49%; border-top: 1px solid #aec9df26; border-radius: 50%; transform: rotate(-24deg); box-shadow: 0 -12px 60px #add8ee0a; }
 .hero-grid { position: relative; z-index: 2; display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(0, .92fr); align-items: center; gap: 2rem; }
-.hero-copy h1 { margin: 0; font-size: clamp(2.6rem, 4.5vw, 4.1rem); font-weight: 500; line-height: 1.08; }
+.hero-copy h1 { margin: 0; font-size: clamp(2.6rem, 4.5vw, 4.1rem); font-weight: 550; line-height: 1.08; letter-spacing: -.045em; }
+.hero-title { color: #23566e; }
+@supports ((background-clip: text) or (-webkit-background-clip: text)) {
+  .hero-title {
+    background-image: linear-gradient(110deg, #193b58 0%, #216d89 12%, var(--signal-vision) 23%, var(--signal-language) 36%, var(--signal-audio) 47%, var(--signal-sensor) 60%, #216d89 73%, #193b58 85%, var(--signal-language) 100%);
+    background-size: 300% 100%; background-position: 0% 50%;
+    background-clip: text; -webkit-background-clip: text; color: transparent;
+    animation: title-spectrum 20s ease-in-out infinite alternate;
+  }
+}
+.hero[data-animation-paused] .hero-title, .hero[data-animation-paused] .signal-ambient { animation-play-state: paused; }
+@keyframes title-spectrum { to { background-position: 100% 50%; } }
+@keyframes ambient-drift { to { transform: translate(-4%, 3%) scale(1.06); } }
 .hero-intro { max-width: 690px; margin: 2rem 0 0; color: #506b7f; font-size: clamp(1rem, 1.2vw, 1.1rem); line-height: 1.85; }
 .hero-intro strong { color: var(--ink-soft); font-weight: 650; }
 .hero-actions { display: flex; align-items: center; gap: 2rem; margin-top: 2.3rem; }
@@ -69,6 +90,9 @@ nav[data-menu] .nav-contact { padding: .62rem .95rem; color: #145f91; background
 .text-link span { color: var(--blue); }
 .hero .text-link { color: #224b68; }
 .hero .text-link span, .text-link.light span { color: #287fb5; }
+.hero .button-primary { border: 1px solid #b7d4e4; border-radius: 6px; background: linear-gradient(120deg, #f9fdff, #e3f0f8); box-shadow: inset 0 1px 0 #fff, 0 4px 16px #37688b09; transition: background .2s ease, border-color .2s ease, box-shadow .2s ease; }
+.hero .button-primary:hover { border-color: #7aa8c6; background: #e0eef7; box-shadow: 0 5px 20px #37688b12; }
+.hero .button-primary:focus-visible, .hero .text-link:focus-visible { outline: 3px solid #267dff; outline-offset: 4px; }
 .research-overview { padding-block: clamp(4rem, 7vw, 6rem); background: var(--paper); border-top: 1px solid rgba(35,118,168,.1); }
 .research-heading { margin-bottom: 2rem; color: #476a81; font: 500 .85rem/1.4 var(--mono); letter-spacing: .12em; text-transform: uppercase; }
 .research-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
@@ -365,8 +389,13 @@ nav[data-menu] .nav-contact { padding: .62rem .95rem; color: #145f91; background
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .hero-title, .signal-ambient { animation: none; }
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
   .publication-card:hover, .publication-card:focus-within, .person-card:hover, .person-card:focus-within { transform: none; }
   .publication-card:hover .publication-cover > img, .publication-card:focus-within .publication-cover > img, .person-card:hover .person-photo img, .person-card:focus-within .person-photo img { transform: none; }
+}
+
+@media (forced-colors: active) {
+  .hero-title { color: CanvasText; background: none; }
 }
