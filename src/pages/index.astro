@@ -8,15 +8,9 @@ import site from '../data/site.json';
 import { sitePath } from '../lib/paths';
 import { getCollection, render } from 'astro:content';
 import { localImage } from '../lib/media';
+import { getResearchAreas, researchAreaPath } from '../lib/research';
 
-const researchInterests = [
-  'Video analysis',
-  'Multimedia Computing',
-  'Machine learning',
-  'Medical image/video analysis',
-  'Satellite and drone imagery analysis',
-  'AI for Science'
-];
+const researchAreas = await getResearchAreas();
 // Rows of three: independent funders first, then the three UKRI councils together.
 const funders = [
   { logo: 'alan-turing-institute.png', name: 'The Alan Turing Institute' },
@@ -73,10 +67,21 @@ const news = await Promise.all(newsEntries.map(async (entry) => ({ entry, conten
     <div class="shell">
       <h2 class="research-heading">Research interests</h2>
       <div class="research-grid">
-        {researchInterests.map((title) => (
-          <a class="research-tile" data-glass="panel" href={sitePath('research/')}>
-            <h3>{title}</h3>
-          </a>
+        {researchAreas.map(({ area, papers }) => (
+          <div class="research-item">
+            <a class="research-tile" data-glass="panel" href={researchAreaPath(area.id)} aria-describedby={`area-summary-${area.id}`}>
+              <h3>{area.data.title}</h3>
+              <p class="research-tile-summary" aria-hidden="true">{area.data.summary}</p>
+              <span class="research-tile-count">{papers.length} publications</span>
+            </a>
+            {/* A sibling of the tile, not a child: a glass pane isolates the backdrop of
+                anything inside it, so a larger popover nested in it would blur nothing. */}
+            <div class="research-pop" data-glass="float">
+              <p class="research-pop-title">{area.data.title}</p>
+              <p id={`area-summary-${area.id}`}>{area.data.summary}</p>
+              <span class="research-pop-more">{papers.length} publications · Explore <span aria-hidden="true">→</span></span>
+            </div>
+          </div>
         ))}
       </div>
     </div>

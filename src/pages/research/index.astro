@@ -1,24 +1,74 @@
 ---
 import '../../styles/research.css';
-import { getCollection, render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PageHero from '../../components/PageHero.astro';
+import { getResearchAreas } from '../../lib/research';
+import { sitePath } from '../../lib/paths';
 
-const entries = (await getCollection('research')).filter((entry) => !entry.data.draft).sort((a, b) => a.data.order - b.data.order);
-const rendered = await Promise.all(entries.map(async (entry) => ({ entry, content: await render(entry) })));
+const areas = await getResearchAreas();
+const paperCount = areas.reduce((total, { papers }) => total + papers.length, 0);
+const count = (n: number) => `${n} publication${n === 1 ? '' : 's'}`;
 ---
 
-<BaseLayout title="Research" description="Research themes of the Multimodal Intelligence Lab." currentPath="/research/">
-  <PageHero eyebrow="Research programme" title="Research" intro="We connect video and multimedia analysis with machine learning, healthcare, environmental monitoring and AI for science." stat={String(entries.length).padStart(2, '0')} statLabel="interconnected research themes" />
+<BaseLayout title="Research" description="Research areas of the Multimodal Intelligence Lab." currentPath="/research/">
+  <PageHero eyebrow="Research programme" title="Research" intro={`Our work spans ${areas.length} connected areas, from multimedia safety and healthcare to the environment, visual scene understanding and trustworthy AI, with ${paperCount} publications so far.`} stat={String(areas.length).padStart(2, '0')} statLabel="research areas" />
   <section class="section research-page">
-    <div class="shell research-theme-list">
-      {rendered.map(({ entry, content: { Content } }, index) => (
-        <article class={`research-theme accent-${entry.data.accent}`}>
-          <div class="theme-number">{String(index + 1).padStart(2, '0')}</div>
-          <div><p class="eyebrow dark">{entry.data.shortTitle}</p><h2>{entry.data.title}</h2></div>
-          <div class="theme-copy"><p class="theme-summary">{entry.data.summary}</p><div class="prose"><Content /></div></div>
+    <div class="shell research-areas">
+      {areas.map(({ area, papers }, index) => (
+        <article class="research-area" id={area.id} data-research-area>
+          <div class="research-card" data-glass="sheet">
+            <p class="research-card-index">{String(index + 1).padStart(2, '0')}</p>
+            <h2>{area.data.title}</h2>
+            <p class="research-card-summary">{area.data.summary}</p>
+            <button class="research-card-toggle" type="button" aria-expanded="false" aria-controls={`papers-${area.id}`} data-research-toggle>
+              {count(papers.length)} <span aria-hidden="true">↗</span>
+            </button>
+          </div>
+          {/* A sibling of the card, not a child: a glass pane isolates the backdrop of
+              anything inside it, so the list could not blur the page behind it. */}
+          <div class="research-papers" id={`papers-${area.id}`} data-glass="float" role="region" aria-label={`Publications in ${area.data.title}`}>
+            <header>
+              <p>{area.data.title}</p>
+              <span>{count(papers.length)}</span>
+            </header>
+            <ol>
+              {papers.map((paper) => (
+                <li>
+                  <a href={sitePath(`publications/${paper.id}/`)}>
+                    <span class="research-paper-year">{paper.data.year}</span>
+                    <span class="research-paper-title">{paper.data.title}</span>
+                    {paper.data.venue && <span class="research-paper-venue">{paper.data.venue}</span>}
+                  </a>
+                </li>
+              ))}
+            </ol>
+          </div>
         </article>
       ))}
     </div>
   </section>
+  <script is:inline>
+    // Hover reveals a list after a short dwell (CSS). The button opens it for touch and
+    // keyboard; Escape, a click elsewhere or the button again closes it.
+    const areas = [...document.querySelectorAll('[data-research-area]')];
+    const setOpen = (area, open) => {
+      area.toggleAttribute('data-open', open);
+      area.querySelector('[data-research-toggle]')?.setAttribute('aria-expanded', String(open));
+    };
+    areas.forEach((area) => area.querySelector('[data-research-toggle]')?.addEventListener('click', () => {
+      const open = !area.hasAttribute('data-open');
+      areas.forEach((other) => other !== area && setOpen(other, false));
+      setOpen(area, open);
+    }));
+    document.addEventListener('click', (event) => {
+      if (!event.target.closest('[data-research-area]')) areas.forEach((area) => setOpen(area, false));
+    });
+    document.addEventListener('keydown', (event) => {
+      if (event.key !== 'Escape') return;
+      areas.filter((area) => area.hasAttribute('data-open')).forEach((area) => {
+        setOpen(area, false);
+        area.querySelector('[data-research-toggle]')?.focus();
+      });
+    });
+  </script>
 </BaseLayout>

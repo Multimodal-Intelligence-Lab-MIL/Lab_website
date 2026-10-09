@@ -1,4 +1,4 @@
-import { defineCollection } from 'astro:content';
+import { defineCollection, reference } from 'astro:content';
 import { z } from 'astro/zod';
 import { glob } from 'astro/loaders';
 
@@ -27,6 +27,8 @@ const publications = defineCollection({
     venue: z.string().optional(),
     year: z.number(),
     category: z.enum(['Journal', 'Conference', 'Workshop', 'Preprint', 'Dataset', 'Other']).default('Other'),
+    // Required: the build fails if a paper names a research area that does not exist.
+    research: reference('research'),
     image: z.string().optional(),
     imageAlt: z.string().optional(),
     abstract: z.string().optional(),

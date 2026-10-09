@@ -4,6 +4,7 @@ authors: "Snehil Kumar, Neil Vaughan, Zeyu Fu, Heather Wilson"
 venue: "ACM Multimedia 2025 Open Source Track"
 year: 2025
 category: Conference
+research: ai-for-healthcare
 abstract: "Motion artifacts in structural and functional magnetic resonance imaging (MRI) pose a significant challenge for both clinical use and machine learning (ML)-based image analysis. Existing ML approaches for artifact correction require paired clean and corrupted datasets, which are difficult to acquire. We present py-simpace, an open-source, pip-installable MRI motion artifact simulation toolkit with native ML integration. py-simpace supports structural MRI and functional MRI (fMRI) simulation, offering configurable k-space and image-space motion, ghosting, Gibbs ringing, and physiological noise. It provides an end-to-end pipeline with a ready-to-use PyTorch Dataset interface for ML training. We describe the design of py-simpace v2.0, compare it with existing tools, and demonstrate its utility for robust artifact correction model development."
 doi: "10.1145/3746027.3756875"
 paperUrl: "https://doi.org/10.1145/3746027.3756875"

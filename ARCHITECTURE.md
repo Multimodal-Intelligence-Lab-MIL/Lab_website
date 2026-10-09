@@ -104,6 +104,7 @@ GitHub 是唯一内容源。`/admin/` 不拥有独立数据库，而是把管理
 - `venue`
 - `year`
 - `category`
+- `research`（必填）：所属研究方向的文件名（如 `ai-for-healthcare`）。构建时校验，指向不存在的方向会使构建失败；前台显示为可点击标签，跳转到 Research 页面对应方向。
 - 可选封面、摘要、奖项说明、关键词
 - DOI、Paper、PDF、arXiv、Project、Code、Dataset、Video
 - 原始 BibTeX
@@ -124,10 +125,12 @@ GitHub 是唯一内容源。`/admin/` 不拥有独立数据库，而是把管理
 ### Research
 
 - 完整标题与短标题
-- 首页摘要
-- Markdown 详细说明
+- `summary`：一两句说明具体研究内容，显示在 Research 页面卡片和首页悬浮卡片中
+- Markdown 详细说明（可选）
 - 色彩标识和排序
 - `featured`、`draft`
+
+当前五个方向：Multimedia Understanding and Safety、AI for Healthcare、AI for Environment、Video and Scene Understanding、Trustworthy AI。首页和 Research 页面都直接读取该 collection，论文数量与列表按 `research` 字段自动汇总。后台新增论文时必须选择方向；选择 “Add new research area…” 会先保存正在填写的论文、切换到新建方向，完成后可返回并自动选中新方向（需先提交方向文件，再提交论文）。删除仍被论文使用的方向时后台会给出提示。
 
 ## 6. 保存与发布流程
 

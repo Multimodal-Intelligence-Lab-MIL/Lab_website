@@ -12,7 +12,7 @@
    displacement per pane: like Liquid-Glass-HTML, no chained colour split, which
    tripled the cost of the navigation bar while scrolling. */
 
-type Tier = 'bar' | 'control' | 'panel' | 'sheet';
+type Tier = 'bar' | 'control' | 'panel' | 'sheet' | 'float';
 
 const svgNamespace = 'http://www.w3.org/2000/svg';
 const filters = new Map<string, Promise<string>>();
@@ -20,8 +20,9 @@ const mapLimit = 384;
 let defs: SVGDefsElement | undefined;
 let counter = 0;
 
+// BaseLayout marks engines without SVG backdrop filters before first paint.
 const supportsRefraction = () =>
-  /Chrome|Chromium|Edg\//.test(navigator.userAgent) &&
+  document.documentElement.dataset.glassEngine !== 'css' &&
   !matchMedia('(prefers-reduced-transparency: reduce), (forced-colors: active)').matches;
 
 function container() {
@@ -181,6 +182,16 @@ function followPointer() {
   if (!matchMedia('(hover: hover) and (pointer: fine)').matches) return;
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   let current: HTMLElement | null = null;
+  let pending: PointerEvent | null = null;
+  // Coordinates are written at most once a frame; each write restyles the pane.
+  const apply = () => {
+    const event = pending;
+    pending = null;
+    if (!event || !current) return;
+    const rect = current.getBoundingClientRect();
+    current.style.setProperty('--mx', `${((event.clientX - rect.left) / rect.width * 100).toFixed(1)}%`);
+    current.style.setProperty('--my', `${((event.clientY - rect.top) / rect.height * 100).toFixed(1)}%`);
+  };
   document.addEventListener('pointermove', (event) => {
     const pane = (event.target as Element | null)?.closest<HTMLElement>('[data-glass]') ?? null;
     if (pane !== current) {
@@ -189,9 +200,8 @@ function followPointer() {
       pane?.setAttribute('data-glass-lit', '');
     }
     if (!pane) return;
-    const rect = pane.getBoundingClientRect();
-    pane.style.setProperty('--mx', `${((event.clientX - rect.left) / rect.width * 100).toFixed(1)}%`);
-    pane.style.setProperty('--my', `${((event.clientY - rect.top) / rect.height * 100).toFixed(1)}%`);
+    if (!pending) requestAnimationFrame(apply);
+    pending = event;
   }, { passive: true });
   document.documentElement.addEventListener('pointerleave', () => {
     current?.removeAttribute('data-glass-lit');
@@ -199,14 +209,20 @@ function followPointer() {
   });
 }
 
-/** Hold the scene still while scrolling, when every pane is already being repainted. */
+/** Hold the scene still while scrolling, when every pane is already being repainted.
+    Styled on the scene itself: toggling an attribute on <html> for every scroll event
+    can restyle the whole document. */
 function pauseSceneWhileScrolling() {
-  const root = document.documentElement;
+  const scene = document.querySelector<HTMLElement>('.liquid-scene');
+  if (!scene) return;
   let timer = 0;
   addEventListener('scroll', () => {
-    root.setAttribute('data-scrolling', '');
+    if (!timer) scene.style.animationPlayState = 'paused';
     clearTimeout(timer);
-    timer = window.setTimeout(() => root.removeAttribute('data-scrolling'), 180);
+    timer = window.setTimeout(() => {
+      timer = 0;
+      scene.style.animationPlayState = '';
+    }, 180);
   }, { passive: true });
 }
 

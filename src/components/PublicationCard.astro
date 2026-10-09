@@ -2,6 +2,7 @@
 import { sitePath } from '../lib/paths';
 import OptimizedImage from './OptimizedImage.astro';
 import LabCover from './LabCover.astro';
+import { getPublicationArea, researchAreaPath } from '../lib/research';
 
 interface Props {
   entry: any;
@@ -11,6 +12,7 @@ const { entry, priority = false } = Astro.props;
 const publication = entry.data;
 const detailUrl = sitePath(`publications/${entry.id}/`);
 const abstractId = `publication-abstract-${entry.id}`;
+const area = await getPublicationArea(entry);
 const links = [
   ['Paper', publication.paperUrl || publication.pdf],
   ['arXiv', publication.arxiv],
@@ -43,6 +45,7 @@ const links = [
     <div class="publication-topline">
       <span>{publication.category}</span>
       {publication.award && <strong>{publication.award}</strong>}
+      {area && <a class="research-area-tag" href={researchAreaPath(area.id)}>{area.data.title}</a>}
     </div>
     <h2><a href={detailUrl}>{publication.title}</a></h2>
     <p class="publication-authors">{publication.authors}</p>

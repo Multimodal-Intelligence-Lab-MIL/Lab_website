@@ -6,6 +6,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import { sitePath } from '../../lib/paths';
 import OptimizedImage from '../../components/OptimizedImage.astro';
 import LabCover from '../../components/LabCover.astro';
+import { getPublicationArea, researchAreaPath } from '../../lib/research';
 
 export async function getStaticPaths() {
   const entries = (await getCollection('publications')).filter((entry) => !entry.data.draft);
@@ -13,6 +14,7 @@ export async function getStaticPaths() {
 }
 const { entry } = Astro.props;
 const publication = entry.data;
+const area = await getPublicationArea(entry);
 const links = [
   ['Paper', publication.paperUrl || publication.pdf], ['arXiv', publication.arxiv], ['Project page', publication.project],
   ['Code', publication.code], ['Dataset', publication.dataset], ['Video', publication.video], ['Source', publication.sourceUrl]
@@ -26,6 +28,7 @@ const links = [
         <div>
           <a class="back-link" href={sitePath('publications/')}>← All publications</a>
           <p class="eyebrow"><span></span>{publication.category} · {publication.year}</p>
+          {area && <a class="research-area-tag" href={researchAreaPath(area.id)}>{area.data.title}</a>}
           <h1>{publication.title}</h1>
           <p class="paper-authors">{publication.authors}</p>
           <p class="paper-venue">{publication.venue || 'Publication details to be added'}</p>
@@ -42,6 +45,7 @@ const links = [
         <dl>
           <div><dt>Year</dt><dd>{publication.year}</dd></div>
           <div><dt>Type</dt><dd>{publication.category}</dd></div>
+          {area && <div><dt>Research area</dt><dd><a href={researchAreaPath(area.id)}>{area.data.title}</a></dd></div>}
           {publication.doi && <div><dt>DOI</dt><dd>{publication.doi}</dd></div>}
           {publication.keywords?.length && <div><dt>Keywords</dt><dd>{publication.keywords.join(' · ')}</dd></div>}
         </dl>

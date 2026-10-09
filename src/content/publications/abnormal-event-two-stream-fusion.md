@@ -4,6 +4,7 @@ authors: "Yuxing Yang, Zeyu Fu, Syed Mohsen Naqvi"
 venue: "Neurocomputing, 553:126561"
 year: 2023
 category: Journal
+research: video-and-scene-understanding
 abstract: "An enhanced two-stream method combining pose and optical-flow information for abnormal event detection in video surveillance."
 doi: "10.1016/j.neucom.2023.126561"
 paperUrl: "https://doi.org/10.1016/j.neucom.2023.126561"

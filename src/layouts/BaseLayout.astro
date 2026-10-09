@@ -37,6 +37,9 @@ const speculationRules = JSON.stringify({
     <link rel="icon" type="image/svg+xml" href={sitePath('favicon.svg')} />
     <title>{pageTitle}</title>
     <script type="speculationrules" is:inline set:html={speculationRules} />
+    <!-- Only Chromium renders SVG refraction in backdrop-filter; mark other engines before
+         first paint so glass.css can give them a lighter material (see liquid-glass.ts). -->
+    <script is:inline>/Chrome|Chromium|Edg\//.test(navigator.userAgent) || document.documentElement.setAttribute('data-glass-engine', 'css');</script>
   </head>
   <body>
     <div class="liquid-scene" aria-hidden="true"></div>

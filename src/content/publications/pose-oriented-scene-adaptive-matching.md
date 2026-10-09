@@ -4,6 +4,7 @@ authors: "Yuxing Yang, Leiyu Xie, Zeyu Fu, Jiawei Yan, Syed Mohsen Naqvi"
 venue: "Neurocomputing, 611:128673"
 year: 2025
 category: Journal
+research: video-and-scene-understanding
 image: "uploads/publications/pose-oriented-scene-adaptive-matching.jpg"
 abstract: "A self and mutual scene-adaptive matching method for abnormal event detection, combining pose estimation, object detection and spatio-temporal graph convolutional networks to improve robustness across unseen scene contexts."
 doi: "10.1016/j.neucom.2024.128673"

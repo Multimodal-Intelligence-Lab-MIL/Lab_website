@@ -9,10 +9,14 @@ export async function getAdminData() {
   const branch = 'main';
   const contentFile = (id: string) => id.endsWith('.md') ? id : `${id}.md`;
   const editUrl = (folder: string, id: string) => `${repositoryUrl}/edit/${branch}/${folder}/${contentFile(id)}`;
+  const isReference = (value: unknown): value is { id: string; collection: string } =>
+    Boolean(value && typeof value === 'object' && 'collection' in value && 'id' in value);
+  // Dates become YYYY-MM-DD and collection references (a paper's research area) their id,
+  // matching what the editor writes back into the Markdown front matter.
   const serialiseData = (data: Record<string, unknown>) => Object.fromEntries(
     Object.entries(data).map(([key, value]) => [
       key,
-      value instanceof Date ? value.toISOString().slice(0, 10) : value
+      value instanceof Date ? value.toISOString().slice(0, 10) : isReference(value) ? value.id : value
     ])
   );
   const markdownExcerpt = (value: string) => value

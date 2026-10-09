@@ -4,6 +4,7 @@ authors: "Leiyu Xie, Yuxing Yang, Zeyu Fu, Syed Mohsen Naqvi"
 venue: "IEEE Transactions on Multimedia"
 year: 2024
 category: Journal
+research: ai-for-healthcare
 image: "uploads/publications/medical-action-recognition.jpg"
 doi: "10.1109/TMM.2024.3521703"
 paperUrl: "https://doi.org/10.1109/TMM.2024.3521703"

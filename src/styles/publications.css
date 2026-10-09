@@ -18,7 +18,13 @@
 .publication-abstract-panel p { margin: 0; font-size: clamp(.82rem, 1.15vw, .95rem); line-height: 1.62; }
 .publication-card[data-abstract-open] .publication-abstract-panel { opacity: 1; visibility: visible; pointer-events: auto; transform: none; }
 .publication-content { display: flex; min-height: 330px; flex: 1; flex-direction: column; padding: clamp(1.5rem, 3vw, 2.15rem); }
-.publication-topline { display: flex; gap: 1rem; margin-bottom: 1.2rem; color: #6b7b86; font: .65rem var(--mono); text-transform: uppercase; letter-spacing: .08em; }
+.publication-topline { display: flex; flex-wrap: wrap; align-items: center; gap: .55rem 1rem; margin-bottom: 1.2rem; color: #6b7b86; font: .65rem var(--mono); text-transform: uppercase; letter-spacing: .08em; }
+/* Research area tag: a light chip rather than a glass pane, as every card carries one. */
+.research-area-tag { display: inline-flex; align-items: center; gap: .45rem; padding: .34rem .7rem .32rem; color: #1f5a86; background: rgba(255,255,255,.5); border: 1px solid rgba(18,52,86,.1); border-radius: 999px; box-shadow: inset 0 1px 0 rgba(255,255,255,.95); font: 600 .62rem/1.2 var(--mono); letter-spacing: .06em; text-transform: uppercase; text-decoration: none; transition: background .2s ease, border-color .2s ease, color .2s ease; }
+.research-area-tag::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: #3f9fd0; box-shadow: 0 0 0 3px rgba(63,159,208,.16); }
+.research-area-tag:hover, .research-area-tag:focus-visible { color: #133f66; background: rgba(255,255,255,.85); border-color: rgba(18,52,86,.18); }
+.publication-topline .research-area-tag { margin-left: auto; }
+.paper-detail .research-area-tag { margin: -.4rem 0 1.4rem; }
 .publication-topline strong { color: #6651c8; }
 .publication-content h2 { max-width: 850px; margin-bottom: 1.2rem; font-size: clamp(1.45rem, 2.2vw, 2rem); line-height: 1.16; }
 .publication-content h2 a { text-decoration: none; }

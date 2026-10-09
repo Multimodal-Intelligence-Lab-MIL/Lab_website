@@ -52,7 +52,6 @@ body { -webkit-font-smoothing: antialiased; isolation: isolate; background: tran
   background-position: 20% 0%, 100% -10%, -10% 75%, 95% 105%, 0 0;
   animation: scene-flow 64s steps(64) infinite;
 }
-[data-scrolling] .liquid-scene { animation-play-state: paused; }
 @keyframes scene-flow {
   0%, 100% { background-position: 20% 0%, 100% -10%, -10% 75%, 95% 105%, 0 0; }
   25% { background-position: 45% 15%, 82% -2%, -2% 62%, 85% 96%, 0 0; }
@@ -92,12 +91,29 @@ a:focus-visible, button:focus-visible { outline: 3px solid #4784d6; outline-offs
   backdrop-filter: var(--lg-refraction,) blur(10px) saturate(1.8) brightness(1.04);
 }
 [data-glass='control'] { background: linear-gradient(180deg, rgba(255,255,255,.4), rgba(255,255,255,.14) 52%, rgba(255,255,255,.22)); }
+/* Floating cards (hover descriptions, publication lists) sit over other content, so they
+   blur it and carry a denser tint for legibility. */
+[data-glass='float'] {
+  background: linear-gradient(180deg, rgba(255,255,255,.8), rgba(255,255,255,.64) 55%, rgba(255,255,255,.72));
+  box-shadow: var(--glass-bevel), var(--glass-lift-hover);
+  -webkit-backdrop-filter: blur(24px) saturate(1.6) brightness(1.04);
+  backdrop-filter: var(--lg-refraction,) blur(24px) saturate(1.6) brightness(1.04);
+}
 [data-glass='panel'], [data-glass='sheet'] { transition: transform .4s var(--ease-glass), box-shadow .4s ease; }
 [data-glass='sheet'] { -webkit-backdrop-filter: none; backdrop-filter: none; }
 [data-glass='sheet']:is(:hover, :focus-within) { -webkit-backdrop-filter: var(--glass-optics); backdrop-filter: var(--lg-refraction,) var(--glass-optics); }
 [data-glass='panel']:is(:hover, :focus-within), [data-glass='sheet']:is(:hover, :focus-within), [data-glass='control']:hover {
   background: var(--glass-tint-lit); box-shadow: var(--glass-bevel), var(--glass-lift-hover);
 }
+/* Safari and Firefox (marked in BaseLayout before first paint) render no SVG refraction.
+   There the per-pane backdrop filter would only add saturation while costing a backdrop
+   layer each, re-rendered whenever the scene steps, and the masked rim costs a mask layer
+   each; Safari was noticeably slower with them. The bevel's inset highlights carry the rim.
+   Navigation and floating cards keep their blur, which content beneath them needs. */
+[data-glass-engine='css'] [data-glass]:is([data-glass='panel'], [data-glass='control'], [data-glass='sheet']) {
+  -webkit-backdrop-filter: none; backdrop-filter: none;
+}
+[data-glass-engine='css'] [data-glass]::before { display: none; }
 
 /* Navigation */
 .site-header {

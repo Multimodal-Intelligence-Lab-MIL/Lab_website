@@ -37,6 +37,7 @@ export function initAdmin(adminData) {
       { key: 'venue', label: 'Journal or conference', type: 'text', wide: true },
       { key: 'year', label: 'Year', type: 'number', required: true, default: currentYear },
       { key: 'category', label: 'Category', type: 'select', required: true, default: 'Conference', options: ['Journal', 'Conference', 'Workshop', 'Preprint', 'Dataset', 'Other'] },
+      { key: 'research', label: 'Research area', type: 'research', required: true, help: 'Every paper belongs to one research area; it appears as a tag on the paper and in that area’s list on the Research page. Choose “Add new research area…” to create one first: the paper you are writing is kept and restored afterwards.' },
       { key: 'image', label: 'Publication image', type: 'media', wide: true, help: 'Choose an image already committed in the Publication upload folder.' },
       { key: 'abstract', label: 'Abstract', type: 'textarea', wide: true, rows: 6 },
       { key: 'award', label: 'Award', type: 'text', wide: true },
@@ -70,7 +71,7 @@ export function initAdmin(adminData) {
     research: [
       { key: 'title', label: 'Full research title', type: 'text', required: true, primary: true, wide: true },
       { key: 'shortTitle', label: 'Short title', type: 'text', required: true },
-      { key: 'summary', label: 'Summary', type: 'textarea', required: true, wide: true, rows: 4 },
+      { key: 'summary', label: 'Summary', type: 'textarea', required: true, wide: true, rows: 4, help: 'One or two sentences on what the area studies. Shown on the Research page and in the home page hover card.' },
       { key: 'accent', label: 'Accent', type: 'select', required: true, default: 'blue', options: ['cyan', 'violet', 'mint', 'blue'] },
       { key: 'order', label: 'Display order', type: 'number', required: true, default: 100 },
       { key: 'featured', label: 'Featured', type: 'checkbox', default: true },
@@ -92,8 +93,24 @@ export function initAdmin(adminData) {
     operation: '',
     entry: null,
     copied: false,
-    slugManuallyEdited: false
+    slugManuallyEdited: false,
+    // A publication set aside while its new research area is created (see startNewResearchArea).
+    publicationDraft: null,
+    // Research areas copied in this session but not yet on the live site.
+    newResearchAreas: []
   };
+  const NEW_RESEARCH_AREA = '__new_research_area__';
+
+  function researchAreaOptions() {
+    const published = (content.research || []).map((entry) => ({
+      id: entry.id.replace(/\.md$/, ''),
+      title: entry.data?.draft ? `${entry.title} (draft)` : entry.title
+    }));
+    const added = state.newResearchAreas
+      .filter((area) => !published.some((entry) => entry.id === area.id))
+      .map((area) => ({ id: area.id, title: `${area.title} (new: commit it before this paper)` }));
+    return [...published, ...added];
+  }
 
   const selectionForm = document.querySelector('[data-selection-form]');
   const contentTypeSelect = selectionForm?.querySelector('[name="contentType"]');
@@ -209,9 +226,18 @@ export function initAdmin(adminData) {
     if (field.type === 'textarea') {
       input = document.createElement('textarea');
       input.rows = field.rows || 4;
-    } else if (field.type === 'select' || field.type === 'media') {
+    } else if (field.type === 'select' || field.type === 'media' || field.type === 'research') {
       input = document.createElement('select');
-      if (field.type === 'media') {
+      if (field.type === 'research') {
+        const areas = researchAreaOptions();
+        input.add(new Option('Please select a research area', ''));
+        areas.forEach((area) => input.add(new Option(area.title, area.id)));
+        if (value && !areas.some((area) => area.id === value)) input.add(new Option(String(value), String(value)));
+        input.add(new Option('+ Add new research area…', NEW_RESEARCH_AREA));
+        input.addEventListener('change', function () {
+          if (input.value === NEW_RESEARCH_AREA) startNewResearchArea();
+        });
+      } else if (field.type === 'media') {
         input.add(new Option('No image', ''));
         const paths = mediaByType[state.contentType] || [];
         paths.forEach((path) => input.add(new Option(path, path)));
@@ -432,6 +458,8 @@ export function initAdmin(adminData) {
     resetCopyState();
     if (contentStatus) contentStatus.textContent = 'Complete the fields, then copy the full file before opening GitHub.';
     updateContentPath();
+    addReturnToPublication();
+    restorePublicationDraft();
   }
 
   function syncPeopleCategoryFields() {
@@ -623,6 +651,18 @@ export function initAdmin(adminData) {
       editorTitle.textContent = 'Delete the selected entry';
       deletePath.textContent = state.entry.path;
       deleteLink.href = `${repositoryUrl}/delete/${branch}/${state.entry.path}`;
+      deletePanel.querySelector('[data-delete-warning]')?.remove();
+      if (state.contentType === 'research') {
+        const areaId = state.entry.id.replace(/\.md$/, '');
+        const papers = (content.publications || []).filter((entry) => entry.data?.research === areaId);
+        if (papers.length) {
+          const warning = document.createElement('p');
+          warning.className = 'delete-warning';
+          warning.setAttribute('data-delete-warning', '');
+          warning.textContent = `${papers.length} publication${papers.length === 1 ? '' : 's'} still use this research area. Move them to another area first; the website build stops while any paper names an area that no longer exists.`;
+          deletePath.after(warning);
+        }
+      }
       return;
     }
 
@@ -647,6 +687,85 @@ export function initAdmin(adminData) {
 
     configureMediaStep(ready);
     configureEditorStep(ready);
+  }
+
+  function openWorkflow(contentType, operation, entryId) {
+    contentTypeSelect.value = contentType;
+    contentTypeSelect.dispatchEvent(new Event('change'));
+    operationSelect.value = operation;
+    operationSelect.dispatchEvent(new Event('change'));
+    if (entryId) {
+      entrySelect.value = entryId;
+      syncWorkflow();
+    }
+    editorStep?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  /** “Add new research area…”: keep the paper being written, then create the area. */
+  function startNewResearchArea() {
+    const values = {};
+    fieldConfig.publications.forEach(function (field) {
+      if (field.key !== 'research') values[field.key] = fieldValue(field);
+    });
+    state.publicationDraft = {
+      operation: state.operation,
+      entryId: state.entry?.id || '',
+      slug: slugInput?.value || '',
+      values
+    };
+    openWorkflow('research', 'create');
+    if (contentStatus) {
+      contentStatus.textContent = 'Create the research area first: fill in its title and summary, copy the file, commit it on GitHub, then use “Back to the publication”.';
+    }
+  }
+
+  function returnToPublication() {
+    const draft = state.publicationDraft;
+    if (!draft) return;
+    openWorkflow('publications', draft.operation, draft.entryId);
+  }
+
+  /** Put a set-aside paper back into the publication form (called after it renders). */
+  function restorePublicationDraft() {
+    const draft = state.publicationDraft;
+    if (!draft || state.contentType !== 'publications' || draft.operation !== state.operation) return;
+    if ((state.entry?.id || '') !== draft.entryId) return;
+    fieldConfig.publications.forEach(function (field) {
+      const element = contentForm.elements[field.key];
+      if (!element || !(field.key in draft.values)) return;
+      const value = draft.values[field.key];
+      if (field.type === 'checkbox') element.checked = Boolean(value);
+      else element.value = Array.isArray(value) ? value.join(', ') : String(value ?? '');
+    });
+    const newest = state.newResearchAreas[state.newResearchAreas.length - 1];
+    if (newest && contentForm.elements.research) contentForm.elements.research.value = newest.id;
+    if (state.operation === 'create' && draft.slug) {
+      slugInput.value = draft.slug;
+      state.slugManuallyEdited = true;
+      updateContentPath();
+    }
+    state.publicationDraft = null;
+    if (contentStatus) {
+      contentStatus.textContent = newest
+        ? `Your paper is restored with “${newest.title}” selected. Commit the research area before this paper; otherwise the website build stops until it exists.`
+        : 'Your paper is restored. Choose its research area to continue.';
+    }
+  }
+
+  /** While a paper is set aside, the research form offers a way back to it. */
+  function addReturnToPublication() {
+    if (!state.publicationDraft || state.contentType !== 'research' || state.operation !== 'create') return;
+    const notice = document.createElement('div');
+    notice.className = 'form-field field-wide research-return';
+    const text = document.createElement('p');
+    text.textContent = 'A publication is waiting for this research area. After copying this file and committing it on GitHub, return to finish the paper.';
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'outline-button';
+    button.textContent = 'Back to the publication';
+    button.addEventListener('click', returnToPublication);
+    notice.append(text, button);
+    contentFields.prepend(notice);
   }
 
   contentTypeSelect?.addEventListener('change', function () {
@@ -804,6 +923,11 @@ export function initAdmin(adminData) {
 
     const copied = await copyText(serialiseContent());
     state.copied = copied;
+    if (copied && state.contentType === 'research' && state.operation === 'create') {
+      const id = cleanSlug(slugInput.value);
+      const title = contentForm.elements.title?.value.trim() || id;
+      state.newResearchAreas = [...state.newResearchAreas.filter((area) => area.id !== id), { id, title }];
+    }
     openGithubButton.disabled = !copied;
     contentStatus.textContent = copied
       ? 'Copied. Now click “Open GitHub editor”, paste into the large file editing area, then click “Commit changes”.'

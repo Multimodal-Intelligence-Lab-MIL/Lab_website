@@ -4,6 +4,7 @@ authors: "Fu Wang, Yanghao Zhang, Xiangyu Yin, Guangliang Cheng, Zeyu Fu, Xiaowe
 venue: "arXiv preprint"
 year: 2024
 category: Preprint
+research: video-and-scene-understanding
 arxiv: "https://arxiv.org/abs/2412.13913"
 paperUrl: "https://arxiv.org/abs/2412.13913"
 featured: false
