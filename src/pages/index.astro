@@ -1,4 +1,5 @@
 ---
+import '../styles/home.css';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SignalField from '../components/SignalField.astro';
 import MultimodalVisual from '../components/MultimodalVisual.astro';
@@ -41,7 +42,7 @@ const news = await Promise.all(newsEntries.map(async (entry) => ({ entry, conten
         <h1 class="hero-title">Multimodal<br />Intelligence Lab</h1>
         <p class="hero-intro">Welcome to the Multimodal Intelligence Lab, where we explore innovative solutions at the intersection of Artificial Intelligence, Machine Learning, and Multimodal Data Processing. Aligned with the University of Exeter’s 2030 strategy, our research investigates how <strong>Multimodal AI</strong> and related disciplines can contribute to a greener, healthier, and fairer society. Our core focus is the development of computer vision and machine learning techniques, with applications in healthcare, the environment, and social science.</p>
         <div class="hero-actions">
-          <a class="button button-primary" href={sitePath('research/')}>Explore our research</a>
+          <a class="button button-primary" data-liquid-glass href={sitePath('research/')}>Explore our research</a>
           <a class="text-link" href={sitePath('publications/')}>View publications <svg class="link-arrow" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 12 12 4M4 4h8v8" /></svg></a>
         </div>
       </div>
@@ -94,7 +95,7 @@ const news = await Promise.all(newsEntries.map(async (entry) => ({ entry, conten
         <p>The research works at MIL has gratefully received funding from several distinguished and venerable funders.</p>
         <div class="partner-logos funder-logos">
           {funders.map(({ logo, name }) => (
-            <div class="partner-logo"><OptimizedImage src={`assets/logos/${logo}`} alt={name} width={640} widths={[320, 640]} sizes="(max-width: 600px) 45vw, (max-width: 900px) 260px, 320px" quality={90} loading="eager" /></div>
+            <div class="partner-logo"><OptimizedImage src={`assets/logos/${logo}`} alt={name} width={640} widths={[320, 640]} sizes="(max-width: 600px) 45vw, (max-width: 900px) 260px, 320px" quality={90} loading="eager" fetchpriority="low" /></div>
           ))}
         </div>
       </div>
@@ -103,7 +104,7 @@ const news = await Promise.all(newsEntries.map(async (entry) => ({ entry, conten
         <p>The lab is fortunate to collaborate with a range of internal and external partners.</p>
         <div class="partner-logos collaborator-logos">
           {collaborators.map(({ logo, name }) => (
-            <div class="partner-logo"><OptimizedImage src={`assets/logos/${logo}`} alt={name} width={540} widths={[270, 540]} sizes="(max-width: 600px) 45vw, 300px" quality={90} loading="eager" /></div>
+            <div class="partner-logo"><OptimizedImage src={`assets/logos/${logo}`} alt={name} width={540} widths={[270, 540]} sizes="(max-width: 600px) 45vw, 300px" quality={90} loading="eager" fetchpriority="low" /></div>
           ))}
         </div>
       </div>

@@ -1,106 +1,20 @@
 ---
-import { getCollection } from 'astro:content';
+import { getAdminData } from '../../lib/admin-data';
 import { sitePath } from '../../lib/paths';
 import alumniData from '../../data/alumni.json';
 import joinData from '../../data/join.json';
+import '../../styles/admin.css';
 
-const repositoryUrl = 'https://github.com/Multimodal-Intelligence-Lab-MIL/Lab_website';
-const repositorySlug = 'Multimodal-Intelligence-Lab-MIL/Lab_website';
-const branch = 'main';
-const contentFile = (id: string) => id.endsWith('.md') ? id : `${id}.md`;
-const editUrl = (folder: string, id: string) => `${repositoryUrl}/edit/${branch}/${folder}/${contentFile(id)}`;
-const alumniPath = 'src/data/alumni.json';
-const alumniEditUrl = `${repositoryUrl}/edit/${branch}/${alumniPath}`;
+const adminData = await getAdminData();
+const { repositoryUrl, branch, content } = adminData;
+const { news: newsEntries, publications: publicationEntries, people: peopleEntries, research: researchEntries } = content;
 const alumniCount = alumniData.reduce((total, group) => total + group.members.length, 0);
-const joinPath = 'src/data/join.json';
-const joinEditUrl = `${repositoryUrl}/edit/${branch}/${joinPath}`;
+const alumniEditUrl = `${repositoryUrl}/edit/${branch}/src/data/alumni.json`;
+const joinEditUrl = `${repositoryUrl}/edit/${branch}/src/data/join.json`;
 const joinOpportunityCount = joinData.phd.opportunities.length + joinData.postdoc.opportunities.length;
-
-const serialiseData = (data: Record<string, unknown>) => Object.fromEntries(
-  Object.entries(data).map(([key, value]) => [
-    key,
-    value instanceof Date ? value.toISOString().slice(0, 10) : value
-  ])
-);
-const markdownExcerpt = (value: string) => value
-  .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
-  .replace(/[*_`>#]/g, '')
-  .replace(/\s+/g, ' ')
-  .trim()
-  .slice(0, 96);
-
-const newsEntries = (await getCollection('news'))
-  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
-  .map((item) => ({
-    id: item.id,
-    title: markdownExcerpt(item.body || '') || `News · ${item.data.date.toLocaleDateString('en-GB')}`,
-    meta: `${item.data.date.toLocaleDateString('en-GB')} · ${item.data.category}`,
-    path: `src/content/news/${contentFile(item.id)}`,
-    url: editUrl('src/content/news', item.id),
-    data: serialiseData(item.data),
-    body: item.body || ''
-  }));
-
-const publicationEntries = (await getCollection('publications'))
-  .sort((a, b) => b.data.year - a.data.year || a.data.title.localeCompare(b.data.title))
-  .map((item) => ({
-    id: item.id,
-    title: item.data.title,
-    meta: `${item.data.year} · ${item.data.category}`,
-    path: `src/content/publications/${contentFile(item.id)}`,
-    url: editUrl('src/content/publications', item.id),
-    data: serialiseData(item.data),
-    body: item.body || ''
-  }));
-
-const peopleEntries = (await getCollection('people'))
-  .sort((a, b) => a.data.order - b.data.order || a.data.name.localeCompare(b.data.name))
-  .map((item) => ({
-    id: item.id,
-    title: item.data.name,
-    meta: item.data.category,
-    path: `src/content/people/${contentFile(item.id)}`,
-    url: editUrl('src/content/people', item.id),
-    data: serialiseData(item.data),
-    body: item.body || ''
-  }));
-
-const researchEntries = (await getCollection('research'))
-  .sort((a, b) => a.data.order - b.data.order)
-  .map((item) => ({
-    id: item.id,
-    title: item.data.title,
-    meta: item.data.shortTitle,
-    path: `src/content/research/${contentFile(item.id)}`,
-    url: editUrl('src/content/research', item.id),
-    data: serialiseData(item.data),
-    body: item.body || ''
-  }));
-
-const currentPublicationImages = publicationEntries
-  .map((entry) => String(entry.data.image || ''))
-  .filter(Boolean);
-const currentPeopleImages = peopleEntries
-  .map((entry) => String(entry.data.image || ''))
-  .filter(Boolean);
-const initialMedia = {
-  publications: [...new Set(currentPublicationImages)].sort(),
-  people: [...new Set(currentPeopleImages)].sort()
-};
-
-const adminData = {
-  repositoryUrl,
-  repositorySlug,
-  branch,
-  content: {
-    news: newsEntries,
-    publications: publicationEntries,
-    people: peopleEntries,
-    research: researchEntries
-  },
-  initialMedia,
-  siteBase: sitePath('')
-};
+const dataDigest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(JSON.stringify(adminData)));
+const dataVersion = Array.from(new Uint8Array(dataDigest), byte => byte.toString(16).padStart(2, '0')).join('').slice(0, 12);
+const gatewayConfig = { dataUrl: `${sitePath('admin/data.json')}?v=${dataVersion}` };
 ---
 
 <!doctype html>
@@ -111,7 +25,7 @@ const adminData = {
     <meta name="robots" content="noindex, nofollow" />
     <meta name="theme-color" content="#f7fbfd" />
     <title>MIL Admin Gateway</title>
-    <link rel="stylesheet" href="admin.css?v=20261009-2" />
+    <link rel="icon" type="image/svg+xml" href={sitePath('favicon.svg')} />
   </head>
   <body>
     <div class="ambient ambient-one" aria-hidden="true"></div>
@@ -139,6 +53,7 @@ const adminData = {
           <p class="form-error" data-login-error role="alert" hidden>Incorrect username or password.</p>
           <button class="primary-button" type="submit">Enter admin</button>
         </form>
+        <p class="gateway-status" data-gateway-status role="status" aria-live="polite" hidden></p>
         <p class="security-note">This is a lightweight visual gate. Repository write access is still controlled by your existing GitHub account.</p>
       </div>
     </section>
@@ -351,10 +266,10 @@ const adminData = {
       </footer>
     </div>
 
-    <script is:inline define:vars={{ adminData }}>
-      window.__MIL_ADMIN_DATA__ = adminData;
+    <script type="application/json" id="admin-gateway-config" set:html={JSON.stringify(gatewayConfig)} />
+    <script>
+      import { mountAdminGateway } from '../../lib/admin-gateway';
+      mountAdminGateway();
     </script>
-    <script is:inline src="bibtex.js"></script>
-    <script is:inline src="admin.js"></script>
   </body>
 </html>

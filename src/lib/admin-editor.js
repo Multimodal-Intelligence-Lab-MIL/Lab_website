@@ -1,8 +1,4 @@
-(function () {
-  const ADMIN_USERNAME = 'MIL';
-  const ADMIN_PASSWORD = 'MIL';
-  const SESSION_KEY = 'mil-admin-session';
-  const adminData = window.__MIL_ADMIN_DATA__ || {};
+export function initAdmin(adminData) {
   const repositoryUrl = adminData.repositoryUrl || '';
   const repositorySlug = adminData.repositorySlug || '';
   const branch = adminData.branch || 'main';
@@ -99,10 +95,6 @@
     slugManuallyEdited: false
   };
 
-  const loginView = document.querySelector('[data-login-view]');
-  const adminView = document.querySelector('[data-admin-view]');
-  const loginForm = document.querySelector('[data-login-form]');
-  const loginError = document.querySelector('[data-login-error]');
   const selectionForm = document.querySelector('[data-selection-form]');
   const contentTypeSelect = selectionForm?.querySelector('[name="contentType"]');
   const operationSelect = selectionForm?.querySelector('[name="operation"]');
@@ -145,39 +137,6 @@
   function currentYear() {
     return new Date().getFullYear();
   }
-
-  function showAdmin() {
-    loginView.hidden = true;
-    adminView.hidden = false;
-  }
-
-  function showLogin() {
-    adminView.hidden = true;
-    loginView.hidden = false;
-  }
-
-  if (sessionStorage.getItem(SESSION_KEY) === 'active') showAdmin();
-  else showLogin();
-
-  loginForm?.addEventListener('submit', function (event) {
-    event.preventDefault();
-    const formData = new FormData(loginForm);
-    const username = String(formData.get('username') || '');
-    const password = String(formData.get('password') || '');
-    if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
-      sessionStorage.setItem(SESSION_KEY, 'active');
-      loginError.hidden = true;
-      loginForm.reset();
-      showAdmin();
-      return;
-    }
-    loginError.hidden = false;
-  });
-
-  document.querySelector('[data-logout]')?.addEventListener('click', function () {
-    sessionStorage.removeItem(SESSION_KEY);
-    showLogin();
-  });
 
   function cleanSlug(value) {
     return value
@@ -365,7 +324,7 @@
     return fieldElement;
   }
 
-  function applyBibtexToForm() {
+  async function applyBibtexToForm() {
     const bibtexInput = contentForm?.querySelector('[name="bibtex"]');
     const overwriteInput = contentForm?.querySelector('[data-bibtex-overwrite]');
     const status = contentForm?.querySelector('[data-bibtex-status]');
@@ -373,7 +332,8 @@
 
     status.classList.remove('is-error', 'is-success');
     try {
-      if (!window.MILBibTeX) throw new Error('The BibTeX reader did not load. Refresh the page and try again.');
+      status.textContent = 'Reading BibTeX…';
+      if (!window.MILBibTeX) await import('./admin-bibtex.js');
       const parsed = window.MILBibTeX.toPublication(bibtexInput.value);
       const config = fieldConfig.publications;
       const overwrite = Boolean(overwriteInput?.checked);
@@ -535,9 +495,12 @@
         preview.rel = 'noreferrer';
         preview.title = 'Open full-size image';
         const image = document.createElement('img');
-        image.src = rawMediaUrl(path);
+        image.src = mediaVersionByType[state.contentType] === 'main'
+          ? (adminData.mediaPreviews?.[path] || rawMediaUrl(path))
+          : rawMediaUrl(path);
         image.alt = '';
         image.loading = 'lazy';
+        image.decoding = 'async';
         const fallback = document.createElement('span');
         fallback.textContent = 'IMAGE';
         fallback.hidden = true;
@@ -599,6 +562,9 @@
   function rawMediaUrl(path) {
     const encodedPath = path.split('/').map(encodeURIComponent).join('/');
     const version = encodeURIComponent(mediaVersionByType[state.contentType] || 'main');
+    if (mediaVersionByType[state.contentType] === 'main') {
+      return `${adminData.siteBase}${encodedPath}`;
+    }
     return `https://raw.githubusercontent.com/${repositorySlug}/${encodeURIComponent(branch)}/public/${encodedPath}?v=${version}`;
   }
 
@@ -922,4 +888,4 @@
   });
 
   syncWorkflow();
-})();
+}

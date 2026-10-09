@@ -14,7 +14,7 @@ const links = [
 const isActive = (path: string) => path === '' ? currentPath === '/' : currentPath.startsWith(`/${path}`);
 ---
 
-<header class="site-header">
+<header class="site-header" data-liquid-glass>
   <div class="shell nav-shell">
     <a class="brand" href={sitePath()} aria-label="Multimodal Intelligence Lab home">
       <OptimizedImage src="assets/images/mmi-lab-logo.jpg" alt="" width={84} widths={[42, 84]} sizes="42px" loading="eager" />
@@ -31,3 +31,8 @@ const isActive = (path: string) => path === '' ? currentPath === '/' : currentPa
     </nav>
   </div>
 </header>
+
+<script>
+  import { enhanceLiquidGlass } from '../lib/liquid-glass';
+  document.querySelectorAll<HTMLElement>('[data-liquid-glass]').forEach(enhanceLiquidGlass);
+</script>

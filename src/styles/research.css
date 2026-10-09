@@ -1,0 +1,19 @@
+.research-page { background: var(--paper); }
+.research-theme-list { border-top: 1px solid var(--line); }
+.research-theme { position: relative; display: grid; grid-template-columns: 90px 1fr .85fr; gap: 3rem; padding: 4rem 0; border-bottom: 1px solid var(--line); }
+.research-theme::before { content: ''; position: absolute; top: 0; left: 0; width: 0; height: 2px; background: var(--cyan); transition: width .35s ease; }
+.research-theme:hover::before { width: 100%; }
+.research-theme.accent-violet::before { background: var(--violet); }
+.research-theme.accent-mint::before { background: #0ba87c; }
+.research-theme.accent-blue::before { background: var(--blue); }
+.theme-number { color: var(--blue); font: .72rem var(--mono); }
+.research-theme h2 { max-width: 590px; font-size: clamp(2rem, 4.3vw, 4rem); }
+.theme-summary { color: var(--ink); font-size: 1.08rem; font-weight: 600; }
+@media (max-width: 900px) {
+.research-theme { grid-template-columns: 60px 1fr; }
+.theme-copy { grid-column: 2; }
+}
+@media (max-width: 600px) {
+.research-theme { grid-template-columns: 1fr; gap: 1.5rem; }
+.theme-copy { grid-column: auto; }
+}

@@ -87,7 +87,11 @@ const terrain = Array.from({ length: 7 }, (_, row) => Array.from({ length: 18 },
 
 <script>
   import { mountNeuralScene } from '../lib/neural-scene';
-  document.querySelectorAll<HTMLElement>('[data-neural-scene]').forEach(mountNeuralScene);
+  const initialise = () => document.querySelectorAll<HTMLElement>('[data-neural-scene]').forEach(mountNeuralScene);
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    if ('requestIdleCallback' in window) window.requestIdleCallback(initialise, { timeout: 1000 });
+    else setTimeout(initialise, 100);
+  }));
 </script>
 
 <style>
