@@ -1,0 +1,84 @@
+---
+interface Props { id: string }
+const { id } = Astro.props;
+const fillId = `lab-cover-core-${id}`;
+const dots = Array.from({ length: 42 }, (_, i) => {
+  const angle = i * 2.39996;
+  const radius = 57 * Math.sqrt((i + .5) / 42);
+  return { x: 140 + Math.cos(angle) * radius, y: 140 + Math.sin(angle) * radius };
+});
+---
+
+<div class="lab-cover" data-lab-cover role="img" aria-label="Multimodal Intelligence Lab — a neural core combining different signals">
+  <div class="lab-cover-layout" aria-hidden="true">
+    <span class="lab-cover-name spectrum-text">Multimodal<br />Intelligence Lab</span>
+    <svg viewBox="0 0 280 280" fill="none">
+      <defs>
+        <radialGradient id={fillId} cx="30%" cy="25%" r="80%">
+          <stop stop-color="#447492" /><stop offset=".55" stop-color="#163753" /><stop offset="1" stop-color="#10223e" />
+        </radialGradient>
+      </defs>
+      <circle cx="140" cy="140" r="88" stroke="#9eaaca" opacity=".3" stroke-width=".5" />
+      <g class="mini-orbit" stroke="#8a94c6" stroke-width=".7" opacity=".6">
+        <ellipse cx="140" cy="140" rx="110" ry="31" transform="rotate(-28 140 140)" />
+        <circle cx="140" cy="140" r="96" stroke-dasharray="28 60 2 12" />
+      </g>
+      <circle cx="140" cy="140" r="62" fill={`url(#${fillId})`} />
+      <g stroke="#86cfe0" stroke-width=".45" opacity=".55">
+        {[18, 36, 51].map(radius => <ellipse cx="140" cy="140" rx={radius} ry="61" transform="rotate(-18 140 140)" />)}
+        {[20, 39, 53].map(radius => <ellipse cx="140" cy="140" rx="61" ry={radius} transform="rotate(-18 140 140)" />)}
+      </g>
+      {dots.map(({ x, y }, i) => <circle cx={x} cy={y} r={i % 4 === 0 ? 1.5 : .85} fill={['#70d9f1', '#b3a2ed', '#ed9ac5', '#79dac1'][i % 4]} />)}
+      <g stroke="var(--signal-vision)" stroke-width="1" opacity=".8">
+        <path d="M14 67V34H51V67ZM18 58 27 44 36 54 42 48 48 59M22 72H56V39" />
+        <path class="mini-stream" d="M51 71 95 103" stroke-dasharray="2 7" />
+      </g>
+      <g fill="var(--signal-language)" color="var(--signal-language)" opacity=".8">
+        <text x="220" y="48" font-family="ui-monospace, monospace" font-size="15">A 文</text>
+        <path d="M220 58H259M220 65H250M220 72H254" stroke="currentColor" stroke-width="1" />
+      </g>
+      <path class="mini-stream" d="M220 73 183 104" stroke="var(--signal-language)" stroke-dasharray="2 7" />
+      <g stroke="var(--signal-audio)" stroke-width="1.5" stroke-linecap="round">
+        {[9, 22, 13, 33, 18, 26, 7].map((height, i) => <path d={`M${220 + i * 5} ${226 - height / 2}v${height}`} />)}
+        <path class="mini-stream" d="M215 213 185 177" stroke-width="1" stroke-dasharray="2 7" />
+      </g>
+      <g stroke="var(--signal-sensor)" stroke-width="1">
+        <path d="M13 230H25L31 211 38 239 44 219 49 230H60" />
+        <path class="mini-stream" d="M63 212 98 179" stroke-dasharray="2 7" />
+      </g>
+    </svg>
+  </div>
+</div>
+
+<script>
+  const covers = [...document.querySelectorAll<HTMLElement>('[data-lab-cover]')];
+  const visible = new Set<Element>();
+  const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const sync = () => covers.forEach(cover => cover.toggleAttribute('data-animating', visible.has(cover) && !document.hidden && !motion.matches));
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => entry.isIntersecting ? visible.add(entry.target) : visible.delete(entry.target));
+    sync();
+  });
+  covers.forEach(cover => observer.observe(cover));
+  document.addEventListener('visibilitychange', sync);
+  motion.addEventListener('change', sync);
+  document.addEventListener('astro:before-swap', () => {
+    observer.disconnect();
+    document.removeEventListener('visibilitychange', sync);
+    motion.removeEventListener('change', sync);
+  }, { once: true });
+</script>
+
+<style>
+  .lab-cover { position: absolute; inset: 0; container-type: inline-size; overflow: hidden; background: radial-gradient(ellipse at 75% 45%, #e2e9f6, transparent 65%), linear-gradient(120deg, #f9fbff, #edf4f8); }
+  .lab-cover-layout { display: grid; grid-template-columns: 1.12fr 1fr; align-items: center; height: 100%; gap: .25rem; padding: 8% 5% 6% 7%; }
+  .lab-cover-name { position: relative; z-index: 1; font: 550 clamp(.85rem, 4.6cqw, 2rem)/1.24 var(--sans); letter-spacing: -.04em; padding-bottom: .17em; white-space: nowrap; }
+  svg { width: 112%; max-width: none; margin-left: -6%; overflow: visible; }
+  .mini-orbit { transform-origin: 140px 140px; animation: cover-orbit 45s linear infinite; }
+  .mini-stream { animation: cover-stream 12s linear infinite; }
+  .lab-cover .spectrum-text, .mini-orbit, .mini-stream { animation-play-state: paused; }
+  .lab-cover[data-animating] .spectrum-text, [data-animating] .mini-orbit, [data-animating] .mini-stream { animation-play-state: running; }
+  @keyframes cover-orbit { to { transform: rotate(360deg); } }
+  @keyframes cover-stream { to { stroke-dashoffset: -90; } }
+  @media (prefers-reduced-motion: reduce) { .lab-cover .spectrum-text, .mini-orbit, .mini-stream { animation: none; } }
+</style>

@@ -1,0 +1,27 @@
+---
+import { Image } from 'astro:assets';
+import { localImage } from '../lib/media';
+import { externalUrl } from '../lib/paths';
+
+interface Props {
+  src: string;
+  alt: string;
+  width: number;
+  widths?: number[];
+  sizes?: string;
+  loading?: 'eager' | 'lazy';
+  fetchpriority?: 'high' | 'low' | 'auto';
+  quality?: number;
+  class?: string;
+}
+const { src, alt, width, widths = [width], sizes, loading = 'lazy', fetchpriority = 'auto', quality = 82, class: className } = Astro.props;
+const source = await localImage(src);
+const outputWidth = source ? Math.min(width, source.width) : width;
+const outputWidths = [...new Set(widths.map(value => source ? Math.min(value, source.width) : value))];
+---
+
+{source ? (
+  <Image src={source} alt={alt} width={outputWidth} widths={outputWidths} sizes={sizes} format="webp" quality={quality} loading={loading} decoding="async" fetchpriority={fetchpriority} class={className} />
+) : (
+  <img src={externalUrl(src)} alt={alt} width={width} loading={loading} decoding="async" fetchpriority={fetchpriority} class={className} />
+)}

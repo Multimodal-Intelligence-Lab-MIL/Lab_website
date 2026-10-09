@@ -1,5 +1,7 @@
 ---
 import { sitePath } from '../lib/paths';
+import OptimizedImage from './OptimizedImage.astro';
+import LabCover from './LabCover.astro';
 
 interface Props {
   entry: any;
@@ -24,11 +26,9 @@ const links = [
   <div class="publication-visual">
     <a class="publication-cover" href={detailUrl} aria-label={`Read details for ${publication.title}`}>
       {publication.image ? (
-        <img src={sitePath(publication.image)} alt={publication.imageAlt || ''} loading={priority ? 'eager' : 'lazy'} />
+        <OptimizedImage src={publication.image} alt={publication.imageAlt || ''} width={1200} widths={[480, 800, 1200]} sizes="(max-width: 900px) calc(100vw - 32px), (max-width: 1288px) calc((100vw - 80px) / 2), 604px" quality={86} loading={priority ? 'eager' : 'lazy'} />
       ) : (
-        <div class="publication-fallback">
-          <span>MIL</span><small>Multimodal<br />Intelligence Lab</small>
-        </div>
+        <LabCover id={entry.id} />
       )}
       <span class="publication-year">{publication.year}</span>
     </a>

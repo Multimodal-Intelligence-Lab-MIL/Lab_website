@@ -7,6 +7,7 @@ export default defineConfig({
   site: process.env.SITE_URL || (owner ? `https://${owner}.github.io` : 'http://localhost:4321'),
   base: process.env.BASE_PATH || (isProjectSite ? `/${repository}` : '/'),
   output: 'static',
+  prefetch: { defaultStrategy: 'hover' },
   trailingSlash: 'always',
   build: {
     format: 'directory'

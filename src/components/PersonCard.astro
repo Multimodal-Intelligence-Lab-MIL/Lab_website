@@ -1,7 +1,7 @@
 ---
-import { sitePath } from '../lib/paths';
-interface Props { person: any }
-const { person } = Astro.props;
+import OptimizedImage from './OptimizedImage.astro';
+interface Props { person: any; priority?: boolean }
+const { person, priority = false } = Astro.props;
 const data = person.data;
 const initials = data.name
   .replace(/^(dr|prof(?:essor)?)\.?\s+/i, '')
@@ -16,7 +16,7 @@ const initials = data.name
 <article class="person-card" data-person data-category={data.category}>
   <div class:list={['person-photo', !data.image && 'person-photo-placeholder']}>
     {data.image ? (
-      <img src={sitePath(data.image)} alt={`Portrait of ${data.name}`} loading="lazy" />
+      <OptimizedImage src={data.image} alt={`Portrait of ${data.name}`} width={224} widths={[112, 224]} sizes="(max-width: 600px) 88px, 112px" loading={priority ? 'eager' : 'lazy'} />
     ) : (
       <div role="img" aria-label={`No portrait is available for ${data.name}`}><span aria-hidden="true">{initials}</span></div>
     )}

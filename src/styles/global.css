@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@1,6..72,400&display=swap');
-
 :root {
   --ink: #10283c;
   --ink-soft: #294b65;
@@ -13,8 +11,12 @@
   --line: rgba(7, 22, 38, 0.14);
   --shell: min(1240px, calc(100vw - 48px));
   --sans: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', system-ui, sans-serif;
-  --serif: 'Newsreader', Georgia, serif;
-  --mono: 'DM Mono', ui-monospace, monospace;
+  --serif: 'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
+  --mono: ui-monospace, 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+  --signal-vision: #218eaf;
+  --signal-language: #7964bf;
+  --signal-audio: #b85888;
+  --signal-sensor: #238c7c;
 }
 
 * { box-sizing: border-box; }
@@ -51,10 +53,6 @@ nav[data-menu] .nav-contact { padding: .62rem .95rem; color: #145f91; background
 .menu-button span { display: block; width: 100%; height: 1px; margin: 6px 0; background: currentColor; }
 
 .hero {
-  --signal-vision: #218eaf;
-  --signal-language: #7964bf;
-  --signal-audio: #b85888;
-  --signal-sensor: #238c7c;
   --signal-vision-rgb: 96, 214, 241;
   --signal-language-rgb: 180, 158, 249;
   --signal-audio-rgb: 240, 143, 193;
@@ -67,10 +65,10 @@ nav[data-menu] .nav-contact { padding: .62rem .95rem; color: #145f91; background
 .signal-ambient { position: absolute; inset: 5% -12% 0 30%; background: radial-gradient(ellipse at 30% 34%, #b0e4ee33, transparent 48%), radial-gradient(ellipse at 74% 39%, #c1b7ef26, transparent 45%), radial-gradient(ellipse at 65% 75%, #ecc4d921, transparent 40%); animation: ambient-drift 24s ease-in-out infinite alternate; }
 .signal-horizon { position: absolute; width: 85%; height: 36%; right: -25%; top: 49%; border-top: 1px solid #aec9df26; border-radius: 50%; transform: rotate(-24deg); box-shadow: 0 -12px 60px #add8ee0a; }
 .hero-grid { position: relative; z-index: 2; display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(0, .92fr); align-items: center; gap: 2rem; }
-.hero-copy h1 { margin: 0; font-size: clamp(2.6rem, 4.5vw, 4.1rem); font-weight: 550; line-height: 1.08; letter-spacing: -.045em; }
-.hero-title { color: #23566e; }
+.hero-copy h1 { margin: 0; padding-bottom: .18em; font-size: clamp(2.6rem, 4.5vw, 4.1rem); font-weight: 550; line-height: 1.2; letter-spacing: -.045em; }
+.hero-title, .spectrum-text { color: #23566e; }
 @supports ((background-clip: text) or (-webkit-background-clip: text)) {
-  .hero-title {
+  .hero-title, .spectrum-text {
     background-image: linear-gradient(110deg, #193b58 0%, #216d89 12%, var(--signal-vision) 23%, var(--signal-language) 36%, var(--signal-audio) 47%, var(--signal-sensor) 60%, #216d89 73%, #193b58 85%, var(--signal-language) 100%);
     background-size: 300% 100%; background-position: 0% 50%;
     background-clip: text; -webkit-background-clip: text; color: transparent;
@@ -173,11 +171,6 @@ nav[data-menu] .nav-contact { padding: .62rem .95rem; color: #145f91; background
 .publication-cover { position: absolute; inset: 0; display: block; overflow: hidden; background: linear-gradient(135deg, #e8f3f8, #f8fbfd); }
 .publication-cover > img { width: 100%; height: 100%; padding: clamp(.65rem, 1.7vw, 1.15rem); object-fit: contain; transition: transform .55s cubic-bezier(.2,.8,.2,1); }
 .publication-card:focus-within .publication-cover > img { transform: scale(1.025); }
-.publication-fallback { position: absolute; inset: 0; display: grid; place-content: center; text-align: center; color: var(--ink); background: radial-gradient(circle at 60% 35%, rgba(117,196,229,.34), transparent 36%), linear-gradient(145deg, #edf7fb, #dbeef6); }
-.publication-fallback::before, .publication-fallback::after { content: ''; position: absolute; inset: 13%; border: 1px solid rgba(124,233,255,.2); border-radius: 50%; }
-.publication-fallback::after { inset: 28%; border-color: rgba(168,146,255,.22); }
-.publication-fallback span { z-index: 1; color: var(--cyan); font: 400 4.5rem/1 var(--serif); }
-.publication-fallback small { z-index: 1; margin-top: .7rem; color: #617d8e; font: .63rem/1.5 var(--mono); letter-spacing: .08em; text-transform: uppercase; }
 .publication-year { position: absolute; left: 1rem; top: 1rem; padding: .48rem .68rem; color: var(--white); background: rgba(7,22,38,.72); border-radius: 999px; font: .65rem var(--mono); text-decoration: none; backdrop-filter: blur(8px); }
 .publication-abstract-panel { position: absolute; z-index: 3; inset: clamp(.7rem, 1.5vw, 1rem); display: flex; flex-direction: column; overflow: auto; padding: clamp(1rem, 2.2vw, 1.5rem); color: #193548; background: rgba(250,253,255,.94); border: 1px solid rgba(255,255,255,.92); border-radius: 20px; box-shadow: 0 18px 55px rgba(17,55,81,.19); opacity: 0; visibility: hidden; pointer-events: none; transform: translateY(10px) scale(.985); transition: opacity .22s ease, visibility .22s ease, transform .3s cubic-bezier(.2,.8,.2,1); backdrop-filter: blur(22px) saturate(1.15); }
 .publication-abstract-panel > span { margin-bottom: .7rem; color: #2677a5; font: 500 .64rem var(--mono); letter-spacing: .1em; text-transform: uppercase; }
@@ -389,7 +382,7 @@ nav[data-menu] .nav-contact { padding: .62rem .95rem; color: #145f91; background
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero-title, .signal-ambient { animation: none; }
+  .hero-title, .spectrum-text, .signal-ambient { animation: none; }
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
   .publication-card:hover, .publication-card:focus-within, .person-card:hover, .person-card:focus-within { transform: none; }
@@ -397,5 +390,5 @@ nav[data-menu] .nav-contact { padding: .62rem .95rem; color: #145f91; background
 }
 
 @media (forced-colors: active) {
-  .hero-title { color: CanvasText; background: none; }
+  .hero-title, .spectrum-text { color: CanvasText; background: none; }
 }

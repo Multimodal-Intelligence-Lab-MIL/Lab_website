@@ -23,10 +23,10 @@ const alumniCount = new Set(alumniGroups.flatMap((group) => group.members.map((m
         {groups.map((group) => <a href={`#${group.category.toLowerCase().replaceAll(' ', '-')}`}>{group.category}<span>{group.members.length}</span></a>)}
         <a href="#alumni">Alumni<span>{alumniCount}</span></a>
       </div>
-      {groups.map((group) => (
+      {groups.map((group, groupIndex) => (
         <section class="people-group" id={group.category.toLowerCase().replaceAll(' ', '-')}>
           <div class="people-group-heading"><p class="eyebrow dark">{String(categoryOrder.indexOf(group.category) + 1).padStart(2, '0')}</p><h2>{group.category}</h2></div>
-          <div class="people-grid">{group.members.map((person) => <PersonCard person={person} />)}</div>
+          <div class="people-grid">{group.members.map((person, index) => <PersonCard person={person} priority={groupIndex === 0 && index < 2} />)}</div>
         </section>
       ))}
       <section class="people-group people-group--alumni" id="alumni">
