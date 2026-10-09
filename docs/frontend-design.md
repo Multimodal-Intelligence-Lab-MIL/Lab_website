@@ -9,7 +9,7 @@ These are design references, not runtime dependencies. Apple's description of tr
 
 The site uses its own CSS in `src/styles/glass.css` and one script, `src/lib/liquid-glass.ts`.
 
-- **Scene.** A fixed `.liquid-scene` layer (in `BaseLayout.astro`) keeps the original pale blue-white wash and moves it as one texture, with a second layer of soft white light streaks for the rims to bend. Both layers share a 64 s period and step together four times a second, and the scene holds still while the page scrolls (see Performance).
+- **Scene.** A fixed `.liquid-scene` element (in `BaseLayout.astro`) keeps the original pale blue-white wash; every colour stays between sky blue and cyan (hue about 190–205°), as an earlier lavender field read as a purple cast. Its soft colour fields and white light streaks are oversized background layers whose positions step along separate paths four times a second, and the scene holds still while the page scrolls (see Performance). It is deliberately one untransformed element: two oversized, rotating layers looked the same but made every frame expensive to composite.
 - **Material (after Apple-UI).** Every `[data-glass]` pane has a low white tint, a dark hairline border, a bevel of inset light and shade for thickness, a 1 px specular rim (bright at the top left and bottom right), a soft gloss that follows the pointer, and a shadow that falls only below the pane.
 - **Refraction (after Liquid-Glass-HTML, Chromium only).** For each pane near the viewport, the script draws a rounded-rectangle signed-distance map into a canvas once per size and applies it through an SVG `feDisplacementMap` in `backdrop-filter`. The backdrop is sampled from further inside within a narrow rim, so the scene and any content scrolling under the navigation bar bend at the edge while the centre stays clear. Safari and Firefox do not render SVG backdrop filters and keep the CSS material.
 - **Tiers (`data-glass`).** `bar`: navigation, which also blurs content scrolling beneath it. `control`: buttons and pills, with a stronger rim. `panel`: tiles, filters and logos. `sheet`: large reading cards (people, publications, the news window), which use the same material but switch the backdrop filter on only while hovered or focused.
@@ -18,6 +18,7 @@ Two Chromium behaviours shape this design and are worth keeping in mind when edi
 
 1. An outer `box-shadow` on a pane, or on anything inside it, shifts its SVG backdrop filter by however far the shadow reaches left or up (1.5 × blur + spread − offset). The filtered area then starts that many pixels inside the pane, leaving pale strips along the top and left edges; this caused the white ring around the earlier navigation bar. All glass shadows therefore keep that reach at or below zero (`--glass-lift`, `--glass-lift-hover`). Inset shadows are unaffected.
 2. A backdrop filter is recomputed whenever what lies behind it changes. With the scene moving every frame, many filtered panes made pages stutter. That is why the scene steps four times a second, pauses during scrolling, and why large cards filter only on hover.
+3. Write the scene's animation with a name (or as longhands). The CSS minifier turned an unnamed shorthand such as `animation: 64s steps(64) infinite` into `animation: none`, which silently stopped the scene.
 
 Reduced motion stops the scene; reduced transparency and forced colours switch to solid surfaces.
 
@@ -27,9 +28,11 @@ Measured in headless Chromium at 2x pixel density, 1440 × 900, frames per secon
 
 | Page | Before the glass redesign | First redesign (blur on every card) | Current |
 | --- | --- | --- | --- |
-| Home | 35 / 37 | 32 / 31 | 39 / 39 |
-| People | 60 / 60 | 47 / 41 | 60 / 60 |
-| Publications | 48 / 49 | 33 / 28 | 60 / 56 |
+| Home | 35 / 37 | 32 / 31 | 44 / 48 |
+| People | 60 / 60 | 47 / 41 | 59 / 60 |
+| Publications | 48 / 49 | 33 / 28 | 58 / 60 |
+
+All with the scene moving. Home is lower throughout because of the animated neural core in its hero.
 
 ## Images
 
@@ -37,7 +40,7 @@ Measured in headless Chromium at 2x pixel density, 1440 × 900, frames per secon
 
 - Avatars: up to 224 px wide, with 112/224 px responsive sources, explicit dimensions and asynchronous decoding. The first visible group loads eagerly; later portraits load lazily.
 - Header logo: 42/84 px sources instead of the original 512 px file.
-- Partner logos: `scripts/prepare-logos.mjs` crops each logo and turns its white background transparent into `public/assets/logos/clean/`; the homepage sizes them to a similar visual area and loads them lazily. Run it again when adding a logo, then list the new file in `src/pages/index.astro`.
+- Partner logos: `scripts/prepare-logos.mjs` writes cropped versions to `public/assets/logos/clean/`. Logos that already have a transparent background are only cropped to their visible pixels (keeping white parts such as the UKRI lettering); opaque logos have their white background made transparent. The homepage sizes them to a similar visual area (`scale` enlarges marks with small type) and shows them in rows of three. To add one: put the file in `public/assets/logos/`, run `node scripts/prepare-logos.mjs <file> <output-name>`, then list `<output-name>.png` in `src/pages/index.astro`.
 - Publication figures: 480/720/960 px WebP sources at quality 80 in the catalogue; up to 1200 px at quality 84 on detail pages.
 - System fonts remove the cross-origin Google Fonts stylesheet and font requests.
 - Astro prefetches navigation destinations on hover/focus to shorten subsequent page changes, respecting its data-saver behavior.

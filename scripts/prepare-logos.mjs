@@ -1,5 +1,7 @@
-// Turns partner logos into tightly cropped PNGs whose white background becomes
-// transparent, so they sit directly on the glass cards without a white box.
+// Turns partner logos into tightly cropped PNGs that sit directly on the glass cards.
+// Logos that already have a transparent background are only cropped, which keeps any
+// white parts of the mark (such as the UKRI lettering). Opaque logos have their white
+// background made transparent instead.
 // Usage: node scripts/prepare-logos.mjs <source-in-public/assets/logos> <output-name> ...
 import sharp from 'sharp';
 
@@ -9,6 +11,27 @@ const pairs = process.argv.slice(2);
 
 for (let i = 0; i < pairs.length; i += 2) {
   const [source, name] = [pairs[i], pairs[i + 1]];
+  const { isOpaque } = await sharp(`${sourceDir}/${source}`).stats();
+  if (!isOpaque) {
+    // Crop to the visible pixels. trim() compares against the top-left pixel, which in
+    // marks such as UKRI's is the logo itself rather than empty space.
+    const { data, info } = await sharp(`${sourceDir}/${source}`).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
+    let left = info.width, top = info.height, right = -1, bottom = -1;
+    for (let y = 0; y < info.height; y++) {
+      for (let x = 0; x < info.width; x++) {
+        if (data[(y * info.width + x) * 4 + 3] <= 8) continue;
+        left = Math.min(left, x); right = Math.max(right, x);
+        top = Math.min(top, y); bottom = Math.max(bottom, y);
+      }
+    }
+    await sharp(`${sourceDir}/${source}`).ensureAlpha()
+      .extract({ left, top, width: right - left + 1, height: bottom - top + 1 })
+      .extend({ top: 2, bottom: 2, left: 2, right: 2, background: { r: 0, g: 0, b: 0, alpha: 0 } })
+      .png({ compressionLevel: 9 }).toFile(`${outputDir}/${name}.png`);
+    const { width, height } = await sharp(`${outputDir}/${name}.png`).metadata();
+    console.log(`${source} -> ${name}.png ${width}x${height} (kept transparency)`);
+    continue;
+  }
   // Flatten in its own pass: within one pipeline sharp trims before flattening.
   const flattened = await sharp(`${sourceDir}/${source}`).flatten({ background: '#ffffff' }).png().toBuffer();
   const flat = await sharp(flattened)

@@ -32,40 +32,32 @@
 html { scroll-padding-top: 112px; background: var(--paper); }
 body { -webkit-font-smoothing: antialiased; isolation: isolate; background: transparent; }
 
-/* Scene. Each layer is one texture moved by transform. Every pane above re-filters
-   its backdrop whenever the scene moves, so both layers share a 64 s period and step
-   together four times a second (about 1-3 px a step on soft gradients, which reads as
-   continuous drift), and the scene holds still while the page scrolls. */
+/* Scene. Every colour stays between sky blue and cyan (hue about 190-205 degrees);
+   a lavender field here used to tint the lower right towards purple.
+   One fixed, untransformed element: each soft field is an oversized background layer
+   whose position steps along its own path four times a second (1-3 px a step reads
+   as continuous drift). Oversized transformed layers looked the same but made every
+   frame expensive to composite, and every pane above re-filters its backdrop when the
+   scene changes, so the scene also holds still while the page scrolls. */
 .liquid-scene {
-  position: fixed; z-index: -1; inset: 0; overflow: hidden; pointer-events: none;
-  background: linear-gradient(118deg, #f9fdff 9%, #e7f5fc 53%, #d9edf9);
+  position: fixed; z-index: -1; inset: 0; pointer-events: none;
+  background:
+    linear-gradient(115deg, transparent 24%, rgba(255,255,255,.55) 30%, transparent 36%, transparent 58%, rgba(255,255,255,.42) 63%, transparent 68%),
+    radial-gradient(closest-side, #a9dff3, #bde8f966 48%, transparent),
+    radial-gradient(closest-side, #b8e8e977, transparent),
+    radial-gradient(closest-side, #c3e4f566, transparent),
+    linear-gradient(118deg, #f9fdff 9%, #e7f5fc 53%, #d9edf9);
+  background-repeat: no-repeat;
+  background-size: 170% 170%, 115% 95%, 90% 90%, 95% 90%, 100% 100%;
+  background-position: 20% 0%, 100% -10%, -10% 75%, 95% 105%, 0 0;
+  animation: scene-flow 64s steps(64) infinite;
 }
-.liquid-scene span {
-  position: absolute; inset: -22%; will-change: transform;
-  animation: 64s steps(64) infinite;
-}
-.liquid-scene span:first-child {
-  background: radial-gradient(ellipse at 73% 18%, #a9dff3 0, #bde8f966 24%, transparent 51%),
-    radial-gradient(ellipse at 25% 62%, #b8e8e977 0, transparent 43%),
-    radial-gradient(ellipse at 74% 71%, #d5cff156 0, transparent 45%);
-  animation-name: scene-current;
-}
-.liquid-scene span:last-child {
-  background: linear-gradient(115deg, transparent 24%, rgba(255,255,255,.6) 30%, transparent 36%, transparent 58%, rgba(255,255,255,.45) 63%, transparent 68%);
-  animation-name: scene-light;
-}
-[data-scrolling] .liquid-scene span { animation-play-state: paused; }
-@keyframes scene-current {
-  0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg) scale(1); }
-  25% { transform: translate3d(-4%, 3%, 0) rotate(2deg) scale(1.04); }
-  50% { transform: translate3d(-1%, 6%, 0) rotate(-1deg) scale(1.02); }
-  75% { transform: translate3d(3%, 2%, 0) rotate(-3deg) scale(1.05); }
-}
-@keyframes scene-light {
-  0%, 100% { transform: translate3d(-9%, 2%, 0); }
-  25% { transform: translate3d(0, -1%, 0); }
-  50% { transform: translate3d(9%, -3%, 0); }
-  75% { transform: translate3d(0, 0, 0); }
+[data-scrolling] .liquid-scene { animation-play-state: paused; }
+@keyframes scene-flow {
+  0%, 100% { background-position: 20% 0%, 100% -10%, -10% 75%, 95% 105%, 0 0; }
+  25% { background-position: 45% 15%, 82% -2%, -2% 62%, 85% 96%, 0 0; }
+  50% { background-position: 75% 25%, 74% 6%, 6% 70%, 78% 104%, 0 0; }
+  75% { background-position: 50% 8%, 92% 4%, -6% 84%, 90% 112%, 0 0; }
 }
 
 a, button, input, select { -webkit-tap-highlight-color: transparent; }
@@ -127,7 +119,7 @@ nav[data-menu] .nav-contact:hover { background: rgba(255,255,255,.48); }
 
 /* Home */
 .hero, .research-overview, .collection-section, .research-page, .join-hero, .paper-detail-hero { background: transparent; }
-.signal-ambient { inset: -15% -10%; background: radial-gradient(ellipse at 30% 34%, #8cd7ea3d, transparent 48%), radial-gradient(ellipse at 74% 39%, #b8acf22e, transparent 45%), radial-gradient(ellipse at 65% 75%, #7fdcc626, transparent 40%); }
+.signal-ambient { inset: -15% -10%; background: radial-gradient(ellipse at 30% 34%, #8cd7ea3d, transparent 48%), radial-gradient(ellipse at 74% 39%, #a6d8f02e, transparent 45%), radial-gradient(ellipse at 65% 75%, #7fdcc626, transparent 40%); }
 .hero-copy .eyebrow { line-height: 1.6; }
 .hero-intro { color: #4a6175; }
 .button, .hero .button-primary { border-radius: 999px; }
@@ -213,12 +205,12 @@ nav[data-menu] .nav-contact:hover { background: rgba(255,255,255,.48); }
   [data-glass] { background: rgba(250,253,255,.86); }
 }
 @media (prefers-reduced-transparency: reduce) {
-  .liquid-scene span { display: none; }
+  .liquid-scene { animation: none; background-size: 0 0, 0 0, 0 0, 0 0, 100% 100%; }
   [data-glass], .publication-abstract-panel { background: #fbfdfe; -webkit-backdrop-filter: none; backdrop-filter: none; }
   [data-glass]::after { display: none; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .liquid-scene span { animation-name: none !important; }
+  .liquid-scene { animation: none; }
   [data-glass]:hover, [data-glass]:focus-within, .button:active { transform: none !important; }
 }
 @media (forced-colors: active) {

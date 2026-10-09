@@ -17,23 +17,29 @@ const researchInterests = [
   'Satellite and drone imagery analysis',
   'AI for Science'
 ];
+// Rows of three: independent funders first, then the three UKRI councils together.
 const funders = [
   { logo: 'alan-turing-institute.png', name: 'The Alan Turing Institute' },
   { logo: 'university-of-exeter.png', name: 'University of Exeter' },
   { logo: 'dso-national-laboratories.png', name: 'DSO National Laboratories' },
-  { logo: 'ukri-research-england.png', name: 'UKRI Research England' }
+  { logo: 'ukri-research-england.png', name: 'UKRI Research England', scale: 1.5 },
+  { logo: 'ukri-epsrc.png', name: 'UKRI Engineering and Physical Sciences Research Council', scale: 1.5 },
+  { logo: 'ukri-innovate-uk.png', name: 'UKRI Innovate UK', scale: 1.5 }
 ];
 const collaborators = [
   { logo: 'newcastle-university.png', name: 'Newcastle University' },
   { logo: 'university-of-birmingham.png', name: 'University of Birmingham' },
-  { logo: 'university-of-liverpool.png', name: 'University of Liverpool' }
+  { logo: 'university-of-liverpool.png', name: 'University of Liverpool' },
+  { logo: 'durham-university.png', name: 'Durham University' },
+  { logo: 'sutd.png', name: 'Singapore University of Technology and Design' }
 ];
 // Give every logo a similar visual area instead of the same box, so wide
 // wordmarks and tall crests read with equal weight (logos come from scripts/prepare-logos.mjs).
-const sizeLogos = (logos: { logo: string; name: string }[]) => Promise.all(logos.map(async (item) => {
+// `scale` enlarges marks whose small type would otherwise be hard to read.
+const sizeLogos = (logos: { logo: string; name: string; scale?: number }[]) => Promise.all(logos.map(async ({ scale = 1, ...item }) => {
   const source = await localImage(`assets/logos/clean/${item.logo}`);
   const aspect = source ? source.width / source.height : 2;
-  const height = Math.min(104, Math.sqrt(9600 / aspect));
+  const height = Math.min(scale > 1 ? 118 : 104, Math.sqrt(9600 * scale / aspect));
   return { ...item, src: `assets/logos/clean/${item.logo}`, height: Math.round(height), width: Math.round(height * aspect) };
 }));
 const partnerGroups = [
