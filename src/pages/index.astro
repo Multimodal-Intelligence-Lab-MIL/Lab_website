@@ -1,13 +1,30 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SignalField from '../components/SignalField.astro';
+import MultimodalVisual from '../components/MultimodalVisual.astro';
 import site from '../data/site.json';
 import { sitePath } from '../lib/paths';
 import { getCollection, render } from 'astro:content';
 
-const research = (await getCollection('research'))
-  .filter((item) => !item.data.draft && item.data.featured)
-  .sort((a, b) => a.data.order - b.data.order);
+const researchInterests = [
+  'Video analysis',
+  'Multimedia Computing',
+  'Machine learning',
+  'Medical image/video analysis',
+  'Satellite and drone imagery analysis',
+  'AI for Science'
+];
+const funders = [
+  { logo: 'the_alan_turing_institute_logo.jpeg', name: 'The Alan Turing Institute' },
+  { logo: 'exeter.png', name: 'University of Exeter' },
+  { logo: 'dso_singapore_log.png', name: 'DSO National Laboratories' },
+  { logo: 'ukri_logo.png', name: 'UKRI Research England' }
+];
+const collaborators = [
+  { logo: 'newcastle-uni.png', name: 'Newcastle University' },
+  { logo: 'birmingham-uni.jpeg', name: 'University of Birmingham' },
+  { logo: 'univ-liverpool.png', name: 'University of Liverpool' }
+];
 const newsEntries = (await getCollection('news'))
   .filter((item) => !item.data.draft)
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
@@ -20,37 +37,25 @@ const news = await Promise.all(newsEntries.map(async (entry) => ({ entry, conten
     <div class="shell hero-grid">
       <div class="hero-copy">
         <p class="eyebrow"><span></span> University of Exeter · Computer Science</p>
-        <h1>Intelligence,<br /><em>across modalities.</em></h1>
-        <p class="hero-intro">{site.mission}</p>
+        <h1>Multimodal<br />Intelligence Lab</h1>
+        <p class="hero-intro">Welcome to the Multimodal Intelligence Lab, where we explore innovative solutions at the intersection of Artificial Intelligence, Machine Learning, and Multimodal Data Processing. Aligned with the University of Exeter’s 2030 strategy, our research investigates how <strong>Multimodal AI</strong> and related disciplines can contribute to a greener, healthier, and fairer society. Our core focus is the development of computer vision and machine learning techniques, with applications in healthcare, the environment, and social science.</p>
         <div class="hero-actions">
           <a class="button button-primary" href={sitePath('research/')}>Explore our research</a>
           <a class="text-link" href={sitePath('publications/')}>View publications <span aria-hidden="true">↗</span></a>
         </div>
       </div>
-      <div class="hero-model" aria-label="Research modalities">
-        <div class="model-core"><span>M</span><small>multimodal<br />intelligence</small></div>
-        <span class="modality modality-vision">Vision</span>
-        <span class="modality modality-language">Language</span>
-        <span class="modality modality-audio">Audio</span>
-        <span class="modality modality-sensor">Signals</span>
-      </div>
-    </div>
-    <div class="shell hero-foot">
-      <span>Video analysis</span><span>Multimedia</span><span>Healthcare</span><span>AI for science</span>
+      <MultimodalVisual />
     </div>
   </section>
 
   <section class="section research-overview">
     <div class="shell">
-      <div class="section-heading split-heading">
-        <div><p class="eyebrow dark">Research directions</p><h2>One lab. Multiple signals.<br />Shared intelligence.</h2></div>
-        <p>{site.description}</p>
-      </div>
-      <div class="research-list">
-        {research.map((item, index) => (
-          <article class="research-row">
-            <span>{String(index + 1).padStart(2, '0')}</span><h3>{item.data.shortTitle}</h3><p>{item.data.summary}</p><span class="row-mark" aria-hidden="true">+</span>
-          </article>
+      <h2 class="research-heading">Research interests</h2>
+      <div class="research-grid">
+        {researchInterests.map((title) => (
+          <a class="research-tile" href={sitePath('research/')}>
+            <h3>{title}</h3>
+          </a>
         ))}
       </div>
     </div>
@@ -83,12 +88,23 @@ const news = await Promise.all(newsEntries.map(async (entry) => ({ entry, conten
 
   <section class="section partners-section">
     <div class="shell">
-      <p class="eyebrow dark">Selected funders & collaborators</p>
-      <div class="partner-strip">
-        <img src={sitePath('assets/logos/exeter.png')} alt="University of Exeter" />
-        <img src={sitePath('assets/logos/ukri_logo.png')} alt="UK Research and Innovation" />
-        <img src={sitePath('assets/logos/the_alan_turing_institute_logo.jpeg')} alt="The Alan Turing Institute" />
-        <img src={sitePath('assets/logos/dso_singapore_log.png')} alt="DSO National Laboratories" />
+      <div class="partner-group">
+        <h2>Selected Funders</h2>
+        <p>The research works at MIL has gratefully received funding from several distinguished and venerable funders.</p>
+        <div class="partner-logos funder-logos">
+          {funders.map(({ logo, name }) => (
+            <div class="partner-logo"><img src={sitePath(`assets/logos/${logo}`)} alt={name} loading="lazy" /></div>
+          ))}
+        </div>
+      </div>
+      <div class="partner-group">
+        <h2>Selected Collaborators</h2>
+        <p>The lab is fortunate to collaborate with a range of internal and external partners.</p>
+        <div class="partner-logos collaborator-logos">
+          {collaborators.map(({ logo, name }) => (
+            <div class="partner-logo"><img src={sitePath(`assets/logos/${logo}`)} alt={name} loading="lazy" /></div>
+          ))}
+        </div>
       </div>
     </div>
   </section>

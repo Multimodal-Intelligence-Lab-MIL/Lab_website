@@ -1,0 +1,161 @@
+---
+// Two hemispheres of connected neurons, surrounded by examples of input signals.
+const leftNeurons = [
+  [274, 195], [241, 208], [221, 234], [258, 233], [281, 253],
+  [202, 263], [235, 267], [264, 280], [194, 298], [220, 305],
+  [249, 310], [280, 313], [206, 334], [232, 345], [263, 342],
+  [280, 371], [244, 375], [220, 368]
+];
+const neurons = [...leftNeurons, ...leftNeurons.map(([x, y]) => [590 - x, y])];
+const connections = neurons.flatMap(([x, y], index) =>
+  neurons.slice(index + 1).flatMap(([otherX, otherY]) =>
+    Math.hypot(x - otherX, y - otherY) < 58
+      ? [{ x, y, otherX, otherY }]
+      : []
+  )
+);
+const audioHeights = Array.from({ length: 31 }, (_, i) =>
+  6 + Math.abs(Math.sin(i * 1.8) * Math.sin(i * .34)) * 46
+);
+---
+
+<div class="multimodal-visual">
+  <svg viewBox="0 0 590 570" role="img" aria-label="Text, images, audio waveforms and sensor signals connected to a brain-shaped neural network">
+    <defs>
+      <radialGradient id="neural-glow">
+        <stop stop-color="#72d3ee" stop-opacity=".3" />
+        <stop offset="1" stop-color="#72d3ee" stop-opacity="0" />
+      </radialGradient>
+      <linearGradient id="neural-fill" x2="1" y2="1">
+        <stop stop-color="#fff" stop-opacity=".85" />
+        <stop offset="1" stop-color="#d9effa" stop-opacity=".7" />
+      </linearGradient>
+      <linearGradient id="landscape-fill" x2="0" y2="1">
+        <stop stop-color="#89cee6" />
+        <stop offset="1" stop-color="#ebf8fc" />
+      </linearGradient>
+    </defs>
+
+    <circle cx="295" cy="286" r="214" fill="url(#neural-glow)" />
+    <g fill="none" stroke="#569fc5" stroke-width="1" opacity=".22">
+      <circle cx="295" cy="286" r="156" />
+      <circle cx="295" cy="286" r="212" stroke-dasharray="3 9" />
+      <path d="M132 116 Q200 116 241 208 M456 117 Q376 135 349 208 M477 295 Q431 298 396 298 M414 471 Q388 397 350 375 M113 436 Q145 345 194 298" />
+    </g>
+    <g class="signal-streams" fill="none" stroke="#368cb6" stroke-width="1.4" stroke-dasharray="3 8" opacity=".5">
+      <path d="M151 135 Q218 153 258 233 M440 128 Q374 159 332 233 M468 294 L370 298 M404 450 Q360 422 327 342 M131 426 Q168 362 220 305" />
+    </g>
+
+    <!-- Image inputs: a small stack of landscape, city and medical imagery. -->
+    <g transform="translate(18 62) rotate(-9 70 65)">
+      <rect class="input-card" x="15" y="-13" width="127" height="105" rx="8" />
+      <rect class="input-card" x="7" y="-6" width="127" height="105" rx="8" />
+      <rect class="input-card" width="127" height="105" rx="8" />
+      <rect x="8" y="8" width="111" height="76" rx="4" fill="url(#landscape-fill)" />
+      <circle cx="96" cy="27" r="9" fill="#fff4be" />
+      <path d="M8 72 40 32 69 65 84 50 119 79V84H8Z" fill="#5ea9ba" />
+      <path d="M8 80 35 63 67 77 96 60 119 74V84H8Z" fill="#226b81" />
+      <path d="M13 93H51M56 93H78" stroke="#b5d3df" stroke-width="3" stroke-linecap="round" />
+    </g>
+    <g transform="translate(84 163) rotate(7)">
+      <rect class="input-card" width="82" height="67" rx="6" />
+      <rect x="6" y="6" width="70" height="55" rx="3" fill="#e0edf5" />
+      <path d="M12 55V30H27V55M32 55V18H48V55M53 55V35H69V55" fill="#779caf" />
+      <path d="M37 26H43M37 34H43M37 42H43M17 38H22M58 42H64" stroke="#e7f5fc" stroke-width="2" />
+    </g>
+    <g transform="translate(30 241) rotate(-6)">
+      <rect class="input-card" width="88" height="73" rx="6" />
+      <rect x="6" y="6" width="76" height="61" rx="3" fill="#204156" />
+      <ellipse cx="44" cy="36" rx="22" ry="25" fill="#7897ab" />
+      <path d="M42 18Q22 28 36 47M47 19Q68 31 51 50M44 16V57" fill="none" stroke="#c2d7e4" stroke-width="3" />
+      <circle cx="45" cy="36" r="8" fill="#204156" />
+    </g>
+
+    <!-- Text inputs, without modality captions. -->
+    <g transform="translate(385 43) rotate(7 90 60)">
+      <rect class="input-card" x="12" y="-10" width="157" height="112" rx="8" />
+      <rect class="input-card" width="157" height="112" rx="8" />
+      <g fill="#547a91" font-family="ui-monospace, monospace" font-size="9">
+        <text x="14" y="26">Learning from the world</text>
+        <text x="14" y="43">context → meaning</text>
+        <text x="14" y="60">自然 · 人类 · 科学</text>
+      </g>
+      <g stroke="#bed7e4" stroke-width="3" stroke-linecap="round">
+        <path d="M15 76H139M15 87H121M15 98H75" />
+      </g>
+    </g>
+    <g transform="translate(453 177) rotate(-5)">
+      <rect class="input-card" width="117" height="45" rx="6" />
+      <g fill="#67869c" font-family="ui-monospace, monospace" font-size="8">
+        <text x="10" y="19">01001 10110 01011</text>
+        <text x="10" y="33">11010 00101 10010</text>
+      </g>
+    </g>
+
+    <!-- Audio inputs: overlapping waveforms and a spectrogram. -->
+    <g transform="translate(440 250) rotate(5 67 40)">
+      <rect class="input-card" x="8" y="-10" width="130" height="81" rx="8" />
+      <rect class="input-card" width="130" height="81" rx="8" />
+      <path d="M10 40H120" stroke="#d7e7ee" />
+      {audioHeights.map((height, i) => (
+        <line x1={12 + i * 3.5} x2={12 + i * 3.5} y1={40 - height / 2} y2={40 + height / 2} stroke={i % 3 ? '#459bc3' : '#83cbd5'} stroke-width="2" stroke-linecap="round" />
+      ))}
+    </g>
+    <g transform="translate(457 354) rotate(-5)">
+      <rect class="input-card" width="107" height="67" rx="6" />
+      {Array.from({ length: 22 }, (_, i) => (
+        <rect x={9 + i * 4} y="9" width="2.5" height="49" rx="1" fill={['#72bfd4', '#9baede', '#4198b7'][i % 3]} opacity={.25 + Math.abs(Math.sin(i * .6)) * .6} />
+      ))}
+    </g>
+
+    <!-- Sensor inputs: time series and spatial samples. -->
+    <g transform="translate(294 440) rotate(5 73 41)">
+      <rect class="input-card" x="9" y="9" width="156" height="87" rx="8" />
+      <rect class="input-card" width="156" height="87" rx="8" />
+      <g fill="none" stroke="#dce9f0" stroke-width="1">
+        <path d="M14 17H141M14 36H141M14 55H141M14 74H141M29 13V75M57 13V75M85 13V75M113 13V75" />
+      </g>
+      <path d="M14 47 26 48 31 24 38 67 45 43 57 46 68 42 76 18 83 65 89 40 104 44 115 31 123 54 131 42 141 45" fill="none" stroke="#3d9f9d" stroke-width="2" stroke-linejoin="round" />
+      <path d="M14 62Q33 31 53 58T94 56T141 62" fill="none" stroke="#8e9bcb" stroke-width="1.5" />
+    </g>
+    <g transform="translate(60 400) rotate(-7 67 43)">
+      <rect class="input-card" width="126" height="93" rx="8" />
+      <g fill="#5e9bb8">
+        {Array.from({ length: 32 }, (_, i) => (
+          <circle cx={17 + (i % 8) * 13} cy={21 + Math.floor(i / 8) * 16 + Math.sin(i * 2) * 6} r={i % 4 === 0 ? 2.5 : 1.5} opacity={.4 + (i % 3) * .25} />
+        ))}
+      </g>
+      <path d="M17 76 43 47 75 60 108 29M43 47 43 23M75 60 99 75" stroke="#86b3c8" stroke-width="1" fill="none" />
+    </g>
+
+    <!-- Brain-shaped neural network at the centre. -->
+    <g class="neural-brain">
+      <path d="M284 189C270 171 244 182 237 199C211 194 195 215 201 236C180 247 179 272 190 286C177 307 189 333 204 339C201 362 219 378 236 377C245 396 272 398 284 380Z M306 189C320 171 346 182 353 199C379 194 395 215 389 236C410 247 411 272 400 286C413 307 401 333 386 339C389 362 371 378 354 377C345 396 318 398 306 380Z" fill="url(#neural-fill)" stroke="#73adc9" stroke-width="1.5" />
+      <g stroke="#539abc" stroke-width="1" opacity=".52">
+        {connections.map(({ x, y, otherX, otherY }) => (
+          <line x1={x} y1={y} x2={otherX} y2={otherY} />
+        ))}
+      </g>
+      {neurons.map(([x, y], i) => (
+        <g>
+          <circle class="neuron-halo" cx={x} cy={y} r="7" fill="#79cce1" opacity=".14" style={`animation-delay: ${i * .12}s`} />
+          <circle cx={x} cy={y} r={i % 5 === 0 ? 4 : 2.8} fill={i % 3 === 0 ? '#38a8b5' : '#377ea7'} />
+          <circle cx={x - .6} cy={y - .6} r=".85" fill="#ecfbff" />
+        </g>
+      ))}
+    </g>
+  </svg>
+</div>
+
+<style>
+  .multimodal-visual { width: 100%; max-width: 590px; justify-self: center; }
+  svg { display: block; width: 100%; height: auto; overflow: visible; }
+  .input-card { fill: #fcfeff; stroke: #bed9e8; stroke-width: 1; }
+  .signal-streams { animation: signal-flow 18s linear infinite; }
+  .neuron-halo { transform-box: fill-box; transform-origin: center; animation: neuron-pulse 4s ease-in-out infinite; }
+  @keyframes signal-flow { to { stroke-dashoffset: -110; } }
+  @keyframes neuron-pulse { 50% { opacity: .38; transform: scale(1.45); } }
+  @media (prefers-reduced-motion: reduce) {
+    .signal-streams, .neuron-halo { animation: none; }
+  }
+</style>
