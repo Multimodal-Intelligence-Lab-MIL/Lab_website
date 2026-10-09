@@ -8,7 +8,7 @@ const rendered = await Promise.all(entries.map(async (entry) => ({ entry, conten
 ---
 
 <BaseLayout title="Research" description="Research themes of the Multimodal Intelligence Lab." currentPath="/research/">
-  <PageHero eyebrow="Research programme" title="Research" intro="We connect methods and applications across multimodal learning, medical intelligence, environmental monitoring and safer digital societies." stat="04" statLabel="interconnected research themes" />
+  <PageHero eyebrow="Research programme" title="Research" intro="We connect video and multimedia analysis with machine learning, healthcare, environmental monitoring and AI for science." stat={String(entries.length).padStart(2, '0')} statLabel="interconnected research themes" />
   <section class="section research-page">
     <div class="shell research-theme-list">
       {rendered.map(({ entry, content: { Content } }, index) => (
