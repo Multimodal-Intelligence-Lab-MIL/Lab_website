@@ -7,7 +7,29 @@ Design references supplied for this update:
 
 These are design references, not runtime dependencies. Apple's description of translucent, content-aware controls also informs the design: https://www.apple.com/newsroom/2025/06/apple-introduces-a-delightful-and-elegant-new-software-design/.
 
-The site uses its own CSS in `src/styles/glass.css`, after iOS 26 Liquid Glass. A fixed `.liquid-scene` layer (in `BaseLayout.astro`) holds six large soft colour fields that drift on independent 30–52 s paths, so each pane picks up different light as the scene moves. Navigation, cards, logo tiles and controls are clear glass: about 20 % white fill, `backdrop-filter: blur() saturate()`, a softened 1 px edge and a gradient specular rim (bright at top left and bottom right). The earlier SVG displacement ("refraction") filter on the header was removed: below 2x pixel density Chromium clipped its blurred backdrop at the edges, which showed as a pale ring, and at 2x it was visually indistinguishable from plain blur. Reduced motion stops the scene; reduced transparency and forced colours switch to solid surfaces.
+The site uses its own CSS in `src/styles/glass.css` and one script, `src/lib/liquid-glass.ts`.
+
+- **Scene.** A fixed `.liquid-scene` layer (in `BaseLayout.astro`) keeps the original pale blue-white wash and moves it as one texture, with a second layer of soft white light streaks for the rims to bend. Both layers share a 64 s period and step together four times a second, and the scene holds still while the page scrolls (see Performance).
+- **Material (after Apple-UI).** Every `[data-glass]` pane has a low white tint, a dark hairline border, a bevel of inset light and shade for thickness, a 1 px specular rim (bright at the top left and bottom right), a soft gloss that follows the pointer, and a shadow that falls only below the pane.
+- **Refraction (after Liquid-Glass-HTML, Chromium only).** For each pane near the viewport, the script draws a rounded-rectangle signed-distance map into a canvas once per size and applies it through an SVG `feDisplacementMap` in `backdrop-filter`. The backdrop is sampled from further inside within a narrow rim, so the scene and any content scrolling under the navigation bar bend at the edge while the centre stays clear. Safari and Firefox do not render SVG backdrop filters and keep the CSS material.
+- **Tiers (`data-glass`).** `bar`: navigation, which also blurs content scrolling beneath it. `control`: buttons and pills, with a stronger rim. `panel`: tiles, filters and logos. `sheet`: large reading cards (people, publications, the news window), which use the same material but switch the backdrop filter on only while hovered or focused.
+
+Two Chromium behaviours shape this design and are worth keeping in mind when editing it:
+
+1. An outer `box-shadow` on a pane, or on anything inside it, shifts its SVG backdrop filter by however far the shadow reaches left or up (1.5 × blur + spread − offset). The filtered area then starts that many pixels inside the pane, leaving pale strips along the top and left edges; this caused the white ring around the earlier navigation bar. All glass shadows therefore keep that reach at or below zero (`--glass-lift`, `--glass-lift-hover`). Inset shadows are unaffected.
+2. A backdrop filter is recomputed whenever what lies behind it changes. With the scene moving every frame, many filtered panes made pages stutter. That is why the scene steps four times a second, pauses during scrolling, and why large cards filter only on hover.
+
+Reduced motion stops the scene; reduced transparency and forced colours switch to solid surfaces.
+
+### Performance
+
+Measured in headless Chromium at 2x pixel density, 1440 × 900, frames per second while idle / while scrolling. Software rendering makes the absolute numbers pessimistic; the comparison is what matters.
+
+| Page | Before the glass redesign | First redesign (blur on every card) | Current |
+| --- | --- | --- | --- |
+| Home | 35 / 37 | 32 / 31 | 39 / 39 |
+| People | 60 / 60 | 47 / 41 | 60 / 60 |
+| Publications | 48 / 49 | 33 / 28 | 60 / 56 |
 
 ## Images
 

@@ -22,7 +22,7 @@ const links = [
 ].filter(([, url]) => Boolean(url));
 ---
 
-<article class="publication-card" data-publication data-year={publication.year} data-category={publication.category} data-search={`${publication.title} ${publication.authors} ${publication.venue ?? ''}`.toLowerCase()}>
+<article class="publication-card" data-glass="sheet" data-publication data-year={publication.year} data-category={publication.category} data-search={`${publication.title} ${publication.authors} ${publication.venue ?? ''}`.toLowerCase()}>
   <div class="publication-visual">
     <a class="publication-cover" href={detailUrl} aria-label={`Read details for ${publication.title}`}>
       {publication.image ? (

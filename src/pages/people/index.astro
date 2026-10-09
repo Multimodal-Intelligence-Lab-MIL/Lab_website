@@ -21,8 +21,8 @@ const alumniCount = new Set(alumniGroups.flatMap((group) => group.members.map((m
   <section class="section collection-section">
     <div class="shell">
       <div class="category-jump" aria-label="People categories">
-        {groups.map((group) => <a href={`#${group.category.toLowerCase().replaceAll(' ', '-')}`}>{group.category}<span>{group.members.length}</span></a>)}
-        <a href="#alumni">Alumni<span>{alumniCount}</span></a>
+        {groups.map((group) => <a href={`#${group.category.toLowerCase().replaceAll(' ', '-')}`} data-glass="control">{group.category}<span>{group.members.length}</span></a>)}
+        <a href="#alumni" data-glass="control">Alumni<span>{alumniCount}</span></a>
       </div>
       {groups.map((group, groupIndex) => (
         <section class="people-group" id={group.category.toLowerCase().replaceAll(' ', '-')}>

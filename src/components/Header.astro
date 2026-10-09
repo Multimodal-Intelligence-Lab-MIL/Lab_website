@@ -14,7 +14,7 @@ const links = [
 const isActive = (path: string) => path === '' ? currentPath === '/' : currentPath.startsWith(`/${path}`);
 ---
 
-<header class="site-header">
+<header class="site-header" data-glass="bar">
   <div class="shell nav-shell">
     <a class="brand" href={sitePath()} aria-label="Multimodal Intelligence Lab home">
       <OptimizedImage src="assets/images/mmi-lab-logo.jpg" alt="" width={84} widths={[42, 84]} sizes="42px" loading="eager" />

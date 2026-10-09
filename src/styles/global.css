@@ -35,7 +35,7 @@ button, input, select, textarea { font: inherit; }
 h1, h2, h3, p { margin-top: 0; }
 h1, h2, h3 { letter-spacing: -.035em; }
 h2 { margin-bottom: 0; font-size: clamp(2.35rem, 5vw, 4.75rem); line-height: .98; font-weight: 500; }
-.site-header { position: absolute; z-index: 20; inset: 0 0 auto; color: var(--ink); background: rgba(255,255,255,.56); border-bottom: 1px solid rgba(28,93,139,.12); backdrop-filter: blur(14px); }
+.site-header { position: absolute; z-index: 20; inset: 0 0 auto; color: var(--ink); }
 .nav-shell { min-height: 84px; display: flex; align-items: center; justify-content: space-between; }
 .brand { display: inline-flex; gap: .75rem; align-items: center; text-decoration: none; }
 .brand img { width: 42px; height: 42px; border-radius: 50%; object-fit: cover; }
@@ -60,8 +60,7 @@ nav[data-menu] .nav-contact { padding: .62rem .95rem; color: #145f91; background
 }
 @keyframes title-spectrum { to { background-position: 100% 50%; } }
 .button { display: inline-flex; justify-content: center; align-items: center; min-height: 50px; padding: 0 1.35rem; border-radius: 3px; font-size: .88rem; font-weight: 600; text-decoration: none; }
-.button-primary { color: #0b5688; background: rgba(86,181,226,.18); border: 1px solid rgba(41,130,181,.25); }
-.button-primary:hover { background: rgba(86,181,226,.3); }
+.button-primary { color: #0b5688; }
 .text-link { display: inline-flex; gap: .5rem; align-items: center; padding: .3rem 0; color: var(--ink); font-size: .86rem; font-weight: 600; text-decoration: none; border-bottom: 1px solid currentColor; }
 .text-link span { color: var(--blue); }
 .text-link.light span { color: #287fb5; }

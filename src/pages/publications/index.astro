@@ -16,7 +16,7 @@ const categories = [...new Set(publications.map((entry) => entry.data.category))
   <PageHero eyebrow="Research output" title="Publications" intro="Selected journal articles, conference papers, preprints and datasets from the lab. Use the filters to explore the collection." stat={String(publications.length)} statLabel="records in the current catalogue" />
   <section class="section collection-section">
     <div class="shell">
-      <div class="filter-bar" data-publication-filters>
+      <div class="filter-bar" data-glass="panel" data-publication-filters>
         <label class="search-field"><span>Search publications</span><input type="search" placeholder="Title, author or venue" data-publication-search /></label>
         <label><span>Year</span><select data-publication-year><option value="all">All years</option>{years.map((year) => <option value={year}>{year}</option>)}</select></label>
         <label><span>Type</span><select data-publication-category><option value="all">All types</option>{categories.map((category) => <option value={category}>{category}</option>)}</select></label>

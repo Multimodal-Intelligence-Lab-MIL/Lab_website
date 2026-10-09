@@ -13,7 +13,7 @@ const initials = data.name
   .toUpperCase();
 ---
 
-<article class="person-card" data-person data-category={data.category}>
+<article class="person-card" data-glass="sheet" data-person data-category={data.category}>
   <div class:list={['person-photo', !data.image && 'person-photo-placeholder']}>
     {data.image ? (
       <OptimizedImage src={data.image} alt={`Portrait of ${data.name}`} width={224} widths={[112, 224]} sizes="(max-width: 600px) 88px, 112px" loading={priority ? 'eager' : 'lazy'} />

@@ -39,7 +39,7 @@ const speculationRules = JSON.stringify({
     <script type="speculationrules" is:inline set:html={speculationRules} />
   </head>
   <body>
-    <div class="liquid-scene" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+    <div class="liquid-scene" aria-hidden="true"><span></span><span></span></div>
     <a class="skip-link" href="#main-content">Skip to content</a>
     <Header currentPath={currentPath} />
     <main id="main-content">
@@ -54,6 +54,10 @@ const speculationRules = JSON.stringify({
         menuButton.setAttribute('aria-expanded', String(!expanded));
         menu?.toggleAttribute('data-open', !expanded);
       });
+    </script>
+    <script>
+      import { mountLiquidGlass } from '../lib/liquid-glass';
+      mountLiquidGlass();
     </script>
   </body>
 </html>
