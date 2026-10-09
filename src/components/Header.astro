@@ -14,7 +14,7 @@ const links = [
 const isActive = (path: string) => path === '' ? currentPath === '/' : currentPath.startsWith(`/${path}`);
 ---
 
-<header class="site-header" data-liquid-glass>
+<header class="site-header">
   <div class="shell nav-shell">
     <a class="brand" href={sitePath()} aria-label="Multimodal Intelligence Lab home">
       <OptimizedImage src="assets/images/mmi-lab-logo.jpg" alt="" width={84} widths={[42, 84]} sizes="42px" loading="eager" />
@@ -25,14 +25,9 @@ const isActive = (path: string) => path === '' ? currentPath === '/' : currentPa
     </button>
     <nav aria-label="Primary navigation" data-menu>
       {links.map(([label, path]) => (
-        <a href={sitePath(path)} data-astro-prefetch aria-current={isActive(path) ? 'page' : undefined}>{label}</a>
+        <a href={sitePath(path)} data-astro-prefetch="load" aria-current={isActive(path) ? 'page' : undefined}>{label}</a>
       ))}
       <a class="nav-contact" href={sitePath('#contact')}>Contact</a>
     </nav>
   </div>
 </header>
-
-<script>
-  import { enhanceLiquidGlass } from '../lib/liquid-glass';
-  document.querySelectorAll<HTMLElement>('[data-liquid-glass]').forEach(enhanceLiquidGlass);
-</script>

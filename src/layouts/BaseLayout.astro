@@ -17,6 +17,14 @@ const {
   currentPath = '/'
 } = Astro.props;
 const pageTitle = title === 'Multimodal Intelligence Lab' ? title : `${title} · Multimodal Intelligence Lab`;
+// Chromium browsers prerender a page as soon as the pointer rests on its link, so the
+// click shows it instantly; the header links are also prefetched once each page is idle.
+const speculationRules = JSON.stringify({
+  prerender: [{
+    where: { and: [{ href_matches: sitePath('*') }, { not: { href_matches: sitePath('admin/*') } }] },
+    eagerness: 'moderate'
+  }]
+});
 ---
 
 <!doctype html>
@@ -28,8 +36,10 @@ const pageTitle = title === 'Multimodal Intelligence Lab' ? title : `${title} ·
     <meta name="theme-color" content="#edf7fc" />
     <link rel="icon" type="image/svg+xml" href={sitePath('favicon.svg')} />
     <title>{pageTitle}</title>
+    <script type="speculationrules" is:inline set:html={speculationRules} />
   </head>
   <body>
+    <div class="liquid-scene" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span></div>
     <a class="skip-link" href="#main-content">Skip to content</a>
     <Header currentPath={currentPath} />
     <main id="main-content">

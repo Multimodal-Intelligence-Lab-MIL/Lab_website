@@ -10,6 +10,9 @@ export default defineConfig({
   prefetch: { defaultStrategy: 'hover' },
   trailingSlash: 'always',
   build: {
-    format: 'directory'
+    format: 'directory',
+    // Styles are small; inlining them removes a render-blocking round trip per page,
+    // which dominates first visits on slow or distant connections to GitHub Pages.
+    inlineStylesheets: 'always'
   }
 });

@@ -10,6 +10,21 @@ export function mountAdminGateway() {
   const config = JSON.parse(document.querySelector('#admin-gateway-config')!.textContent!);
   let editorReady = false;
   let pending = false;
+  let warming: Promise<[typeof import('./admin-editor.js'), unknown]> | undefined;
+
+  // Start downloading the editor and its data while the visitor is still signing in,
+  // so pressing "Enter admin" only has to render. A failed attempt is retried on submit.
+  function warm() {
+    warming ??= Promise.all([
+      import('./admin-editor.js'),
+      fetch(config.dataUrl).then(response => {
+        if (!response.ok) throw new Error('Editor data could not be loaded.');
+        return response.json();
+      })
+    ]);
+    warming.catch(() => { warming = undefined; });
+    return warming;
+  }
 
   async function enter() {
     if (pending) return;
@@ -20,13 +35,7 @@ export function mountAdminGateway() {
     error.hidden = true;
     try {
       if (!editorReady) {
-        const [editor, data] = await Promise.all([
-          import('./admin-editor.js'),
-          fetch(config.dataUrl).then(response => {
-            if (!response.ok) throw new Error('Editor data could not be loaded.');
-            return response.json();
-          })
-        ]);
+        const [editor, data] = await warm();
         editor.initAdmin(data);
         editorReady = true;
       }
@@ -56,4 +65,9 @@ export function mountAdminGateway() {
     form.querySelector<HTMLInputElement>('input')?.focus();
   });
   if (sessionStorage.getItem(sessionKey) === 'active') void enter();
+  else {
+    form.addEventListener('focusin', () => void warm().catch(() => {}), { once: true });
+    if ('requestIdleCallback' in window) window.requestIdleCallback(() => void warm().catch(() => {}), { timeout: 2000 });
+    else setTimeout(() => void warm().catch(() => {}), 600);
+  }
 }

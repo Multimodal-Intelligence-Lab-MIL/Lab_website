@@ -7,7 +7,7 @@ Design references supplied for this update:
 
 These are design references, not runtime dependencies. Apple's description of translucent, content-aware controls also informs the design: https://www.apple.com/newsroom/2025/06/apple-introduces-a-delightful-and-elegant-new-software-design/.
 
-The site uses its own CSS in `src/styles/glass.css`: a continuous, slowly moving pale blue scene, clear control centers, asymmetric 2.5–3 px edge highlights and inset shadows. The floating navigation reveals content while scrolling. In Chromium, `src/lib/liquid-glass.ts` prepares small cached displacement maps for the header and homepage research button after two animation frames and an idle callback. Maps regenerate only when dimensions change, never on each frame. Other browsers use CSS blur and edge lighting; repeated reading cards use translucent gradients without per-card displacement or blur. Reduced motion, reduced transparency and forced colors have fallbacks. The SVG-backed refraction is an enhancement and does not affect foreground text.
+The site uses its own CSS in `src/styles/glass.css`, after iOS 26 Liquid Glass. A fixed `.liquid-scene` layer (in `BaseLayout.astro`) holds six large soft colour fields that drift on independent 30–52 s paths, so each pane picks up different light as the scene moves. Navigation, cards, logo tiles and controls are clear glass: about 20 % white fill, `backdrop-filter: blur() saturate()`, a softened 1 px edge and a gradient specular rim (bright at top left and bottom right). The earlier SVG displacement ("refraction") filter on the header was removed: below 2x pixel density Chromium clipped its blurred backdrop at the edges, which showed as a pale ring, and at 2x it was visually indistinguishable from plain blur. Reduced motion stops the scene; reduced transparency and forced colours switch to solid surfaces.
 
 ## Images
 
@@ -15,8 +15,8 @@ The site uses its own CSS in `src/styles/glass.css`: a continuous, slowly moving
 
 - Avatars: up to 224 px wide, with 112/224 px responsive sources, explicit dimensions and asynchronous decoding. The first visible group loads eagerly; later portraits load lazily.
 - Header logo: 42/84 px sources instead of the original 512 px file.
-- Partner logos: small WebP sources, explicit dimensions and eager loading so they are fetched before the visitor reaches the section.
-- Publication figures: responsive WebP sources in the catalogue; larger, higher-quality variants on detail pages.
+- Partner logos: `scripts/prepare-logos.mjs` crops each logo and turns its white background transparent into `public/assets/logos/clean/`; the homepage sizes them to a similar visual area and loads them lazily. Run it again when adding a logo, then list the new file in `src/pages/index.astro`.
+- Publication figures: 480/720/960 px WebP sources at quality 80 in the catalogue; up to 1200 px at quality 84 on detail pages.
 - System fonts remove the cross-origin Google Fonts stylesheet and font requests.
 - Astro prefetches navigation destinations on hover/focus to shorten subsequent page changes, respecting its data-saver behavior.
 
@@ -43,3 +43,9 @@ The admin screen now has a small, hashed module entry and hashed CSS instead of 
 The homepage particle scene starts after initial painting, retaining its inline SVG fallback. Partner logos remain eager but have low fetch priority so they do not compete with the stylesheet. These changes reduce transfer and startup work; GitHub Pages connection latency still depends on the visitor's location and network.
 
 Follow-up validation in Chromium: cold-cache Home/Research/Join/Admin requests under a 150 ms latency, 200 KB/s download and 4x CPU simulation; no font or cross-origin startup requests; 390 px Research/Join/Admin without overflow; fixed navigation, visible glass edges, cached refraction maps, reduced-transparency fallback and the Safari-user-agent CSS path. This is not a test in the actual Safari engine. Admin checks covered wrong credentials, a failed snapshot request followed by retry, editing all four collections, deferred BibTeX parsing, deletion URLs, logout/relogin and session restoration. Publication filtering, abstract/BibTeX controls, cold-load logos, title descenders and reduced motion also passed.
+
+## Loading
+
+- All CSS is inlined into each page (`build.inlineStylesheets: 'always'`), so no page waits on a separate stylesheet request.
+- Header links are prefetched once a page is idle (`data-astro-prefetch="load"`); Chromium additionally prerenders a same-site page when the pointer rests on its link (speculation rules in `BaseLayout.astro`, excluding `/admin/`).
+- Admin downloads its editor module and `admin/data.json` while the sign-in form is shown, so entering only has to render.

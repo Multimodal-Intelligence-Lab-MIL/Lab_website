@@ -59,17 +59,14 @@
 .partner-group + .partner-group { margin-top: clamp(4rem, 7vw, 7rem); }
 .partner-group h2 { font-size: clamp(2rem, 3.5vw, 3rem); line-height: 1.15; }
 .partner-group > p { max-width: 880px; margin: 1.5rem auto 0; color: var(--muted); font-size: 1.05rem; }
-.partner-logos { display: grid; align-items: center; gap: clamp(1rem, 3vw, 2.5rem); margin: 2.5rem auto 0; }
-.funder-logos { grid-template-columns: 1.1fr .8fr 1.15fr 1.7fr; }
-.collaborator-logos { max-width: 800px; grid-template-columns: 1fr 1fr 1.7fr; }
-.partner-logo { display: grid; place-items: center; min-width: 0; height: 165px; }
-.partner-logo img { width: 100%; height: 100%; object-fit: contain; }
+.partner-logos { display: flex; flex-wrap: wrap; justify-content: center; gap: clamp(.9rem, 2vw, 1.4rem); max-width: 1080px; margin: 2.5rem auto 0; padding: 0; list-style: none; }
+.partner-logo { display: grid; place-items: center; min-width: 0; height: 148px; padding: 0 clamp(1.6rem, 3vw, 2.6rem); }
+.partner-logo img { width: var(--logo-w); max-width: 100%; height: auto; max-height: var(--logo-h); object-fit: contain; }
 @media (max-width: 900px) {
 .hero { padding-top: 9rem; }
 .hero-grid { grid-template-columns: 1fr; gap: 2rem; }
 .hero-copy h1 { font-size: clamp(2.6rem, 7vw, 4.1rem); }
 .research-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-.funder-logos { max-width: 580px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 600px) {
 .hero { padding: 8.5rem 0 3rem; }
@@ -83,9 +80,8 @@
 .home-news-scroll { min-height: 470px; height: 68vh; }
 .home-news-entry { grid-template-columns: 1fr; gap: .8rem; padding: 1.6rem; }
 .home-news-date { display: flex; align-items: baseline; gap: .75rem; }
-.partner-logo { height: 115px; }
-.collaborator-logos { max-width: 400px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
-.collaborator-logos .partner-logo:last-child { grid-column: 1 / -1; justify-self: center; width: 80%; }
+.partner-logo { height: 112px; padding-inline: 1.25rem; }
+.partner-logo img { width: calc(var(--logo-w) * .78); max-height: calc(var(--logo-h) * .78); }
 }
 @media (prefers-reduced-motion: reduce) {
 .signal-ambient { animation: none; }

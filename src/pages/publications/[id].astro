@@ -32,7 +32,7 @@ const links = [
           <div class="paper-actions">{links.map(([label, url]) => <a class="button button-primary" href={url} target="_blank" rel="noreferrer">{label}</a>)}</div>
         </div>
         <div class="paper-detail-image">
-          {publication.image ? <OptimizedImage src={publication.image} alt={publication.imageAlt || ''} width={1600} widths={[600, 1000, 1600]} sizes="(max-width: 900px) calc(100vw - 32px), 600px" quality={90} loading="eager" /> : <LabCover id={entry.id} />}
+          {publication.image ? <OptimizedImage src={publication.image} alt={publication.imageAlt || ''} width={1200} widths={[600, 900, 1200]} sizes="(max-width: 900px) calc(100vw - 32px), 600px" quality={84} loading="eager" /> : <LabCover id={entry.id} />}
         </div>
       </div>
     </header>
