@@ -47,6 +47,7 @@ Astro 会在 GitHub Actions 中自动判断：
 后台提供：
 
 - News、Publication、People 和 Research 的新增、编辑与删除入口；
+- Alumni 名单的轻量编辑入口，直接修改 `src/data/alumni.json`；
 - 与内容 schema 对齐的字段表单和 Markdown 自动生成；
 - Publication 与 People 对应图片目录的上传、删除和刷新入口；
 - 已有内容的表单回填和图片路径选择；
@@ -70,10 +71,11 @@ Astro 会在 GitHub Actions 中自动判断：
 2. 访问 `/admin/`，使用 `MIL / MIL` 进入编辑入口。
 3. 第一步选择内容类型以及新增、编辑或删除操作。
 4. Publication 或 People 可以在第二步跳转 GitHub 上传、删除图片；提交图片后回到后台刷新图片列表。
-5. Publication 在第三步先粘贴 BibTeX，点击 `Read BibTeX & fill fields` 自动填写可识别字段，再人工补充图片和其他链接。
-6. 点击 `Copy complete file content`，复制成功后再点击 `Open GitHub editor`。
-7. 在 GitHub 的文件编辑区域粘贴完整内容，不要粘贴到 commit message；最后点击 `Commit changes`。
-8. GitHub Actions 自动重新构建并发布。
+5. Alumni 在后台点击 `Edit Alumni on GitHub`，按现有 JSON 格式增删分组或成员；`name` 必填，`destination` 可选。
+6. Publication 在第三步先粘贴 BibTeX，点击 `Read BibTeX & fill fields` 自动填写可识别字段，再人工补充图片和其他链接。
+7. 点击 `Copy complete file content`，复制成功后再点击 `Open GitHub editor`。
+8. 在 GitHub 的文件编辑区域粘贴完整内容，不要粘贴到 commit message；最后点击 `Commit changes`。
+9. GitHub Actions 自动重新构建并发布。
 
 发布不是数据库实时更新，需要等待 GitHub Actions 构建完成。构建失败时，旧网站仍然保留，可在仓库 Actions 页面查看错误并修正对应内容。
 
