@@ -3,6 +3,7 @@ import { sitePath } from '../lib/paths';
 import OptimizedImage from './OptimizedImage.astro';
 import LabCover from './LabCover.astro';
 import { getPublicationArea, researchAreaPath } from '../lib/research';
+import { accentColor } from '../lib/accents';
 
 interface Props {
   entry: any;
@@ -45,7 +46,7 @@ const links = [
     <div class="publication-topline">
       <span>{publication.category}</span>
       {publication.award && <strong>{publication.award}</strong>}
-      {area && <a class="research-area-tag" href={researchAreaPath(area.id)}>{area.data.title}</a>}
+      {area && <a class="research-area-tag" href={researchAreaPath(area.id)} style={`--area-accent: ${accentColor(area.data.accent)}`}>{area.data.title}</a>}
     </div>
     <h2><a href={detailUrl}>{publication.title}</a></h2>
     <p class="publication-authors">{publication.authors}</p>

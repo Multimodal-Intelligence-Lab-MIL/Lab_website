@@ -127,7 +127,8 @@ GitHub 是唯一内容源。`/admin/` 不拥有独立数据库，而是把管理
 - 完整标题与短标题
 - `summary`：一两句说明具体研究内容，显示在 Research 页面卡片和首页悬浮卡片中
 - Markdown 详细说明（可选）
-- 色彩标识和排序
+- `accent`：方向的标识色，从 `src/lib/accents.ts` 中的 8 个预设颜色选择（Ocean、Sky、Aqua、Teal、Mint、Slate、Amber、Coral），只用于小标记：论文标签上的圆点、首页方块的圆点和 Research 卡片编号旁的短线。后台以色块显示，标出已被其他方向使用的颜色，并默认选中第一个未使用的颜色。如需新增颜色，在该文件中添加即可。
+- `order` 排序
 - `featured`、`draft`
 
 当前五个方向：Multimedia Understanding and Safety、AI for Healthcare、AI for Environment、Video and Scene Understanding、Trustworthy AI。首页和 Research 页面都直接读取该 collection，论文数量与列表按 `research` 字段自动汇总。后台新增论文时必须选择方向；选择 “Add new research area…” 会先保存正在填写的论文、切换到新建方向，完成后可返回并自动选中新方向（需先提交方向文件，再提交论文）。删除仍被论文使用的方向时后台会给出提示。

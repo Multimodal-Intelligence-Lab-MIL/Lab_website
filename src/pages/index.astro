@@ -9,6 +9,7 @@ import { sitePath } from '../lib/paths';
 import { getCollection, render } from 'astro:content';
 import { localImage } from '../lib/media';
 import { getResearchAreas, researchAreaPath } from '../lib/research';
+import { accentColor } from '../lib/accents';
 
 const researchAreas = await getResearchAreas();
 // Rows of three: independent funders first, then the three UKRI councils together.
@@ -68,7 +69,7 @@ const news = await Promise.all(newsEntries.map(async (entry) => ({ entry, conten
       <h2 class="research-heading">Research interests</h2>
       <div class="research-grid">
         {researchAreas.map(({ area, papers }) => (
-          <div class="research-item">
+          <div class="research-item" style={`--area-accent: ${accentColor(area.data.accent)}`}>
             <a class="research-tile" data-glass="panel" href={researchAreaPath(area.id)} aria-describedby={`area-summary-${area.id}`}>
               <h3>{area.data.title}</h3>
               <p class="research-tile-summary" aria-hidden="true">{area.data.summary}</p>

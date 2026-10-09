@@ -4,6 +4,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import PageHero from '../../components/PageHero.astro';
 import { getResearchAreas } from '../../lib/research';
 import { sitePath } from '../../lib/paths';
+import { accentColor } from '../../lib/accents';
 
 const areas = await getResearchAreas();
 const paperCount = areas.reduce((total, { papers }) => total + papers.length, 0);
@@ -15,7 +16,7 @@ const count = (n: number) => `${n} publication${n === 1 ? '' : 's'}`;
   <section class="section research-page">
     <div class="shell research-areas">
       {areas.map(({ area, papers }, index) => (
-        <article class="research-area" id={area.id} data-research-area>
+        <article class="research-area" id={area.id} style={`--area-accent: ${accentColor(area.data.accent)}`} data-research-area>
           <div class="research-card" data-glass="sheet">
             <p class="research-card-index">{String(index + 1).padStart(2, '0')}</p>
             <h2>{area.data.title}</h2>

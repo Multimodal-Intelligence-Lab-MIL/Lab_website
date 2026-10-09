@@ -21,7 +21,8 @@
 .publication-topline { display: flex; flex-wrap: wrap; align-items: center; gap: .55rem 1rem; margin-bottom: 1.2rem; color: #6b7b86; font: .65rem var(--mono); text-transform: uppercase; letter-spacing: .08em; }
 /* Research area tag: a light chip rather than a glass pane, as every card carries one. */
 .research-area-tag { display: inline-flex; align-items: center; gap: .45rem; padding: .34rem .7rem .32rem; color: #1f5a86; background: rgba(255,255,255,.5); border: 1px solid rgba(18,52,86,.1); border-radius: 999px; box-shadow: inset 0 1px 0 rgba(255,255,255,.95); font: 600 .62rem/1.2 var(--mono); letter-spacing: .06em; text-transform: uppercase; text-decoration: none; transition: background .2s ease, border-color .2s ease, color .2s ease; }
-.research-area-tag::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: #3f9fd0; box-shadow: 0 0 0 3px rgba(63,159,208,.16); }
+/* The dot carries the area's colour (src/lib/accents.ts). */
+.research-area-tag::before { content: ''; flex: none; width: 6px; height: 6px; border-radius: 50%; background: var(--area-accent, #3a9fd2); box-shadow: 0 0 0 3px color-mix(in srgb, var(--area-accent, #3a9fd2) 18%, transparent); }
 .research-area-tag:hover, .research-area-tag:focus-visible { color: #133f66; background: rgba(255,255,255,.85); border-color: rgba(18,52,86,.18); }
 .publication-topline .research-area-tag { margin-left: auto; }
 .paper-detail .research-area-tag { margin: -.4rem 0 1.4rem; }

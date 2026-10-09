@@ -1,6 +1,7 @@
 import { defineCollection, reference } from 'astro:content';
 import { z } from 'astro/zod';
 import { glob } from 'astro/loaders';
+import { accentNames } from './lib/accents';
 
 const news = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/news' }),
@@ -74,7 +75,7 @@ const research = defineCollection({
     title: z.string(),
     shortTitle: z.string(),
     summary: z.string(),
-    accent: z.enum(['cyan', 'violet', 'mint', 'blue']).default('cyan'),
+    accent: z.enum(accentNames).default('sky'),
     order: z.number().default(100),
     featured: z.boolean().default(true),
     draft: z.boolean().default(false)

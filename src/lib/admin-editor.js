@@ -1,3 +1,5 @@
+import { accents } from './accents';
+
 export function initAdmin(adminData) {
   const repositoryUrl = adminData.repositoryUrl || '';
   const repositorySlug = adminData.repositorySlug || '';
@@ -72,7 +74,7 @@ export function initAdmin(adminData) {
       { key: 'title', label: 'Full research title', type: 'text', required: true, primary: true, wide: true },
       { key: 'shortTitle', label: 'Short title', type: 'text', required: true },
       { key: 'summary', label: 'Summary', type: 'textarea', required: true, wide: true, rows: 4, help: 'One or two sentences on what the area studies. Shown on the Research page and in the home page hover card.' },
-      { key: 'accent', label: 'Accent', type: 'select', required: true, default: 'blue', options: ['cyan', 'violet', 'mint', 'blue'] },
+      { key: 'accent', label: 'Colour', type: 'accent', required: true, default: firstUnusedAccent, help: 'A small marker colour for this area: the dot on its paper tags and the bar beside its number on the Research page. Preset colours keep areas distinct and in keeping with the site; colours already in use are marked.' },
       { key: 'order', label: 'Display order', type: 'number', required: true, default: 100 },
       { key: 'featured', label: 'Featured', type: 'checkbox', default: true },
       { key: 'draft', label: 'Draft', type: 'checkbox', default: false },
@@ -199,8 +201,65 @@ export function initAdmin(adminData) {
     }
   }
 
+  /** Which research areas already use each colour (the area being edited excluded). */
+  function accentUsage() {
+    const usage = {};
+    (content.research || []).forEach(function (entry) {
+      if (entry.id === state.entry?.id) return;
+      const name = entry.data?.accent;
+      if (name) (usage[name] = usage[name] || []).push(entry.title);
+    });
+    return usage;
+  }
+
+  function firstUnusedAccent() {
+    const used = accentUsage();
+    return Object.keys(accents).find((name) => !used[name]) || 'sky';
+  }
+
+  function makeAccentField(field, value) {
+    const fieldElement = document.createElement('fieldset');
+    fieldElement.className = 'form-field field-wide accent-field';
+    const legend = document.createElement('legend');
+    legend.textContent = `${field.label}${field.required ? ' *' : ''}`;
+    const swatches = document.createElement('div');
+    swatches.className = 'accent-swatches';
+    const usage = accentUsage();
+    Object.entries(accents).forEach(function ([name, { label, color }]) {
+      const option = document.createElement('label');
+      option.className = 'accent-swatch';
+      const input = document.createElement('input');
+      input.type = 'radio';
+      input.name = field.key;
+      input.value = name;
+      input.required = Boolean(field.required);
+      input.checked = value === name;
+      const chip = document.createElement('span');
+      chip.className = 'accent-chip';
+      chip.style.background = color;
+      const text = document.createElement('span');
+      text.textContent = label;
+      option.append(input, chip, text);
+      if (usage[name]) {
+        const note = document.createElement('small');
+        note.textContent = `Used by ${usage[name].join(', ')}`;
+        option.classList.add('is-used');
+        option.append(note);
+      }
+      swatches.append(option);
+    });
+    fieldElement.append(legend, swatches);
+    if (field.help) {
+      const help = document.createElement('small');
+      help.textContent = field.help;
+      fieldElement.append(help);
+    }
+    return fieldElement;
+  }
+
   function makeField(field, value) {
     if (field.type === 'markdown') return makeMarkdownField(field, value);
+    if (field.type === 'accent') return makeAccentField(field, value);
 
     const fieldElement = document.createElement(field.importer ? 'div' : 'label');
     fieldElement.className = field.wide ? 'form-field field-wide' : 'form-field';
