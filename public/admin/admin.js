@@ -134,6 +134,9 @@
   const deletePanel = document.querySelector('[data-delete-panel]');
   const deletePath = document.querySelector('[data-delete-path]');
   const deleteLink = document.querySelector('[data-delete-link]');
+  const workflow = document.querySelector('[data-workflow]');
+  const selectionStep = document.querySelector('[data-selection-step]');
+  const quickActionButtons = Array.from(document.querySelectorAll('[data-quick-content][data-quick-operation]'));
 
   function today() {
     return new Date().toISOString().slice(0, 10);
@@ -174,16 +177,6 @@
   document.querySelector('[data-logout]')?.addEventListener('click', function () {
     sessionStorage.removeItem(SESSION_KEY);
     showLogin();
-  });
-
-  const tabs = Array.from(document.querySelectorAll('[data-tab]'));
-  const panels = Array.from(document.querySelectorAll('[data-panel]'));
-  tabs.forEach(function (tab) {
-    tab.addEventListener('click', function () {
-      const key = tab.dataset.tab;
-      tabs.forEach((item) => item.setAttribute('aria-selected', String(item === tab)));
-      panels.forEach((panel) => { panel.hidden = panel.dataset.panel !== key; });
-    });
   });
 
   function cleanSlug(value) {
@@ -707,7 +700,31 @@
     syncWorkflow();
   });
 
-  entrySelect?.addEventListener('change', syncWorkflow);
+  entrySelect?.addEventListener('change', function () {
+    syncWorkflow();
+    if (entrySelect.value) editorStep?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+
+  quickActionButtons.forEach(function (button) {
+    button.addEventListener('click', function () {
+      if (!contentTypeSelect || !operationSelect || !workflow || !selectionStep) return;
+      const contentType = button.dataset.quickContent || '';
+      const operation = button.dataset.quickOperation || '';
+      const needsEntry = operation === 'edit' || operation === 'delete';
+
+      workflow.hidden = false;
+      workflow.dataset.operation = operation;
+      selectionStep.hidden = !needsEntry;
+      contentTypeSelect.value = contentType;
+      contentTypeSelect.dispatchEvent(new Event('change'));
+      operationSelect.value = operation;
+      operationSelect.dispatchEvent(new Event('change'));
+
+      const target = needsEntry ? selectionStep : workflow;
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if (needsEntry) window.setTimeout(() => entrySelect?.focus(), 350);
+    });
+  });
 
   slugInput?.addEventListener('input', function () {
     state.slugManuallyEdited = true;

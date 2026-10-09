@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content';
 import { sitePath } from '../../lib/paths';
 import alumniData from '../../data/alumni.json';
+import joinData from '../../data/join.json';
 
 const repositoryUrl = 'https://github.com/Multimodal-Intelligence-Lab-MIL/Lab_website';
 const repositorySlug = 'Multimodal-Intelligence-Lab-MIL/Lab_website';
@@ -11,6 +12,9 @@ const editUrl = (folder: string, id: string) => `${repositoryUrl}/edit/${branch}
 const alumniPath = 'src/data/alumni.json';
 const alumniEditUrl = `${repositoryUrl}/edit/${branch}/${alumniPath}`;
 const alumniCount = alumniData.reduce((total, group) => total + group.members.length, 0);
+const joinPath = 'src/data/join.json';
+const joinEditUrl = `${repositoryUrl}/edit/${branch}/${joinPath}`;
+const joinOpportunityCount = joinData.phd.opportunities.length + joinData.postdoc.opportunities.length;
 
 const serialiseData = (data: Record<string, unknown>) => Object.fromEntries(
   Object.entries(data).map(([key, value]) => [
@@ -73,13 +77,6 @@ const researchEntries = (await getCollection('research'))
     body: item.body || ''
   }));
 
-const panels = [
-  { key: 'news', label: 'Lab news', items: newsEntries },
-  { key: 'publications', label: 'Publications', items: publicationEntries },
-  { key: 'people', label: 'People', items: peopleEntries },
-  { key: 'research', label: 'Research', items: researchEntries }
-];
-
 const currentPublicationImages = publicationEntries
   .map((entry) => String(entry.data.image || ''))
   .filter(Boolean);
@@ -114,7 +111,7 @@ const adminData = {
     <meta name="robots" content="noindex, nofollow" />
     <meta name="theme-color" content="#f7fbfd" />
     <title>MIL Admin Gateway</title>
-    <link rel="stylesheet" href="admin.css?v=20261009-1" />
+    <link rel="stylesheet" href="admin.css?v=20261009-2" />
   </head>
   <body>
     <div class="ambient ambient-one" aria-hidden="true"></div>
@@ -162,18 +159,66 @@ const adminData = {
       <main class="admin-shell">
         <section class="admin-intro">
           <div>
-            <p class="eyebrow">Git-backed content management</p>
-            <h1>Prepare here.<br /><em>Commit on GitHub.</em></h1>
+            <p class="eyebrow">Website administration</p>
+            <h1>What would you<br /><em>like to edit?</em></h1>
           </div>
-          <p>Choose the content and operation first. The gateway will prepare the correct media folder, fields and repository path without introducing another service or account.</p>
+          <p>Choose one area below. Structured entries open the existing form; Alumni and Join use a single lightweight data file on GitHub.</p>
         </section>
 
-        <section class="workflow" aria-label="Content editing workflow">
-          <article class="workflow-card workflow-selection">
+        <section class="content-launcher" aria-label="Website content areas">
+          <article class="content-launch-card">
+            <span class="content-launch-count">{newsEntries.length}</span>
+            <div><p>Updates</p><h2>News</h2></div>
+            <div class="content-launch-actions">
+              <button type="button" data-quick-content="news" data-quick-operation="create">Add new</button>
+              <button type="button" data-quick-content="news" data-quick-operation="edit">Edit existing</button>
+              <button type="button" data-quick-content="news" data-quick-operation="delete">Remove</button>
+            </div>
+          </article>
+          <article class="content-launch-card">
+            <span class="content-launch-count">{publicationEntries.length}</span>
+            <div><p>Research output</p><h2>Publications</h2></div>
+            <div class="content-launch-actions">
+              <button type="button" data-quick-content="publications" data-quick-operation="create">Add new</button>
+              <button type="button" data-quick-content="publications" data-quick-operation="edit">Edit existing</button>
+              <button type="button" data-quick-content="publications" data-quick-operation="delete">Remove</button>
+            </div>
+          </article>
+          <article class="content-launch-card content-launch-card-featured">
+            <span class="content-launch-count">{peopleEntries.length}</span>
+            <div><p>Lab directory</p><h2>People</h2></div>
+            <div class="content-launch-actions">
+              <button type="button" data-quick-content="people" data-quick-operation="create">Add new</button>
+              <button type="button" data-quick-content="people" data-quick-operation="edit">Edit existing</button>
+              <button type="button" data-quick-content="people" data-quick-operation="delete">Remove</button>
+              <a href={alumniEditUrl} target="_blank" rel="noreferrer">Alumni <small>{alumniCount}</small></a>
+            </div>
+          </article>
+          <article class="content-launch-card">
+            <span class="content-launch-count">{researchEntries.length}</span>
+            <div><p>Research themes</p><h2>Research</h2></div>
+            <div class="content-launch-actions">
+              <button type="button" data-quick-content="research" data-quick-operation="create">Add new</button>
+              <button type="button" data-quick-content="research" data-quick-operation="edit">Edit existing</button>
+              <button type="button" data-quick-content="research" data-quick-operation="delete">Remove</button>
+            </div>
+          </article>
+          <article class="content-launch-card content-launch-card-dark">
+            <span class="content-launch-count">{joinOpportunityCount}</span>
+            <div><p>Opportunities</p><h2>Join</h2></div>
+            <div class="content-launch-actions">
+              <a href={joinEditUrl} target="_blank" rel="noreferrer">Edit page</a>
+              <a href={sitePath('join/')} target="_blank" rel="noreferrer">View page</a>
+            </div>
+          </article>
+        </section>
+
+        <section class="workflow" aria-label="Content editing workflow" data-workflow hidden>
+          <article class="workflow-card workflow-selection" data-selection-step hidden>
             <span class="step-number">01</span>
             <div>
-              <p class="card-label">Choose the change</p>
-              <h2>Select content and operation</h2>
+              <p class="card-label">Selected workflow</p>
+              <h2>Choose an existing entry</h2>
               <form data-selection-form>
                 <label>
                   <span>Content type</span>
@@ -292,54 +337,6 @@ const adminData = {
           </article>
         </section>
 
-        <section class="alumni-tool" aria-labelledby="alumni-tool-title">
-          <div>
-            <p class="eyebrow">Quick data edit</p>
-            <h2 id="alumni-tool-title">Alumni directory</h2>
-            <p>Edit all {alumniCount} alumni records in one JSON file. Groups and members appear on the People page in the same order as this file.</p>
-          </div>
-          <div class="alumni-tool-actions">
-            <p class="repository-path">{alumniPath}</p>
-            <a class="primary-button" href={alumniEditUrl} target="_blank" rel="noreferrer">Edit Alumni on GitHub</a>
-            <small>Keep the existing brackets, quotes and commas. Each member needs a <code>name</code>; <code>destination</code> is optional. Commit the file on GitHub to publish the update.</small>
-          </div>
-        </section>
-
-        <section class="library-section">
-          <div class="section-heading">
-            <div>
-              <p class="eyebrow">Content library</p>
-              <h2>Load an existing entry</h2>
-            </div>
-            <p>Select an entry to load it into the workflow above. You can then edit its structured fields or switch the operation to delete.</p>
-          </div>
-
-          <div class="content-tabs" role="tablist" aria-label="Content types">
-            {panels.map((panel, index) => (
-              <button type="button" role="tab" aria-selected={index === 0 ? 'true' : 'false'} data-tab={panel.key}>
-                {panel.label}<span>{panel.items.length}</span>
-              </button>
-            ))}
-          </div>
-
-          {panels.map((panel, index) => (
-            <div class="content-panel" role="tabpanel" data-panel={panel.key} hidden={index !== 0}>
-              {panel.items.length > 0 ? (
-                <div class="entry-list">
-                  {panel.items.map((item) => (
-                    <button class="entry-row" type="button" data-load-type={panel.key} data-load-entry={item.id}>
-                      <span><strong>{item.title}</strong><small>{item.meta}</small></span>
-                      <span class="edit-mark">Load into workflow ↑</span>
-                    </button>
-                  ))}
-                </div>
-              ) : (
-                <div class="empty-state">No entries yet. Select this content type and create the first one.</div>
-              )}
-            </div>
-          ))}
-        </section>
-
         <section class="commit-guide">
           <p><span>1</span> Prepare and copy here</p>
           <p><span>2</span> Open the GitHub editor</p>
@@ -350,7 +347,7 @@ const adminData = {
 
       <footer class="admin-footer">
         <span>MIL content gateway</span>
-        <a href={`${repositoryUrl}/tree/${branch}/src/content`} target="_blank" rel="noreferrer">Browse all source content ↗</a>
+        <a href={`${repositoryUrl}/tree/${branch}/src`} target="_blank" rel="noreferrer">Browse all editable data ↗</a>
       </footer>
     </div>
 

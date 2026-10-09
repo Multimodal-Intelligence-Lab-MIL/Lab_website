@@ -1,0 +1,92 @@
+{
+  "eyebrow": "Opportunities",
+  "title": "Join the lab.",
+  "intro": "We welcome enquiries from prospective PhD students, research fellows, visitors and collaborators whose interests align with our research.",
+  "phd": {
+    "eyebrow": "Doctoral study",
+    "title": "Funded and self-funded PhD opportunities",
+    "intro": "Explore the principal funding routes available to prospective doctoral researchers at the University of Exeter.",
+    "opportunities": [
+      {
+        "title": "China Scholarship Council (CSC) and University of Exeter PhD Scholarships",
+        "url": "https://www.exeter.ac.uk/pg-research/csc-scholarships/",
+        "note": "50 full PhD studentships per year"
+      },
+      {
+        "title": "EPSRC Funded PhD Studentships",
+        "url": "https://www.exeter.ac.uk/study/pg-research/funding/phdfunding/epsrc-dtp-studentships/",
+        "note": "Up to 15 studentships"
+      },
+      {
+        "title": "UKRI Centre for Doctoral Training in Environmental Intelligence",
+        "url": "https://www.exeter.ac.uk/research/eicdt/",
+        "note": ""
+      },
+      {
+        "title": "Faculty of Environment, Science and Economy PhD Studentships",
+        "url": "https://www.exeter.ac.uk/study/pg-research/funding/phdfunding/fundingbyfaculty/ese/",
+        "note": ""
+      },
+      {
+        "title": "Doctoral Training Partnerships and other funded centres",
+        "url": "http://www.exeter.ac.uk/pg-research/money/phdfunding/fundedcentres/",
+        "note": ""
+      },
+      {
+        "title": "Commonwealth Scholarships",
+        "url": "https://cscuk.fcdo.gov.uk/about-us/scholarships/",
+        "note": ""
+      },
+      {
+        "title": "Self-funded PhD opportunities",
+        "url": "",
+        "note": "Available in line with the lab's research interests"
+      }
+    ]
+  },
+  "postdoc": {
+    "eyebrow": "Postdoctoral research",
+    "title": "Postdoctoral fellowship funding schemes",
+    "intro": "We welcome conversations with researchers preparing fellowship applications aligned with the lab's research programme.",
+    "opportunities": [
+      {
+        "title": "EPSRC Post-Doctoral Fellowship",
+        "url": "https://www.ukri.org/what-we-offer/developing-people-and-skills/epsrc/fellowships/"
+      },
+      {
+        "title": "Royal Academy of Engineering Fellowship",
+        "url": "https://www.raeng.org.uk/grants-prizes/grants/support-for-research/raeng-research-fellowship"
+      },
+      {
+        "title": "Royal Society University Research Fellowship",
+        "url": "https://royalsociety.org/grants-schemes-awards/grants/university-research/"
+      },
+      {
+        "title": "Newton International Fellowships",
+        "url": "https://royalsociety.org/grants-schemes-awards/grants/newton-international/"
+      },
+      {
+        "title": "Leverhulme Trust Early Career Fellowships",
+        "url": "https://www.leverhulme.ac.uk/early-career-fellowships"
+      },
+      {
+        "title": "Marie Skłodowska-Curie Actions",
+        "url": "https://marie-sklodowska-curie-actions.ec.europa.eu/"
+      },
+      {
+        "title": "Royal Commission for the Exhibition of 1851",
+        "url": "https://royalcommission1851.org/research-fellowships-eligibility-and-benefits"
+      },
+      {
+        "title": "Wellcome Early-Career Awards",
+        "url": "https://wellcome.org/grant-funding/schemes/early-career-awards"
+      }
+    ]
+  },
+  "contact": {
+    "eyebrow": "Start a conversation",
+    "title": "Bring your next research question.",
+    "body": "Tell us about your background, research interests and the opportunity or funding route you are considering.",
+    "buttonLabel": "Email the lab"
+  }
+}
