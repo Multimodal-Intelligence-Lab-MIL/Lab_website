@@ -127,7 +127,7 @@ GitHub 是唯一内容源。`/admin/` 不拥有独立数据库，而是把管理
 - 完整标题与短标题
 - `summary`：一两句说明具体研究内容，显示在 Research 页面卡片和首页悬浮卡片中
 - Markdown 详细说明（可选）
-- `accent`：方向的标识色，从 `src/lib/accents.ts` 中的 8 个预设颜色选择（Ocean、Sky、Aqua、Teal、Mint、Slate、Amber、Coral），只用于小标记：论文标签上的圆点、首页方块的圆点和 Research 卡片编号旁的短线。后台以色块显示，标出已被其他方向使用的颜色，并默认选中第一个未使用的颜色。如需新增颜色，在该文件中添加即可。
+- `accent`：方向的标识色，从 `src/lib/accents.ts` 中的 6 个预设颜色选择（Ocean、Sky、Teal、Green、Amber、Coral，两两之间的感知色差都足够大，小圆点也能分清），只用于小标记：论文标签上的圆点、首页方块的圆点和 Research 卡片编号旁的短线。后台以色块显示，标出已被其他方向使用的颜色，并默认选中第一个未使用的颜色。如需新增颜色，在该文件中添加即可。
 - `order` 排序
 - `featured`、`draft`
 
