@@ -4,7 +4,7 @@ category: Research Assistants
 bio: "Specialises in model fine-tuning and graph-based neural networks."
 email: "yueming.sun@durham.ac.uk"
 website: "https://www.durham.ac.uk/staff/yueming-sun/"
-order: 32
+order: 41
 current: true
 draft: false
 ---
