@@ -5,8 +5,8 @@ venue: "WACV 2026 Workshops (CV4EO)"
 year: 2026
 category: Workshop
 research: ai-for-environment
-image: "uploads/publications/masked-edge-reconstruction.webp"
-imageAlt: "Remote-sensing image pairs, change masks and alternative edge representations used by EASM."
+image: "uploads/publications/masked-edge-reconstruction-framework.webp"
+imageAlt: "Overview of the EASM-based change detection framework and the internal edge extraction, masking and reconstruction workflow."
 abstract: "Change detection (CD) in remote sensing has seen great progress with deep learning models, yet accurately delineating object boundaries remains a persistent challenge. Most existing CD methods overlook edge information, resulting in blurred contours and frequent misclassifications in regions with subtle or complex changes. To address this, we propose the Edge-Aware Self-Supervised Module (EASM), a lightweight, plug-and-play component designed to enhance edge sensitivity without requiring external edge labels or auxiliary supervision. EASM operates in two stages: (1) edge feature extraction and masking via high-frequency and topological feature encoding, and (2) masked image reconstruction through a self-supervised autoencoder. This encourages the network to learn sharp and structurally consistent edge representations. Extensive experiments on three benchmark CD datasets, across nine backbone architectures, demonstrate that integrating EASM improves change localisation accuracy and edge clarity, with negligible computational overhead. Our results highlight the potential of edge-aware self-supervised learning in advancing reliable and fine-grained CD performance in remote sensing applications. The source code will be released at https://github.com/Multimodal-Intelligence-Lab-MIL/EASM"
 doi: "10.1109/WACVW68408.2026.00160"
 paperUrl: "https://doi.org/10.1109/WACVW68408.2026.00160"

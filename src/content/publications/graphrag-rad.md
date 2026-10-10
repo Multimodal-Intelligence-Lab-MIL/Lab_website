@@ -5,8 +5,8 @@ venue: "EACL 2026 Student Research Workshop"
 year: 2026
 category: Workshop
 research: ai-for-healthcare
-image: "uploads/publications/graphrag-rad.webp"
-imageAlt: "First-page preview of the GraphRAG-Rad paper."
+image: "uploads/publications/graphrag-rad-framework.webp"
+imageAlt: "Overview of the GraphRAG-Rad framework: latent visual-semantic retrieval, knowledge-grounded visual encoding, multi-hop reasoning and graph-gated fusion for report generation."
 abstract: "Radiology report generation involves translating visual signals from pixels into precise clinical language. Existing encoder-decoder models often suffer from hallucinations, generating plausible but incorrect medical findings. We propose GraphRAG-Rad, a novel architecture that integrates biomedical knowledge through a novel Latent Visual-Semantic Retrieval (VSR). Unlike traditional Retrieval-Augmented Generation (RAG) methods that rely on textual queries, our approach aligns visual embeddings with the latent space of the Knowledge Graph, PrimeKG. The retrieved sub-graph guides the Visual Encoder and the Multi-Hop Reasoning Module. The reasoning module simulates clinical deduction paths (Ground-Glass Opacity → Viral Pneumonia → COVID-19) before it combines the information with visual features in a Graph-Gated Cross-Modal Decoder. Experiments on the COV-CTR dataset demonstrate that GraphRAG-Rad achieves competitive performance with strong results across multiple metrics. Furthermore, ablation studies show that integrating latent retrieval and reasoning improves performance significantly compared to a visual-only baseline. Qualitative analysis further reveals interpretable attention maps. These maps explicitly link visual regions to symbolic medical concepts, effectively bridging the modality gap between vision and language."
 doi: "10.18653/v1/2026.eacl-srw.34"
 paperUrl: "https://doi.org/10.18653/v1/2026.eacl-srw.34"
