@@ -64,7 +64,8 @@ import site from '../../data/site.json';
       <p class="join-kicker">{joinData.contact.eyebrow}</p>
       <h2>{joinData.contact.title}</h2>
       <p>{joinData.contact.body}</p>
-      <a class="join-contact-button" href={`mailto:${site.email}`}>{joinData.contact.buttonLabel}<span aria-hidden="true">↗</span></a>
+      <a class="join-contact-button" href={`mailto:${site.email}`} aria-label={`${joinData.contact.buttonLabel}: ${site.email}`}>{site.email}<span aria-hidden="true">↗</span></a>
+      <p class="join-contact-note">{joinData.contact.application}</p>
     </div>
   </section>
 </BaseLayout>

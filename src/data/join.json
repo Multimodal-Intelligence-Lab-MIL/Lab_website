@@ -87,6 +87,7 @@
     "eyebrow": "Start a conversation",
     "title": "Bring your next research question.",
     "body": "Tell us about your background, research interests and the opportunity or funding route you are considering.",
-    "buttonLabel": "Email the lab"
+    "buttonLabel": "Email the lab",
+    "application": "If you share the same interests and passion with us, please send your CV together with a short description (2–3 sentences) of your research interests to the above email address (with the keywords “[PhD/Postdoc/RA/Visitor/Collaboration application]” in your email subject)."
   }
 }

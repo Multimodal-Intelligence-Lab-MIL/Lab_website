@@ -67,10 +67,12 @@ nav[data-menu] .nav-contact { padding: .62rem .95rem; color: #145f91; background
 .text-link.light { color: var(--ink); }
 .site-footer { padding: 6rem 0 2rem; color: var(--ink); background: #eaf4f9; border-top: 1px solid rgba(26,100,149,.12); }
 .footer-grid { display: grid; grid-template-columns: 1.2fr .7fr .4fr; gap: 4rem; padding-bottom: 5rem; }
-.footer-grid h2 { max-width: 670px; font-size: clamp(2.4rem, 5vw, 4.6rem); }
+.footer-grid h2 { max-width: 670px; font-size: clamp(2.2rem, 4vw, 4rem); }
+.footer-grid h2 span { display: inline-block; }
 .footer-contact { color: #557083; }
 .footer-contact a { color: #176d9f; text-decoration: none; }
-.footer-contact p { margin-top: 1.2rem; }
+.footer-contact .footer-address { display: block; margin-top: 1.2rem; color: inherit; }
+.footer-contact .footer-address:hover, .footer-contact .footer-address:focus-visible { color: #176d9f; text-decoration: underline; text-underline-offset: 3px; }
 .footer-links { display: grid; align-content: start; gap: .7rem; }
 .footer-links a { width: max-content; color: #557083; font-size: .87rem; text-decoration: none; }
 .footer-links a:hover { color: #155f8e; }
